@@ -1,0 +1,219 @@
+#rootDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+}
+
+#mainScreen {
+    display: flex;
+    flex-direction: row;
+}
+
+#mainNav {
+    position: absolute;
+    top: 0;
+    background-color: white;
+    width: 100vw;
+    color: black;
+    height: 8vh;
+    display: flex;
+    font-size: 1em;
+    min-height: 60px;
+    box-sizing: border-box;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#titleCover {
+    width: 40vw;
+    height: 100vh;
+    background-color: #B90606;
+}
+
+#titleCover > h1 {
+    color: white;
+}
+
+#formSection {
+    width: 60vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#formSection > form {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+.formRow {
+    margin-top: 1.5em;
+    height: 30px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.formRow > label {
+    font-size: 1.2em;
+}
+
+.formRow > input {
+    height: 100%;
+    width: 80%;
+}
+
+#navigation {
+    text-align: start;
+    width: 200px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: black;
+    display: flex;
+    flex-direction: row;
+    padding-left: 10px;
+}
+
+#logoDiv {
+    display: flex;
+    justify-self: flex-end;
+    margin-left: auto;
+    flex-direction: row-reverse;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td {
+    border: 2px solid black;
+    position: relative;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.optionSearchContainer {
+    position: relative;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+textarea {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    resize: none;
+    border: none;
+    outline: none;
+}
+th {
+    border: 2px solid black;
+    padding: 5px;
+    font-size: 0.7em;
+}
+
+tr {
+    box-sizing: border-box;
+}
+
+.optionsInfo {
+    margin-top: 3em;
+}
+
+.optionSearchContainer > input {
+    outline: none;
+    text-align: center;
+    width: 100%;
+    height: auto;
+    box-sizing: border-box;
+    overflow: hidden;
+    border-radius: 0;
+    border: 0px;
+    padding-left: 5px;
+}
+
+h1 {
+    display: flex;
+    justify-content: center;
+    
+}
+
+.exampleSection {
+    display: flex;
+    width: 80vw;
+    flex-direction: column;
+    padding: 10px;
+    border: 2px solid black;
+    min-height: 300px;
+}
+
+.lotInfo {
+    align-self: center;
+    margin-top: 1em;
+}
+
+.optionCell {
+    width: 30vw;
+    height: 200px;
+}
+
+.optionResults {
+    z-index: 20;
+    position: absolute;
+    width: 100%;
+    top: 30px;
+    font-size: 0.7em;
+    box-sizing: border-box;
+    border: 1px solid black;
+    max-height: 150px;
+    overflow-y: auto; 
+    overflow-x: hidden;
+}
+
+.optionResults > div {
+    padding: 2px 5px;
+    background-color: white;
+}
+
+.optionResults > div:hover {
+    background-color: #f2eeed;
+    cursor: pointer;
+}
+@media only screen and (min-width: 1000px) {
+    th {
+        padding: 5px;
+        font-size: 1em;
+    }
+    
+    td > input {
+        outline: none;
+        width: 100%;
+        height: 30px;
+        box-sizing: border-box;
+        overflow: hidden;
+        border-radius: 0;
+        border: 0px;
+        padding-left: 5px;
+    }
+    
+    .exampleSection {
+        display: flex;
+        flex-direction: column;
+        width: 60vw;
+        padding: 10px;
+        border: 2px solid black;
+        min-height: 300px;
+    }
+    
+    .lotInfo {
+        align-self: center;
+        margin-top: 1em;
+    }
+    
+    .optionResults {
+        font-size: 1em;
+    }
+}
