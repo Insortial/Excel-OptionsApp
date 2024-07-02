@@ -3,10 +3,11 @@ import React from 'react'
 
 type inputOptions = {
     listOptions: string[];
+    inputValue?: string;
+    onInputChange?: (input: string) => void;
 }
 
-const InputSearch: React.FC<inputOptions> = ({listOptions}) => {
-    const [prefix, setPrefix] = useState<string | string>("");
+const InputSearch: React.FC<inputOptions> = ({listOptions, inputValue, onInputChange}) => {
     const [suggestion, setSuggestion] = useState<string[] | string[]>([]);
     const [inFocus, setInFocus] = useState<boolean | boolean>(false);
     const [focusedIndex, setFocusedIndex] = useState(-1);
@@ -58,13 +59,13 @@ const InputSearch: React.FC<inputOptions> = ({listOptions}) => {
         resetSearchComplete();
 
         console.log(selectedItem)
-        setPrefix(selectedItem)
+        onInputChange?.(selectedItem)
     }
     
     function readInput(input: React.ChangeEvent<HTMLInputElement>): void {
-        setPrefix(input.target.value)
+        onInputChange?.(input.target.value)
         if(suggestion != undefined) {
-            setSuggestion(listOptions?.filter((x: string) => x.includes(input.target.value)));
+            setSuggestion(listOptions?.filter((x: string) => x.toLowerCase().includes(input.target.value.toLowerCase())));
         }
     }
 
@@ -73,13 +74,13 @@ const InputSearch: React.FC<inputOptions> = ({listOptions}) => {
         <div className="optionSearchContainer" tabIndex={1} onKeyDown={handleKeyDown}>
             <input type="text" 
                 className="optionSearch" 
-                value={prefix} 
+                value={inputValue} 
                 onChange={readInput}
                 onFocus={handleOnFocus}
                 onBlur={handleOnBlur}
                 ref={inputRef}
                 />
-            <div className="optionResults" style={{display: inFocus ? "block" : "none"}}>
+            <div className="optionResults" style={{display: inFocus ? "block" : "none", border: suggestion.length === 0 ? "none" : "1px solid black"}}>
                 {suggestion.map((x: string, index: number) => {
                     return <div key={index} onMouseDown={() => handleOptionClick(index)}
                     style={{

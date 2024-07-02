@@ -1,16 +1,61 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import InputSearch from "./InputSearch"
-import { LotTableInterface } from './LotTableInterface'
+import { LotTableInterface, JobInterface } from './LotTableInterface';
 
-type Props = {}
+type BoxStyleType = [string, number];
+type DrawerFrontsType = [string, number];
+type DrawerBoxesType = [string, number];
+type DrawerGuidesType = [string, number];
+type DoorHingesType = [string, number];
+type InteriorsType = [string, number];
+type MaterialStainType = [string, number];
 
-const LotTable = (lotTableDetails: LotTableInterface) => {
+type LotTable = {
+    lotTableDetails: LotTableInterface
+}
+
+const LotTable: React.FC<LotTable> = ({lotTableDetails}) => {
+    const [builderState, setBuilderState] = useState<string>('');
+    const [projectState, setProjectState] = useState<string>('');
+    const [phaseState, setPhaseState] = useState<string>('');
+    const [superintendentState, setSuperintendentState] = useState<string | undefined>(undefined);
+    const [phoneState, setPhoneState] = useState<string | undefined>(undefined);
+    const [foremanState, setForemanState] = useState<string>('');
+    const [jobIDState, setJobIDState] = useState<number>(0);
+    const [boxStyleState, setBoxStyleState] = useState<BoxStyleType | undefined>(undefined);
+    const [drawerFrontsState, setDrawerFrontsState] = useState<DrawerFrontsType | undefined>(undefined);
+    const [drawerBoxesState, setDrawerBoxesState] = useState<DrawerBoxesType | undefined>(undefined);
+    const [drawerGuidesState, setDrawerGuidesState] = useState<DrawerGuidesType | undefined>(undefined);
+    const [doorHingesState, setDoorHingesState] = useState<DoorHingesType | undefined>(undefined);
+    const [interiorsState, setInteriorsState] = useState<InteriorsType | undefined>(undefined);
+    const [upperHeightState, setUpperHeightState] = useState<string | undefined>(undefined);
+    const [islandsState, setIslandsState] = useState<string | undefined>(undefined);
+    const [crownState, setCrownState] = useState<string | undefined>(undefined);
+    const [lightRailState, setLightRailState] = useState<string | undefined>(undefined);
+    const [baseShoeState, setBaseShoeState] = useState<string | undefined>(undefined);
+    const [recyclingBinsState, setRecyclingBinsState] = useState<string | undefined>(undefined);
+    const [jobNotesState, setJobNotesState] = useState<string | undefined>(undefined);
+    const [lotState, setLotState] = useState<string | undefined>(undefined);
+    const [planState, setPlanState] = useState<string | undefined>(undefined);
+    const [materialStainState, setMaterialStainState] = useState<MaterialStainType | undefined>(undefined);
+    
     const builderOptions : string[] = ["DR Horton", "Tri Pointe", "Richmond American", "Melia", "Dale", "Stella Pointe", "Lark"]
     const projectOptions : string[] = ["DR Horton", "Tri Pointe", "Richmond American", "Melia"]
     const foremanOptions : string[] = ["Adrian Gonzalez", "Eduardo Jimenez", "Rogelio", "Keith Kelley", "Leonard Schmidt"]
     const jobIDOptions : string[] = ["10167", "10152", "10102", "10023"]
     const boxOptions : string[] = ["Euro", "FaceFrame"]
     const noOptions : string[] = []
+
+    useEffect(() => {
+        setBuilderState(lotTableDetails.builder)
+        setProjectState(lotTableDetails.project)
+        setPhaseState(lotTableDetails.phase)
+        setSuperintendentState(lotTableDetails.superintendent)
+        setPhoneState(lotTableDetails.phone)
+        setForemanState(lotTableDetails.foreman)
+        setJobIDState(lotTableDetails.jobID)
+    }, [])
+    
 
     return (
         <div className='exampleSection'>
@@ -25,12 +70,12 @@ const LotTable = (lotTableDetails: LotTableInterface) => {
                         <th>Area Foreman</th>
                     </tr>
                     <tr>
-                        <td><InputSearch listOptions={builderOptions}></InputSearch></td>
-                        <td><InputSearch listOptions={projectOptions}></InputSearch></td>
-                        <td><InputSearch listOptions={noOptions}></InputSearch></td>
-                        <td><InputSearch listOptions={noOptions}></InputSearch></td>
-                        <td><InputSearch listOptions={noOptions}></InputSearch></td>
-                        <td><InputSearch listOptions={foremanOptions}></InputSearch></td>
+                        <td><InputSearch inputValue={builderState} onInputChange={setBuilderState} listOptions={builderOptions}></InputSearch></td>
+                        <td><InputSearch inputValue={projectState} onInputChange={setProjectState} listOptions={projectOptions}></InputSearch></td>
+                        <td><InputSearch inputValue={phaseState} onInputChange={setPhaseState} listOptions={noOptions}></InputSearch></td>
+                        <td><InputSearch inputValue={superintendentState} onInputChange={setSuperintendentState} listOptions={noOptions}></InputSearch></td>
+                        <td><InputSearch inputValue={phoneState} onInputChange={setPhoneState} listOptions={noOptions}></InputSearch></td>
+                        <td><InputSearch inputValue={foremanState} onInputChange={setForemanState} listOptions={foremanOptions}></InputSearch></td>
                     </tr>
                 </tbody>
             </table>
@@ -38,15 +83,15 @@ const LotTable = (lotTableDetails: LotTableInterface) => {
                 <tbody>
                     <tr>
                         <th>Job ID</th>
-                        <td><InputSearch listOptions={jobIDOptions}></InputSearch></td>
+                        <td><InputSearch inputValue={jobIDState} onInputChange={setJobIDState} listOptions={jobIDOptions}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Box Style</th>
-                        <td><InputSearch listOptions={boxOptions}></InputSearch></td>
+                        <td><InputSearch inputValue={boxStyleState} onInputChange={setBoxStyleState} listOptions={boxOptions}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Drawer Fronts</th>
-                        <td><InputSearch listOptions={noOptions}></InputSearch></td>
+                        <td><InputSearch inputValue={drawerFrontsState} onInputChange={setDrawerFrontsState} listOptions={noOptions}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Drawer Boxes</th>
@@ -105,12 +150,12 @@ const LotTable = (lotTableDetails: LotTableInterface) => {
                         <th>Notes:</th>
                     </tr>
                     <tr>
-                        <td><input></input></td>
-                        <td><input></input></td>
-                        <td><input></input></td>
+                        <td><textarea></textarea></td>
+                        <td><textarea></textarea></td>
+                        <td><textarea></textarea></td>
                         <td className="optionCell"><textarea></textarea></td>
-                        <td><input></input></td>
-                        <td><input></input></td>
+                        <td><textarea></textarea></td>
+                        <td><textarea></textarea></td>
                     </tr>
                 </tbody>
             </table>

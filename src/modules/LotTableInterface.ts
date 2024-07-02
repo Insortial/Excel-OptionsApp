@@ -19,7 +19,17 @@ export interface LotTableInterface {
     baseShoe?: string,
     recyclingBins?: string,
     jobNotes?: string,
-    lot: string,
-    plan: string,
+    lot?: string,
+    plan?: string,
     materialStain?: [string, number],
+}
+
+export interface JobInterface {
+    builder: string,
+    project: string,
+    phase: string,
+    superintendent?: string,
+    phone?: string,
+    foreman: string,
+    jobID: number,
 }

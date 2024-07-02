@@ -14,7 +14,7 @@ const router = createBrowserRouter([
     element: <App />
   },
   {
-    path: "creatingOptions/",
+    path: "/creatingOptions/",
     element: <OptionsCreator />
   }
 ]);
