@@ -43,7 +43,13 @@ const LotTable: React.FC<LotTable> = ({lotTableDetails}) => {
     const projectOptions : string[] = ["DR Horton", "Tri Pointe", "Richmond American", "Melia"]
     const foremanOptions : string[] = ["Adrian Gonzalez", "Eduardo Jimenez", "Rogelio", "Keith Kelley", "Leonard Schmidt"]
     const jobIDOptions : string[] = ["10167", "10152", "10102", "10023"]
-    const boxOptions : string[] = ["Euro", "FaceFrame"]
+    const boxStyleOptions : string[] = ["Euro", "FaceFrame"]
+    const frontOptions : string[] = ["Solid", "Routed MDF", "Flat/MDF", "Routed Thermofoil", "Flat/Thermofoil", "Five Piece"]
+    const boxOptions : string[] = ["Standard", "Dovetail", "Meta box", "APA Dovetail"]
+    const guideOptions : string[] = ["Standard", "Full Extension", "Soft Closing", "Meta box", "Undermount", "APA Soft Closing Salice"]
+    const hingeOptions : string[] = ["Standard", "Soft Closing", "APA Soft Closing", "1-3/8"]
+    const interiorOptions : string[] = ["White Melamine", "Maple Melamine"]
+
     const noOptions : string[] = []
 
     useEffect(() => {
@@ -54,7 +60,23 @@ const LotTable: React.FC<LotTable> = ({lotTableDetails}) => {
         setPhoneState(lotTableDetails.phone)
         setForemanState(lotTableDetails.foreman)
         setJobIDState(lotTableDetails.jobID)
-    }, [])
+        setLotState(lotTableDetails.lot)
+
+        setBoxStyleState(lotTableDetails.boxStyle ?? ["", -1]) 
+        /* setDrawerFrontsState(lotTableDetails.drawerFronts ?? ["", -1])
+        setDrawerBoxesState(lotTableDetails.drawerBoxes ?? ["", -1])
+        setDrawerGuidesState(lotTableDetails.drawerGuides ?? ["", -1])
+        setDoorHingesState(lotTableDetails.doorHinges ?? ["", -1])
+        setInteriorsState(lotTableDetails.interiors ?? ["", -1])
+        setUpperHeightState(lotTableDetails.upperHeight ?? "")
+        setIslandsState(lotTableDetails.islands ?? "")
+        setCrownState(lotTableDetails.crown ?? "")
+        setLightRailState(lotTableDetails.lightRail ?? "")
+        setBaseShoeState(lotTableDetails.baseShoe ?? "")
+        setRecyclingBinsState(lotTableDetails.recyclingBins ?? "")
+        setJobNotesState(lotTableDetails.jobNotes ?? "")
+        setPlanState(lotTableDetails.plan ?? "") */
+    }, [lotTableDetails])
     
 
     return (
@@ -87,27 +109,27 @@ const LotTable: React.FC<LotTable> = ({lotTableDetails}) => {
                     </tr>
                     <tr>
                         <th>Box Style</th>
-                        <td><InputSearch inputValue={boxStyleState} onInputChange={setBoxStyleState} listOptions={boxOptions}></InputSearch></td>
+                        <td><InputSearch inputValue={boxStyleState} onInputChange={setBoxStyleState} listOptions={boxStyleOptions}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Drawer Fronts</th>
-                        <td><InputSearch inputValue={drawerFrontsState} onInputChange={setDrawerFrontsState} listOptions={noOptions}></InputSearch></td>
+                        <td><InputSearch inputValue={drawerFrontsState} onInputChange={setDrawerFrontsState} listOptions={frontOptions}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Drawer Boxes</th>
-                        <td><InputSearch listOptions={noOptions}></InputSearch></td>
+                        <td><InputSearch inputValue={drawerBoxesState} onInputChange={setDrawerBoxesState} listOptions={boxOptions}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Drawer Guides</th>
-                        <td><InputSearch listOptions={noOptions}></InputSearch></td>
+                        <td><InputSearch inputValue={drawerGuidesState} onInputChange={setDrawerGuidesState} listOptions={guideOptions}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Drawer Hinges</th>
-                        <td><InputSearch listOptions={noOptions}></InputSearch></td>
+                        <td><InputSearch inputValue={doorHingesState} onInputChange={setDoorHingesState} listOptions={hingeOptions}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Interiors</th>
-                        <td><InputSearch listOptions={noOptions}></InputSearch></td>
+                        <td><InputSearch inputValue={interiorsState} onInputChange={setInteriorsState} listOptions={interiorOptions}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Upper Height</th>
@@ -150,7 +172,7 @@ const LotTable: React.FC<LotTable> = ({lotTableDetails}) => {
                         <th>Notes:</th>
                     </tr>
                     <tr>
-                        <td><textarea></textarea></td>
+                        <td><InputSearch inputValue={lotState} onInputChange={setLotState} listOptions={noOptions}></InputSearch></td>
                         <td><textarea></textarea></td>
                         <td><textarea></textarea></td>
                         <td className="optionCell"><textarea></textarea></td>

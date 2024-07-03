@@ -61,8 +61,54 @@
 .modal {
     width: 80vw;
     max-width: 600px;
-    min-height: 300px;
+    min-height: 230px;
     background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal > h2 {
+    width: 100%;
+    height: 50px;
+    background-color: #945766;
+    margin: 0;
+    color: white;
+    padding: 5px 10px;
+    box-sizing: border-box;
+}
+
+.modalRow {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+    height: 50px;
+    margin-top: 3em;
+    justify-content: space-between;
+}
+
+datalist {
+    max-height: 500px !important;
+    overflow-y: auto !important;
+}
+
+
+.modalRow > input {
+    height: 100%;
+    width: 75%;
+    font-size: 2em;
+    box-sizing: border-box;
+}
+
+input:focus {
+    border-color: #ffb74a;
+}
+
+.modalRow > button {
+    width: 20%;
+    height: 100%;
 }
 
 .modalScreen {

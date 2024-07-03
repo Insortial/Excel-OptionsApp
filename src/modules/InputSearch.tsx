@@ -11,7 +11,6 @@ const InputSearch: React.FC<inputOptions> = ({listOptions, inputValue, onInputCh
     const [suggestion, setSuggestion] = useState<string[] | string[]>([]);
     const [inFocus, setInFocus] = useState<boolean | boolean>(false);
     const [focusedIndex, setFocusedIndex] = useState(-1);
-    const inputRef = useRef(null);
 
     useEffect(() => {
       setSuggestion(listOptions);
@@ -72,13 +71,13 @@ const InputSearch: React.FC<inputOptions> = ({listOptions, inputValue, onInputCh
 
     return (
         <div className="optionSearchContainer" tabIndex={1} onKeyDown={handleKeyDown}>
-            <input type="text" 
+            <input 
+                type="text" 
                 className="optionSearch" 
                 value={inputValue} 
                 onChange={readInput}
                 onFocus={handleOnFocus}
                 onBlur={handleOnBlur}
-                ref={inputRef}
                 />
             <div className="optionResults" style={{display: inFocus ? "block" : "none", border: suggestion.length === 0 ? "none" : "1px solid black"}}>
                 {suggestion.map((x: string, index: number) => {
