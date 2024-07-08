@@ -1,22 +1,33 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import React from 'react'
-import { JobInterface, LotTableInterface } from "./LotTableInterface";
+import { JobInterface, LotTableInterface, PartOfLot } from "./LotTableInterface";
 
 type inputOptions = {
     listOptions: string[];
     formState: LotTableInterface | JobInterface;
-    onFormChange?: (value: string, key: string) => void;
+    optionSectionNum?: number;
+    onFormChange?: (value: string, key: string, optSectionNum?: number) => void;
     inputName: string;
 }
 
-const InputSearch: React.FC<inputOptions> = ({listOptions, formState, onFormChange, inputName}) => {
+const InputSearch: React.FC<inputOptions> = ({listOptions, formState, onFormChange, inputName, optionSectionNum}) => {
     const [suggestion, setSuggestion] = useState<string[] | string[]>([]);
     const [inFocus, setInFocus] = useState<boolean | boolean>(false);
     const [focusedIndex, setFocusedIndex] = useState(-1);
 
     useEffect(() => {
-      setSuggestion(listOptions);
+        setSuggestion(listOptions);
     }, [])
+
+    const checkTypeOfForm = () => {
+        let accessedObject:LotTableInterface | PartOfLot | JobInterface = formState;
+
+        if(optionSectionNum !== undefined && "partsOfLot" in formState) {
+            accessedObject = formState.partsOfLot[optionSectionNum]
+        }
+
+        return (accessedObject[inputName as keyof (LotTableInterface | JobInterface | PartOfLot)] as string) ?? ""
+    }
 
     const resetSearchComplete = useCallback(() => {
         setFocusedIndex(-1);
@@ -54,33 +65,38 @@ const InputSearch: React.FC<inputOptions> = ({listOptions, formState, onFormChan
     }
 
     function handleOptionClick(selectedIndex: number):void {
-        console.log(selectedIndex)
         const selectedItem = suggestion[selectedIndex];
         if (!selectedItem) return resetSearchComplete();
         resetSearchComplete();
-
-        console.log(selectedItem)
-        onFormChange?.(selectedItem, inputName)
+        onFormChange?.(selectedItem, inputName, optionSectionNum)
     }
     
     function readInput(input: React.ChangeEvent<HTMLInputElement>): void {
-        onFormChange?.(input.target.value, inputName)
+        onFormChange?.(input.target.value, inputName, optionSectionNum)
         if(suggestion != undefined) {
             setSuggestion(listOptions?.filter((x: string) => x.toLowerCase().includes(input.target.value.toLowerCase())));
         }
     }
 
-
     return (
         <div className="optionSearchContainer" tabIndex={1} onKeyDown={handleKeyDown}>
-            <input 
-                type="text" 
-                className="optionSearch" 
-                value={(formState[inputName as keyof (LotTableInterface | JobInterface)] as string) ?? ""} 
-                onChange={readInput}
-                onFocus={handleOnFocus}
-                onBlur={handleOnBlur}
-                />
+            {(optionSectionNum !== undefined) && ("partsOfLot" in formState) ? 
+                (<input 
+                    type="text" 
+                    className="optionSearch" 
+                    value={(formState.partsOfLot[optionSectionNum][inputName as keyof (LotTableInterface | JobInterface | PartOfLot)] as string) ?? ""} 
+                    onChange={readInput}
+                    onFocus={handleOnFocus}
+                    onBlur={handleOnBlur}
+                />) : 
+                (<input 
+                    type="text" 
+                    className="optionSearch" 
+                    value={(formState[inputName as keyof (LotTableInterface | JobInterface | PartOfLot)] as string) ?? ""} 
+                    onChange={readInput}
+                    onFocus={handleOnFocus}
+                    onBlur={handleOnBlur}
+                />)}
             <div className="optionResults" style={{display: inFocus ? "block" : "none", border: suggestion.length === 0 ? "none" : "1px solid black"}}>
                 {suggestion.map((x: string, index: number) => {
                     return <div key={index} onMouseDown={() => handleOptionClick(index)}

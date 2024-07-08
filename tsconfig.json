@@ -9,7 +9,7 @@
     }
   ],
   "compilerOptions": {
-    "target": "ES6",
-    "lib": ["DOM", "ES2023"]
+    "target": "ES2023",
+    "lib": ["ES2023", "DOM"]
   }
 }

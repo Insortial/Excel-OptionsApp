@@ -1,7 +1,7 @@
 import LotTable from "./LotTable";
 import Navigation from './Navigation.tsx';
 import { useLocation, Link } from "react-router-dom";
-import { LotTableInterface, JobInterface } from './LotTableInterface';
+import { LotTableInterface, JobInterface, PartOfLot } from './LotTableInterface';
 import React, { useEffect, useRef, useState } from "react";
 
 type Props = {}
@@ -12,8 +12,22 @@ function OptionsCreator({}: Props) {
     const [currentLotNum, setCurrentLotNum] = useState<string>("")
     const [currentLot, setCurrentLot] = useState<LotTableInterface>()
     const [needLotID, setNeedLotID] = useState<boolean>(false)
+    const [isLotCopy, setIsLotCopy] = useState<boolean>(false)
     const location = useLocation();
     const jobDetails = location.state;
+    const throughoutLot:PartOfLot = {
+        roomID: "Throughout",
+        material: "",
+        stain: "",
+        doors: "",
+        fingerpull: "",
+        drawerFronts: "",
+        knob: "",
+        drawerBoxes: "",
+        drawerGuides: "",
+        doorHinges: "",
+        pulls: "",
+    }
 
     const createLotTable = (jobInfo: JobInterface, lotNum: string): LotTableInterface => {
         let lotDetails:LotTableInterface = {
@@ -25,6 +39,7 @@ function OptionsCreator({}: Props) {
             foreman: jobInfo.foreman,
             jobID: parseInt(jobInfo.jobID),
             lot: lotNum,
+            partsOfLot: [throughoutLot]
         }
 
         return lotDetails;
@@ -33,19 +48,33 @@ function OptionsCreator({}: Props) {
     const saveLotTable = (lotTableData: LotTableInterface) => {
         let filteredTableList = listOfLots.filter((lotDetails:LotTableInterface) => lotDetails.lot !== lotTableData.lot)
         setListOfLots([...filteredTableList, lotTableData])
-        console.log(filteredTableList)
+    }
+
+    const deleteLotTable = (lotNum: string) => {
+        let filteredTableList = listOfLots.filter((lotDetails:LotTableInterface) => lotDetails.lot !== lotNum)
+        setListOfLots(filteredTableList)
+        setCurrentLot(filteredTableList[0])
+        setCurrentLotNum(filteredTableList[0].lot ?? "")
     }
 
     const changeLotTable = (lotNum: string) => {
         setCurrentLotNum(lotNum)
         let foundLot = listOfLots.find((lotDetails:LotTableInterface) => {return lotDetails.lot === lotNum})
+        console.log(foundLot)
         setCurrentLot(foundLot)
     }
 
     const addLotTable = () => {
         let table:LotTableInterface;
         if(lotNumRef.current) {
-            table = createLotTable(jobDetails, lotNumRef.current.value)
+            if(!isLotCopy) 
+                table = createLotTable(jobDetails, lotNumRef.current.value)
+            else {
+                table = Object.assign({},  listOfLots.find((lotDetails:LotTableInterface) => {return lotDetails.lot === currentLotNum}))
+                table.partsOfLot = table.partsOfLot?.filter((partOfLot:PartOfLot) => partOfLot.roomID === "Throughout")
+                table.lot = lotNumRef.current.value
+                setIsLotCopy(false)
+            }
             setListOfLots([...listOfLots, table])
             changeLotTable(lotNumRef.current.value)
 
@@ -55,9 +84,16 @@ function OptionsCreator({}: Props) {
         }
     }
 
-    const promptLotNum = () => {
+    const createNewLot = () => {
         setNeedLotID(true)
     }
+
+    const createLotCopy = () => {
+        setNeedLotID(true)
+        setIsLotCopy(true)
+    }
+
+
 
     useEffect(() => {
       if(listOfLots.length == 0)
@@ -81,12 +117,17 @@ function OptionsCreator({}: Props) {
                 <section id="lotList">
                     <h3>List of Lots</h3>
                     {listOfLots.map((lotDetails:LotTableInterface, index:number) => {
-                        return <button key={index} onClick={() => changeLotTable(lotDetails.lot ?? "-1")}>LOT {lotDetails.lot}</button>
+                        return (
+                        <section className="listOfLotsRow">
+                            <button className="lotDelete" onClick={() => deleteLotTable(lotDetails.lot ?? "")}>X</button>
+                            <button className="lotButton" style={{backgroundColor: lotDetails.lot === currentLotNum ? "#d9d9d9" : "#f0f0f0"}}key={index} onClick={() => changeLotTable(lotDetails.lot ?? "-1")}>LOT {lotDetails.lot}</button>
+                        </section>
+                        )
                     })}
                 </section>
                 <section id="newTableButtons">
-                    <button onClick={() => promptLotNum()}>New Lot Table</button>
-                    <button>Copy Details</button>
+                    <button onClick={() => createNewLot()}>New Lot Table</button>
+                    <button onClick={() => createLotCopy()}>Copy Details</button>
                 </section>
                 <Link to="/" style={{marginTop: "auto"}}>Back to Job Creation</Link>
             </div>

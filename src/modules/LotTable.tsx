@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import InputSearch from "./InputSearch"
-import { LotTableInterface, JobInterface } from './LotTableInterface';
+import { LotTableInterface, JobInterface, PartOfLot } from './LotTableInterface';
 
 type BoxStyleType = [string, number];
 type DrawerFrontsType = [string, number];
@@ -16,6 +16,20 @@ type LotTable = {
 }
 
 const LotTable: React.FC<LotTable> = ({lotTableDetails, saveLotTable}) => {
+    let throughoutLot:PartOfLot = {
+        roomID: "Throughout",
+        material: "",
+        stain: "",
+        doors: "",
+        fingerpull: "",
+        drawerFronts: "",
+        knob: "",
+        drawerBoxes: "",
+        drawerGuides: "",
+        doorHinges: "",
+        pulls: "",
+    }
+
     let initialLotTableInterface:LotTableInterface = {
         builder: "",
         project: "",
@@ -24,8 +38,8 @@ const LotTable: React.FC<LotTable> = ({lotTableDetails, saveLotTable}) => {
         phone: "",
         foreman: "",
         jobID: -1,
-        boxStyle: ["", 0],
-        interiors: ["", 0],
+        boxStyle: "",
+        interiors: "",
         upperHeight: "",
         islands: "",
         crown: "",
@@ -35,11 +49,10 @@ const LotTable: React.FC<LotTable> = ({lotTableDetails, saveLotTable}) => {
         jobNotes: "",
         lot: "",
         plan: "",
-        partsOfLot: [],
+        partsOfLot: [throughoutLot],
     }
 
     const[formState, setFormState] = useState<LotTableInterface>(initialLotTableInterface)
-    const[numOfOptionSections, setNumOfOptionSections] = useState<number>(0)
 
 
     const builderOptions : string[] = ["DR Horton", "Tri Pointe", "Richmond American", "Melia", "Dale", "Stella Pointe", "Lark"]
@@ -55,32 +68,47 @@ const LotTable: React.FC<LotTable> = ({lotTableDetails, saveLotTable}) => {
 
     const noOptions : string[] = []
 
-    const generateRange = (n:number):number[] => {
-        let array:number[] = []
-        for (let i = 0; i <= n; i += 1) {
-            array.push(i);
-        }
-        return array;
+    const deleteLotSection = (lotSectionIndex:number) => {
+        console.log(lotSectionIndex)
+        let updatedTable:LotTableInterface = {...formState}
+        updatedTable.partsOfLot.splice(lotSectionIndex, 1)
+        setFormState(updatedTable)
+        saveLotTable(updatedTable)
     }
 
-    const onFormChange = (value: string, key: string) => {
-        let updatedTable = {
-            ...formState,
-            [key]: value
+    const onFormChange = (value: string, key: string, optionSectionNum: number=-1) => {
+        let updatedTable:LotTableInterface;
+        if(optionSectionNum === -1) {
+            updatedTable = {
+                ...formState,
+                [key]: value
+            }
+        } else {
+            updatedTable = {...formState}
+            updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot, index:number) => (index === optionSectionNum ? { ...partOfLot, [key]: value } : partOfLot))
         }
-        setFormState(updatedTable);
-        console.log(updatedTable)
+        setFormState(updatedTable)
         saveLotTable(updatedTable)
     }
 
     const addOptionRow = () => {
-        console.log(numOfOptionSections)
-        setNumOfOptionSections(numOfOptionSections + 1)
+        let lotSection:PartOfLot = {
+            roomID: "",
+            drawerFronts: formState.partsOfLot[0].drawerFronts ?? "",
+            drawerBoxes: formState.partsOfLot[0].drawerBoxes ?? "",
+            drawerGuides: formState.partsOfLot[0].drawerGuides ?? "",
+            doorHinges: formState.partsOfLot[0].doorHinges ?? "",
+        }
+
+        let newPartsOfLot = [...formState.partsOfLot, lotSection]
+
+        setFormState({...formState,
+            partsOfLot: newPartsOfLot
+        })
     }
     
     useEffect(() => {
         setFormState(lotTableDetails)
-        console.log(generateRange(numOfOptionSections))
     }, [lotTableDetails])
     
 
@@ -118,22 +146,22 @@ const LotTable: React.FC<LotTable> = ({lotTableDetails, saveLotTable}) => {
                     </tr>
                     <tr>
                         <th>Drawer Fronts</th>
-                        <td><InputSearch inputName={"interiors"} formState={formState} onFormChange={onFormChange} listOptions={frontOptions}></InputSearch></td>
+                        <td><InputSearch inputName={"drawerFronts"} optionSectionNum={0} formState={formState} onFormChange={onFormChange} listOptions={frontOptions}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Drawer Boxes</th>
                         {/* Look at changing this Input Search */}
-                        <td><InputSearch inputName={"drawerBoxes"} formState={formState} onFormChange={onFormChange} listOptions={boxOptions}></InputSearch></td>
+                        <td><InputSearch inputName={"drawerBoxes"} optionSectionNum={0} formState={formState} onFormChange={onFormChange} listOptions={boxOptions}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Drawer Guides</th>
                         {/* Look at changing this Input Search */}
-                        <td><InputSearch inputName={"drawerGuides"} formState={formState} onFormChange={onFormChange} listOptions={guideOptions}></InputSearch></td>
+                        <td><InputSearch inputName={"drawerGuides"} optionSectionNum={0} formState={formState} onFormChange={onFormChange} listOptions={guideOptions}></InputSearch></td>
                     </tr>
                     <tr>
-                        <th>Drawer Hinges</th>
+                        <th>Door Hinges</th>
                         {/* Look at changing this Input Search */}
-                        <td><InputSearch inputName={"doorHinges"} formState={formState} onFormChange={onFormChange} listOptions={hingeOptions}></InputSearch></td>
+                        <td><InputSearch inputName={"doorHinges"} optionSectionNum={0} formState={formState} onFormChange={onFormChange} listOptions={hingeOptions}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Interiors</th>
@@ -180,21 +208,56 @@ const LotTable: React.FC<LotTable> = ({lotTableDetails, saveLotTable}) => {
                         <th>Option PO</th>
                         <th>Notes:</th>
                     </tr>
-                    {generateRange(numOfOptionSections).map((currentRow:number) => {
+                    {formState.partsOfLot?.map((lotSection:PartOfLot, currentRow:number) => {
                         return <tr key={currentRow}>
                                     <td>
-                                        <InputSearch inputName={"lot"} formState={formState} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
-                                        <button className="deleteButton"style={{display: currentRow !== 0 ? "block" : "none"}}>Delete Row</button>
+                                        {currentRow == 0 &&
+                                            <InputSearch inputName={"lot"} formState={formState} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
+                                        }
+                                        <button className="deleteButton" style={{display: currentRow !== 0 ? "block" : "none"}} onClick={() => deleteLotSection(currentRow)}>Delete Row</button>
                                     </td>
-                                    <td><InputSearch inputName={"plan"} formState={formState} onFormChange={onFormChange} listOptions={noOptions}></InputSearch></td>
+                                    <td>
+                                        {currentRow == 0 &&
+                                            <InputSearch inputName={"plan"} formState={formState} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
+                                        }
+                                    </td>
                                     <td>
                                         <label>Material:</label>
-                                        <InputSearch inputName={`material${currentRow}`} formState={formState} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
+                                        <InputSearch inputName={`material`} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
                                         <label>Stain:</label>
-                                        <InputSearch inputName={`stain${currentRow}`} formState={formState} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
-                                        <button style={{display: currentRow === numOfOptionSections ? "block" : "none"}} onClick={addOptionRow}>Add Material</button>
+                                        <InputSearch inputName={`stain`} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
+                                        <button style={{display: currentRow === (formState.partsOfLot?.length - 1) ? "block" : "none"}} onClick={addOptionRow}>Add Material</button>
                                     </td>
-                                    <td className="optionCell"><textarea>{currentRow === 0 ? "Throughout: " : ""}</textarea></td>
+                                    <td className="optionCell">
+                                    <label>Room ID: </label>
+                                    <InputSearch inputName={"roomID"} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
+                                        <section className="optionParts">
+                                            <label>Door:</label>
+                                            <InputSearch inputName={"doors"} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
+                                            <label>Fingerpull:</label>
+                                            <InputSearch inputName={"fingerpull"} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
+                                            <label>Pulls:</label>
+                                            <InputSearch inputName={"pulls"} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
+                                        </section>
+                                        {currentRow !== 0 &&
+                                            <section className="optionParts">
+                                                <label>Guide:</label>
+                                                <InputSearch inputName={"drawerGuides"} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
+                                                <label>Hinge:</label>
+                                                <InputSearch inputName={"doorHinges"} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
+                                                <label>Drawer Box:</label>
+                                                <InputSearch inputName={"drawerBoxes"} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
+                                            </section>
+                                        }
+                                        <label>Details: </label>
+                                        <textarea></textarea>
+                                        {currentRow == 0 &&
+                                            <>
+                                                <label>Appliances: </label>
+                                                <textarea></textarea>
+                                            </>
+                                        }
+                                    </td>
                                     <td><textarea></textarea></td>
                                     <td><textarea></textarea></td>
                                </tr>
