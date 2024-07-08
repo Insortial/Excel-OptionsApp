@@ -89,11 +89,13 @@
     justify-content: space-between;
 }
 
-datalist {
-    max-height: 500px !important;
-    overflow-y: auto !important;
+.deleteButton {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: red;
+    color: white;
 }
-
 
 .modalRow > input {
     height: 100%;
@@ -162,9 +164,11 @@ input:focus {
 }
 
 #optionsNav {
-    width: 30vw;
+    width: 30%;
     background-color: #a8193d;
+    float: left;
     height: 100vh;
+    position: fixed;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
@@ -181,6 +185,7 @@ input:focus {
 }
 
 #optionsEditor {
+    float: right;
     width: 70vw;
     box-sizing: border-box;
     display: flex;
@@ -256,6 +261,8 @@ a:visited {
     height: 100%;
     text-align: left;
     padding: 5px 5px;
+    outline: none;
+    border: none;
 }
 
 #navigation {
@@ -280,6 +287,7 @@ table {
 
 td {
     border: 2px solid black;
+    box-sizing: border-box;
     position: relative;
     padding: 0;
     box-sizing: border-box;
@@ -289,16 +297,22 @@ td {
     position: relative;
     padding: 0;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 textarea {
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     box-sizing: border-box;
     resize: vertical;
-    border: none;
     outline: none;
     font-family: Inter, system-ui;
+}
+
+.optionsInfo > tbody > tr > td {
+
 }
 
 th {
@@ -316,16 +330,14 @@ tr {
 }
 
 .optionSearchContainer > input {
-    outline: none;
     text-align: center;
-    width: 100%;
-    height: auto;
+    width: 95%;
     box-sizing: border-box;
     overflow: hidden;
     border-radius: 0;
-    border: 0px;
     padding-left: 5px;
 }
+
 
 h1 {
     display: flex; 
@@ -343,6 +355,7 @@ h1 {
 .lotInfo {
     align-self: center;
     margin-top: 1em;
+    width: 60%;
 }
 
 .optionCell {
@@ -381,7 +394,7 @@ h1 {
     td > input {
         outline: none;
         width: 100%;
-        height: 30px;
+        height: 100%;
         box-sizing: border-box;
         overflow: hidden;
         border-radius: 0;
@@ -392,7 +405,7 @@ h1 {
     .exampleSection {
         display: flex;
         flex-direction: column;
-        width: 60%;
+        width: 90%;
         padding: 10px;
         border: 2px solid black;
         min-height: 300px;

@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import React from 'react'
+import { JobInterface, LotTableInterface } from "./LotTableInterface";
 
 type inputOptions = {
     listOptions: string[];
-    inputValue?: string;
-    onInputChange?: (input: string) => void;
+    formState: LotTableInterface | JobInterface;
+    onFormChange?: (value: string, key: string) => void;
+    inputName: string;
 }
 
-const InputSearch: React.FC<inputOptions> = ({listOptions, inputValue, onInputChange}) => {
+const InputSearch: React.FC<inputOptions> = ({listOptions, formState, onFormChange, inputName}) => {
     const [suggestion, setSuggestion] = useState<string[] | string[]>([]);
     const [inFocus, setInFocus] = useState<boolean | boolean>(false);
     const [focusedIndex, setFocusedIndex] = useState(-1);
@@ -58,11 +60,11 @@ const InputSearch: React.FC<inputOptions> = ({listOptions, inputValue, onInputCh
         resetSearchComplete();
 
         console.log(selectedItem)
-        onInputChange?.(selectedItem)
+        onFormChange?.(selectedItem, inputName)
     }
     
     function readInput(input: React.ChangeEvent<HTMLInputElement>): void {
-        onInputChange?.(input.target.value)
+        onFormChange?.(input.target.value, inputName)
         if(suggestion != undefined) {
             setSuggestion(listOptions?.filter((x: string) => x.toLowerCase().includes(input.target.value.toLowerCase())));
         }
@@ -74,7 +76,7 @@ const InputSearch: React.FC<inputOptions> = ({listOptions, inputValue, onInputCh
             <input 
                 type="text" 
                 className="optionSearch" 
-                value={inputValue} 
+                value={(formState[inputName as keyof (LotTableInterface | JobInterface)] as string) ?? ""} 
                 onChange={readInput}
                 onFocus={handleOnFocus}
                 onBlur={handleOnBlur}

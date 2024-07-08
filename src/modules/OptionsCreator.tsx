@@ -23,11 +23,17 @@ function OptionsCreator({}: Props) {
             superintendent: jobInfo.superintendent,
             phone: jobInfo.phone,
             foreman: jobInfo.foreman,
-            jobID: jobInfo.jobID,
+            jobID: parseInt(jobInfo.jobID),
             lot: lotNum,
         }
 
         return lotDetails;
+    }
+
+    const saveLotTable = (lotTableData: LotTableInterface) => {
+        let filteredTableList = listOfLots.filter((lotDetails:LotTableInterface) => lotDetails.lot !== lotTableData.lot)
+        setListOfLots([...filteredTableList, lotTableData])
+        console.log(filteredTableList)
     }
 
     const changeLotTable = (lotNum: string) => {
@@ -41,8 +47,9 @@ function OptionsCreator({}: Props) {
         if(lotNumRef.current) {
             table = createLotTable(jobDetails, lotNumRef.current.value)
             setListOfLots([...listOfLots, table])
+            changeLotTable(lotNumRef.current.value)
+
             setCurrentLotNum(lotNumRef.current.value)
-            console.log(table)
             setCurrentLot(table)
             setNeedLotID(false)
         }
@@ -56,7 +63,6 @@ function OptionsCreator({}: Props) {
       if(listOfLots.length == 0)
         setNeedLotID(true)
     }, [])
-    
 
     return (
         <>
@@ -69,25 +75,23 @@ function OptionsCreator({}: Props) {
                     </div>
                 </div>
             </div>
-            <div id="rootDiv">
-                <div id="optionsNav">
-                    <h1>Options Creator</h1>
-                    <h2>Current Lot: {currentLotNum}</h2>
-                    <section id="lotList">
-                        <h3>List of Lots</h3>
-                        {listOfLots.map((lotDetails:LotTableInterface) => {
-                            return <button onClick={() => changeLotTable(lotDetails.lot ?? "-1")}>LOT {lotDetails.lot}</button>
-                        })}
-                    </section>
-                    <section id="newTableButtons">
-                        <button onClick={() => promptLotNum()}>New Lot Table</button>
-                        <button>Copy Details</button>
-                    </section>
-                    <Link to="/" style={{marginTop: "auto"}}>Back to Job Creation</Link>
-                </div>
-                <div id="optionsEditor">
-                    {!currentLot ? (<div>Placeholder</div>): (<LotTable lotTableDetails={currentLot} />)}
-                </div>
+            <div id="optionsNav">
+                <h1>Options Creator</h1>
+                <h2>Current Lot: {currentLotNum}</h2>
+                <section id="lotList">
+                    <h3>List of Lots</h3>
+                    {listOfLots.map((lotDetails:LotTableInterface, index:number) => {
+                        return <button key={index} onClick={() => changeLotTable(lotDetails.lot ?? "-1")}>LOT {lotDetails.lot}</button>
+                    })}
+                </section>
+                <section id="newTableButtons">
+                    <button onClick={() => promptLotNum()}>New Lot Table</button>
+                    <button>Copy Details</button>
+                </section>
+                <Link to="/" style={{marginTop: "auto"}}>Back to Job Creation</Link>
+            </div>
+            <div id="optionsEditor">
+                {!currentLot ? (<div>Placeholder</div>): (<LotTable saveLotTable={saveLotTable} lotTableDetails={currentLot} />)}
             </div>
         </>
     )

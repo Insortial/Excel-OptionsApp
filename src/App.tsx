@@ -6,34 +6,35 @@ import InputSearch from './modules/InputSearch.tsx';
 import { JobInterface } from './modules/LotTableInterface.ts';
 
 function App() {
-  const [builder, setBuilder] = useState<string>("");
-  const [project, setProject] = useState<string>("");
-  const [phase, setPhase] = useState<string>("");
-  const [superIntendent, setSuperIntendent] = useState<string>("");
-  const [phoneNo, setPhoneNo] = useState<string>("");
-  const [foreman, setForeman] = useState<string>("");
-  const [jobID, setJobID] = useState<string>("");
+  let defaultJobForm:JobInterface = {
+    builder: "",
+    project: "",
+    phase: "",
+    superintendent: "",
+    phone: "",
+    foreman: "",
+    jobID: ""
+  }
+
+  const [jobForm, setJobForm] = useState<JobInterface>(defaultJobForm);
 
   const navigate = useNavigate();
-  
+
   const builderOptions : string[] = ["DR Horton", "Tri Pointe", "Richmond American", "Melia", "Dale", "Stella Pointe", "Lark"]
   const foremanOptions : string[] = ["Adrian Gonzalez", "Eduardo Jimenez", "Rogelio", "Keith Kelley", "Leonard Schmidt"]
   const noOptions : string[] = []
   const jobIDOptions : string[] = ["11312", "101239", "213132", "22123"]
 
+  const onFormChange = (value: string, key: string) => {
+    setJobForm(prevForm => ({
+        ...prevForm,
+        [key]: value
+    }));
+  }
+
   const goToOptionsCreator = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let jobOptions:JobInterface = {
-      builder: builder,
-      project: project,
-      phase: phase,
-      superintendent: superIntendent,
-      phone: phoneNo,
-      foreman: foreman,
-      jobID: parseInt(jobID),
-    }
-
-    navigate("/creatingOptions/", {state: jobOptions})
+    navigate("/creatingOptions/", {state: jobForm})
   }
 
   return (
@@ -46,31 +47,31 @@ function App() {
           <h2>Enter Job Details:</h2>
           <div className="formRow">
             <label>Builder: </label>
-            <InputSearch inputValue={builder} onInputChange={setBuilder} listOptions={builderOptions}></InputSearch>
+            <InputSearch inputName={"builder"} formState={jobForm} onFormChange={onFormChange} listOptions={builderOptions}></InputSearch>
           </div>
           <div className="formRow">
             <label>Project: </label>
-            <InputSearch inputValue={project} onInputChange={setProject} listOptions={noOptions}></InputSearch>
+            <InputSearch inputName={"project"} formState={jobForm} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
           </div>
           <div className="formRow">
             <label>Phase: </label>
-            <InputSearch inputValue={phase} onInputChange={setPhase} listOptions={noOptions}></InputSearch>
+            <InputSearch inputName={"phase"} formState={jobForm} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
           </div>
           <div className="formRow">
             <label>Superintendent: </label>
-            <InputSearch inputValue={superIntendent} onInputChange={setSuperIntendent} listOptions={noOptions}></InputSearch>
+            <InputSearch inputName={"superintendent"} formState={jobForm} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
           </div>
           <div className="formRow">
             <label>Phone Number: </label>
-            <InputSearch inputValue={phoneNo} onInputChange={setPhoneNo} listOptions={noOptions}></InputSearch>
+            <InputSearch inputName={"phone"} formState={jobForm} onFormChange={onFormChange} listOptions={noOptions}></InputSearch>
           </div>
           <div className="formRow">
             <label>Area Foreman: </label>
-            <InputSearch inputValue={foreman} onInputChange={setForeman} listOptions={foremanOptions}></InputSearch>
+            <InputSearch inputName={"foreman"} formState={jobForm} onFormChange={onFormChange} listOptions={foremanOptions}></InputSearch>
           </div>
           <div className="formRow">
             <label>Job ID: </label>
-            <InputSearch inputValue={jobID} onInputChange={setJobID} listOptions={jobIDOptions}></InputSearch>
+            <InputSearch inputName={"jobID"} formState={jobForm} onFormChange={onFormChange} listOptions={jobIDOptions}></InputSearch>
           </div>
           <button id="createJobButton">Create Form</button>
         </form>

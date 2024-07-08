@@ -38,5 +38,5 @@ export interface JobInterface {
     superintendent?: string,
     phone?: string,
     foreman: string,
-    jobID: number,
+    jobID: string,
 }
