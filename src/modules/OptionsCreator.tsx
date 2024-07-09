@@ -3,6 +3,7 @@ import Navigation from './Navigation.tsx';
 import { useLocation, Link } from "react-router-dom";
 import { LotTableInterface, JobInterface, PartOfLot } from './LotTableInterface';
 import React, { useEffect, useRef, useState } from "react";
+import docxConverter from "../hooks/docxConverter.tsx";
 
 type Props = {}
 
@@ -60,7 +61,6 @@ function OptionsCreator({}: Props) {
     const changeLotTable = (lotNum: string) => {
         setCurrentLotNum(lotNum)
         let foundLot = listOfLots.find((lotDetails:LotTableInterface) => {return lotDetails.lot === lotNum})
-        console.log(foundLot)
         setCurrentLot(foundLot)
     }
 
@@ -93,6 +93,17 @@ function OptionsCreator({}: Props) {
         setIsLotCopy(true)
     }
 
+    const testCreateDocument = () => {
+        docxConverter(listOfLots)
+    }
+
+    const turnOffModal = () => {
+        setNeedLotID(false)
+    }
+
+    useEffect(() => {
+        lotNumRef.current?.focus()
+    }, [lotNumRef])
 
 
     useEffect(() => {
@@ -109,6 +120,7 @@ function OptionsCreator({}: Props) {
                         <input ref={lotNumRef}></input>
                         <button onClick={addLotTable}>Submit</button>
                     </div>
+                    <span className="exitButton" onClick={() => turnOffModal()}></span>
                 </div>
             </div>
             <div id="optionsNav">
@@ -118,9 +130,9 @@ function OptionsCreator({}: Props) {
                     <h3>List of Lots</h3>
                     {listOfLots.map((lotDetails:LotTableInterface, index:number) => {
                         return (
-                        <section className="listOfLotsRow">
+                        <section className="listOfLotsRow" key={index}>
                             <button className="lotDelete" onClick={() => deleteLotTable(lotDetails.lot ?? "")}>X</button>
-                            <button className="lotButton" style={{backgroundColor: lotDetails.lot === currentLotNum ? "#d9d9d9" : "#f0f0f0"}}key={index} onClick={() => changeLotTable(lotDetails.lot ?? "-1")}>LOT {lotDetails.lot}</button>
+                            <button className="lotButton" style={{backgroundColor: lotDetails.lot === currentLotNum ? "#d9d9d9" : "#f0f0f0"}} onClick={() => changeLotTable(lotDetails.lot ?? "-1")}>LOT {lotDetails.lot}</button>
                         </section>
                         )
                     })}
@@ -128,11 +140,12 @@ function OptionsCreator({}: Props) {
                 <section id="newTableButtons">
                     <button onClick={() => createNewLot()}>New Lot Table</button>
                     <button onClick={() => createLotCopy()}>Copy Details</button>
+                    <button onClick={() => testCreateDocument()}>Test Create Document</button>
                 </section>
                 <Link to="/" style={{marginTop: "auto"}}>Back to Job Creation</Link>
             </div>
             <div id="optionsEditor">
-                {!currentLot ? (<div>Placeholder</div>): (<LotTable saveLotTable={saveLotTable} lotTableDetails={currentLot} />)}
+                {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} lotTableDetails={currentLot} />)}
             </div>
         </>
     )

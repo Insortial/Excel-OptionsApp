@@ -16,6 +16,11 @@
     flex-direction: row;
 }
 
+input {
+    outline: none;
+    font-size: .7em;
+}
+
 #mainNav {
     background-color: #B90606;
     width: 100vw;
@@ -40,6 +45,9 @@
     align-self: center;
     justify-self: center;
     min-height: 250px;
+    max-height: 300px;
+    box-sizing: border-box;
+    padding-bottom: 15px;
 }
 .listOfLotsRow {
     margin-top: 10px;
@@ -121,7 +129,15 @@
 }
 
 input:focus {
-    border-color: #ffb74a;
+    border: 2px solid #ffb74a !important;
+}
+
+textarea:focus {
+    border: 2px solid #ffb74a
+}
+
+td > div > input {
+    border: none;
 }
 
 .modalRow > button {
@@ -165,6 +181,10 @@ input:focus {
 
 #newTableButtons > button{
     margin-right: 10px;
+}
+
+td > input {
+    text-align: center;
 }
 
 #titleCover {
@@ -306,7 +326,7 @@ td {
     box-sizing: border-box;
     position: relative;
     padding: 0;
-    box-sizing: border-box;
+    height: inherit;
 }
 
 .optionSearchContainer {
@@ -332,7 +352,15 @@ textarea {
 }
 
 .optionsInfo > tbody > tr > td {
+    padding: 5px;
+}
 
+.optionsInfo > tbody > tr > td > div > input{
+    border: 1px solid black;
+}
+
+.optionParts > div > input {
+    border: 1px solid black;
 }
 
 th {
@@ -343,6 +371,7 @@ th {
 
 tr {
     box-sizing: border-box;
+    height: 1px;
 }
 
 .optionsInfo {
@@ -378,6 +407,14 @@ h1 {
     width: 60%;
 }
 
+.lotInfo > tbody > tr > td > div {
+    height: 100%;
+}
+
+.lotInfo > tbody > tr > td > div > input {
+    height: 100%;
+}
+
 .optionCell {
     padding: 15px;
     width: 50%;
@@ -389,9 +426,6 @@ h1 {
     flex-direction: row;
     justify-content: space-around;
     margin-top: 5px;
-}
-
-.optionParts > .optionSearchContainer {
 }
 
 .optionResults {
@@ -427,6 +461,10 @@ h1 {
         box-sizing: border-box;
     }
     
+    input {
+        font-size: 1em;
+    }
+
     .exampleSection {
         display: flex;
         flex-direction: column;

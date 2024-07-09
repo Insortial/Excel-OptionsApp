@@ -10,6 +10,8 @@ export interface PartOfLot {
     drawerGuides?: string, //[string, number]
     doorHinges?: string, //[string, number]
     pulls?: string, 
+    details?: string,
+    appliances?: string
 }
 
 export interface LotTableInterface {

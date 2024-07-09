@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import InputSearch from "./InputSearch"
 import { LotTableInterface, JobInterface, PartOfLot } from './LotTableInterface';
-
+import ControlledTextArea from "./ControlledTextArea"
 type BoxStyleType = [string, number];
 type DrawerFrontsType = [string, number];
 type DrawerBoxesType = [string, number];
@@ -194,7 +194,7 @@ const LotTable: React.FC<LotTable> = ({lotTableDetails, saveLotTable}) => {
                     </tr>
                     <tr>
                         <th>Job Specific Notes</th>
-                        <td><textarea></textarea></td>
+                        <td><ControlledTextArea inputName={"jobNotes"} formState={formState} onFormChange={onFormChange}></ControlledTextArea></td>
                     </tr>
                 </tbody>
             </table>
@@ -250,11 +250,11 @@ const LotTable: React.FC<LotTable> = ({lotTableDetails, saveLotTable}) => {
                                             </section>
                                         }
                                         <label>Details: </label>
-                                        <textarea></textarea>
+                                        <ControlledTextArea inputName={"details"} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange}></ControlledTextArea>
                                         {currentRow == 0 &&
                                             <>
                                                 <label>Appliances: </label>
-                                                <textarea></textarea>
+                                                <ControlledTextArea inputName={"appliances"} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange}></ControlledTextArea>
                                             </>
                                         }
                                     </td>
@@ -262,6 +262,32 @@ const LotTable: React.FC<LotTable> = ({lotTableDetails, saveLotTable}) => {
                                     <td><textarea></textarea></td>
                                </tr>
                     })}
+                </tbody>
+            </table>
+            <table className="lotFooter">
+                <tbody>
+                    <tr>
+                        <th>Lot</th>
+                        <th>Kitchen</th>
+                        <th>Master</th>
+                        <th>Bath 2</th>
+                        <th>Bath 3</th>
+                        <th>Bath 4</th>
+                        <th>Powder</th>
+                        <th>Laundry</th>
+                        <th>Notes</th>
+                    </tr>
+                    <tr>
+                        <td><InputSearch inputName={"lotFooter"} formState={formState} onFormChange={onFormChange} listOptions={noOptions}/></td>
+                        <td><InputSearch inputName={"kitchen"} formState={formState} onFormChange={onFormChange} listOptions={noOptions}/></td>
+                        <td><InputSearch inputName={"master"} formState={formState} onFormChange={onFormChange} listOptions={noOptions}/></td>
+                        <td><InputSearch inputName={"bath2"} formState={formState} onFormChange={onFormChange} listOptions={noOptions}/></td>
+                        <td><InputSearch inputName={"bath3"} formState={formState} onFormChange={onFormChange} listOptions={noOptions}/></td>
+                        <td><InputSearch inputName={"bath4"} formState={formState} onFormChange={onFormChange} listOptions={noOptions}/></td>
+                        <td><InputSearch inputName={"powder"} formState={formState} onFormChange={onFormChange} listOptions={noOptions}/></td>
+                        <td><InputSearch inputName={"laundry"} formState={formState} onFormChange={onFormChange} listOptions={noOptions}/></td>
+                        <td><input></input></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
