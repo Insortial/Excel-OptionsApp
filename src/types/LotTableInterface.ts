@@ -1,11 +1,12 @@
 export interface PartOfLot {
     roomID: string, //ex. Throughout, Balance of the House, etc.
     material?: string, //[string, number]
+    isPull?: boolean,
     stain?: string, //[string, number]
     doors?: string,
     fingerpull?: string,
     drawerFronts?: string, //[string, number]
-    knob?: string,
+    knobs?: string,
     drawerBoxes?: string, //[string, number]
     drawerGuides?: string, //[string, number]
     doorHinges?: string, //[string, number]
@@ -31,8 +32,17 @@ export interface LotTableInterface {
     baseShoe?: string,
     recyclingBins?: string,
     jobNotes?: string,
+    lotFooter?: string,
     lot?: string,
     plan?: string,
+    kitchen?: string,
+    master?: string,
+    bath2?: string,
+    bath3?: string,
+    bath4?: string,
+    powder?: string,
+    laundry?: string,
+    footerNotes?: string,
     partsOfLot: PartOfLot[],
 }
 

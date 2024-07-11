@@ -116,6 +116,7 @@ input {
 .deleteButton {
     position: absolute;
     bottom: 0;
+    left: 0;
     width: 100%;
     background-color: red;
     color: white;
@@ -129,7 +130,12 @@ input {
 }
 
 input:focus {
-    border: 2px solid #ffb74a !important;
+    border: 1px solid #ffb74a !important;
+}
+
+input::placeholder {
+    font-weight: bold;
+    color: black;
 }
 
 textarea:focus {
@@ -355,11 +361,11 @@ textarea {
     padding: 5px;
 }
 
-.optionsInfo > tbody > tr > td > div > input{
+.optionsInfo > tbody > tr > td > div {
     border: 1px solid black;
 }
 
-.optionParts > div > input {
+.optionParts > div > div {
     border: 1px solid black;
 }
 
@@ -378,6 +384,11 @@ tr {
     margin-top: 3em;
 }
 
+.optionSearch {
+    border: none;
+    outline: none;
+}
+
 .optionSearchContainer > input {
     text-align: center;
     width: 100%;
@@ -387,6 +398,21 @@ tr {
     padding-left: 5px;
 }
 
+.hardwareHeader {
+    display: flex;
+    flex-direction: row;
+    margin-top: 15px;
+}
+
+.hardwareHeader > h3 {
+    margin: 0 10px 0 0;
+}
+.hardwareHeader > input {
+    margin: 5px 10px 5px 5px;
+}
+.hardwareHeader > label {
+    margin: 5px 0
+}
 
 h1 {
     display: flex; 
@@ -407,6 +433,10 @@ h1 {
     width: 60%;
 }
 
+.lotInfo textarea {
+    min-height: 100px;
+}
+
 .lotInfo > tbody > tr > td > div {
     height: 100%;
 }
@@ -417,22 +447,66 @@ h1 {
 
 .optionCell {
     padding: 15px;
-    width: 50%;
+    width: 70%;
     min-height: 200px;
 }
 
-.optionParts {
+.optionParts > div {
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    margin-top: 5px;
+    flex-direction: column;
+}
+
+.doorList {
+    grid-area: "door"
+}
+
+.fingerPullList {
+    grid-area: "fingerPull"
+}
+
+.pullList {
+    grid-area: "pullKnob"
+}
+
+.guideList {
+    grid-area: "guide"
+}
+
+.hingeList {
+    grid-area: "hinge"
+}
+
+.drawerBoxList {
+    grid-area: "drawerBox"
+}
+
+
+.optionParts {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    grid-column-gap: 10px;
+}
+
+.lotFooter .optionSearchContainer {
+    height: 100%;
+}
+
+.lotFooter .optionSearch {
+    height: 100%;
+    font-size: 0.7em;
+}
+
+.lotFooter .optionResults {
+    bottom: 100%;
+    top: auto;
+    max-height: 200px;
 }
 
 .optionResults {
     z-index: 20;
     position: absolute;
     width: 100%;
-    top: 38px;
+    top: 100%;
     font-size: 0.7em;
     box-sizing: border-box;
     border: 1px solid black;

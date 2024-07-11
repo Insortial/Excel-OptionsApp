@@ -1,14 +1,16 @@
 import LotTable from "./LotTable";
-import Navigation from './Navigation.tsx';
 import { useLocation, Link } from "react-router-dom";
-import { LotTableInterface, JobInterface, PartOfLot } from './LotTableInterface';
-import React, { useEffect, useRef, useState } from "react";
+import { LotTableInterface, JobInterface, PartOfLot } from '../types/LotTableInterface.ts';
+import React, { useContext, useEffect, useState } from "react";
 import docxConverter from "../hooks/docxConverter.tsx";
+import { FormOptionsContext } from './OptionsTemplateContext.tsx';
+import { FormOptionsContextType, FormOptionsInterface } from "../types/FormOptions"
 
 type Props = {}
 
 function OptionsCreator({}: Props) {
     const lotNumRef = React.useRef<HTMLInputElement>(null);
+    //const { setIsCheckingError, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const [listOfLots, setListOfLots] = useState<LotTableInterface[]>([])
     const [currentLotNum, setCurrentLotNum] = useState<string>("")
     const [currentLot, setCurrentLot] = useState<LotTableInterface>()
@@ -16,6 +18,7 @@ function OptionsCreator({}: Props) {
     const [isLotCopy, setIsLotCopy] = useState<boolean>(false)
     const location = useLocation();
     const jobDetails = location.state;
+
     const throughoutLot:PartOfLot = {
         roomID: "Throughout",
         material: "",
@@ -23,11 +26,12 @@ function OptionsCreator({}: Props) {
         doors: "",
         fingerpull: "",
         drawerFronts: "",
-        knob: "",
+        knobs: "",
         drawerBoxes: "",
         drawerGuides: "",
         doorHinges: "",
         pulls: "",
+        isPull: true
     }
 
     const createLotTable = (jobInfo: JobInterface, lotNum: string): LotTableInterface => {
@@ -94,6 +98,7 @@ function OptionsCreator({}: Props) {
     }
 
     const testCreateDocument = () => {
+        //setIsCheckingError(!isCheckingError)
         docxConverter(listOfLots)
     }
 
@@ -109,6 +114,8 @@ function OptionsCreator({}: Props) {
     useEffect(() => {
       if(listOfLots.length == 0)
         setNeedLotID(true)
+
+      
     }, [])
 
     return (
@@ -142,7 +149,7 @@ function OptionsCreator({}: Props) {
                     <button onClick={() => createLotCopy()}>Copy Details</button>
                     <button onClick={() => testCreateDocument()}>Test Create Document</button>
                 </section>
-                <Link to="/" style={{marginTop: "auto"}}>Back to Job Creation</Link>
+                <Link to="/creatingJob" style={{marginTop: "auto"}}>Back to Job Creation</Link>
             </div>
             <div id="optionsEditor">
                 {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} lotTableDetails={currentLot} />)}

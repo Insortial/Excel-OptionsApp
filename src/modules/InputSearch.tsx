@@ -1,33 +1,45 @@
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback, useContext } from "react"
 import React from 'react'
-import { JobInterface, LotTableInterface, PartOfLot } from "./LotTableInterface";
+import { JobInterface, LotTableInterface, PartOfLot } from "../types/LotTableInterface";
+import { FormOptionsContext } from "./OptionsTemplateContext";
+import { FormOptionsContextType, FormOptionsInterface } from "../types/FormOptions"
 
 type inputOptions = {
-    listOptions: string[];
+    isDropDown: boolean;
     formState: LotTableInterface | JobInterface;
     optionSectionNum?: number;
     onFormChange?: (value: string, key: string, optSectionNum?: number) => void;
     inputName: string;
 }
 
-const InputSearch: React.FC<inputOptions> = ({listOptions, formState, onFormChange, inputName, optionSectionNum}) => {
-    const [suggestion, setSuggestion] = useState<string[] | string[]>([]);
+const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChange, inputName, optionSectionNum}) => {
+    const [suggestion, setSuggestion] = useState<string[]>([]);
     const [inFocus, setInFocus] = useState<boolean | boolean>(false);
     const [focusedIndex, setFocusedIndex] = useState(-1);
+    const [value, setValue] = useState<string>("");
+    const [hasError, setError] = useState(false)
+    const { formOptions, retrieveDropDown, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
+    const suggestedChoices = retrieveDropDown(inputName)
+
+    const getPartOfLotValue = () => {
+        if((optionSectionNum !== undefined) && ("partsOfLot" in formState)) {
+            //Represents a PartOfLot Value
+            return formState.partsOfLot[optionSectionNum][inputName as keyof (LotTableInterface | JobInterface | PartOfLot)] ?? ""
+        } else {
+            //Represents all other interfaces values
+            return formState[inputName as keyof (LotTableInterface | JobInterface | PartOfLot)] ?? ""
+        }
+    }
 
     useEffect(() => {
-        setSuggestion(listOptions);
+        setSuggestion(suggestedChoices.slice(0, 50));
     }, [])
 
-    const checkTypeOfForm = () => {
-        let accessedObject:LotTableInterface | PartOfLot | JobInterface = formState;
-
-        if(optionSectionNum !== undefined && "partsOfLot" in formState) {
-            accessedObject = formState.partsOfLot[optionSectionNum]
+    useEffect(() => {
+        if(isDropDown && "partsOfLot" in formState) {
+            setError(getPartOfLotValue() === "")
         }
-
-        return (accessedObject[inputName as keyof (LotTableInterface | JobInterface | PartOfLot)] as string) ?? ""
-    }
+    }, [isCheckingError, formState])
 
     const resetSearchComplete = useCallback(() => {
         setFocusedIndex(-1);
@@ -61,6 +73,8 @@ const InputSearch: React.FC<inputOptions> = ({listOptions, formState, onFormChan
     }
 
     function handleOnBlur():void {
+        if(isDropDown)
+            setValue("")
         setInFocus(false)
     }
 
@@ -69,34 +83,37 @@ const InputSearch: React.FC<inputOptions> = ({listOptions, formState, onFormChan
         if (!selectedItem) return resetSearchComplete();
         resetSearchComplete();
         onFormChange?.(selectedItem, inputName, optionSectionNum)
+
+        if(isDropDown)
+            setValue("")
     }
     
     function readInput(input: React.ChangeEvent<HTMLInputElement>): void {
-        onFormChange?.(input.target.value, inputName, optionSectionNum)
+        //onFormChange?.(input.target.value, inputName, optionSectionNum)
+        setValue(input.target.value)
+
+        if(!isDropDown)
+            onFormChange?.(input.target.value, inputName, optionSectionNum)
+
         if(suggestion != undefined) {
-            setSuggestion(listOptions?.filter((x: string) => x.toLowerCase().includes(input.target.value.toLowerCase())));
+            let prefix = input.target.value.toLowerCase()
+            let stringArray:string[] = suggestedChoices as string[]
+            setSuggestion(stringArray?.filter((x: string) => x.toLowerCase().includes(prefix)).slice(0, 50));
         }
     }
 
     return (
         <div className="optionSearchContainer" tabIndex={1} onKeyDown={handleKeyDown}>
-            {(optionSectionNum !== undefined) && ("partsOfLot" in formState) ? 
-                (<input 
+            <input 
                     type="text" 
                     className="optionSearch" 
-                    value={(formState.partsOfLot[optionSectionNum][inputName as keyof (LotTableInterface | JobInterface | PartOfLot)] as string) ?? ""} 
+                    style={{border: hasError && isCheckingError ? "1px solid red" : "black"}}
+                    value={!isDropDown ? getPartOfLotValue() : value}
+                    placeholder={getPartOfLotValue()} 
                     onChange={readInput}
                     onFocus={handleOnFocus}
                     onBlur={handleOnBlur}
-                />) : 
-                (<input 
-                    type="text" 
-                    className="optionSearch" 
-                    value={(formState[inputName as keyof (LotTableInterface | JobInterface | PartOfLot)] as string) ?? ""} 
-                    onChange={readInput}
-                    onFocus={handleOnFocus}
-                    onBlur={handleOnBlur}
-                />)}
+                />
             <div className="optionResults" style={{display: inFocus ? "block" : "none", border: suggestion.length === 0 ? "none" : "1px solid black"}}>
                 {suggestion.map((x: string, index: number) => {
                     return <div key={index} onMouseDown={() => handleOptionClick(index)}

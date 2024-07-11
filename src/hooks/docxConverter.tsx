@@ -1,5 +1,5 @@
 import { Document, Packer, Paragraph, TextRun, PageBreak, HeadingLevel, AlignmentType, Table, TableRow, TableCell, WidthType, VerticalAlign } from "docx";
-import { LotTableInterface, PartOfLot } from "../modules/LotTableInterface";
+import { LotTableInterface, PartOfLot } from "../types/LotTableInterface";
 import { saveAs } from "file-saver";
 
 
@@ -329,6 +329,7 @@ export default function docxConverter(lotCollection: LotTableInterface[]) {
                     ],
                 }),
             ],
+            alignment: AlignmentType.CENTER,
             width: {
                 size: 7000,
                 type: WidthType.DXA
@@ -460,6 +461,133 @@ export default function docxConverter(lotCollection: LotTableInterface[]) {
         })
     }
 
+    const lotFooterTable = new Table({
+        rows: [
+            new TableRow({
+                children: [
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: "Lot",
+                            alignment: AlignmentType.CENTER
+                        })],
+                        verticalAlign: VerticalAlign.CENTER,
+                    }),
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: "Kitchen",
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: "Master",
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: "Bath 2",
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: "Bath 3",
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: "Bath 4",
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: "Powder",
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: "Laundry",
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: "Notes",
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                ],
+            }),
+            new TableRow({
+                children: [
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: lotCollection[0].lotFooter,
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: lotCollection[0].kitchen,
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: lotCollection[0].master,
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: lotCollection[0].bath2,
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: lotCollection[0].bath3,
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: lotCollection[0].bath4,
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: lotCollection[0].powder,
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                    new TableCell({
+                        children: [new Paragraph({
+                            text: lotCollection[0].laundry,
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                    new TableCell({
+                        children: [new Paragraph({
+                            children: readNewLine(lotCollection[0].footerNotes),
+                            alignment: AlignmentType.CENTER
+                        })],
+                    }),
+                ],
+            }),
+        ],
+        alignment: AlignmentType.CENTER,
+        width: {
+            size: 10000,
+            type: WidthType.DXA
+        }
+    })
+
 
     const pageTitle = new Paragraph({
         children: [new TextRun({
@@ -489,14 +617,17 @@ export default function docxConverter(lotCollection: LotTableInterface[]) {
 
     const iterateOverTables = () => {
         let newArray = []
-        for (let lot of lotCollection) {
+        for (let lotIndex = 0; lotIndex < lotCollection.length; lotIndex++) {
             newArray.push(pageTitle)
             newArray.push(jobDetailsTable)
             newArray.push(lineBreak)
-            newArray.push(createLotDetailsTable(lot))
+            newArray.push(createLotDetailsTable(lotCollection[lotIndex]))
             newArray.push(lineBreak)
-            newArray.push(createOptionsInfoTable(lot))
-            newArray.push(pageBreak)
+            newArray.push(createOptionsInfoTable(lotCollection[lotIndex]))
+            newArray.push(lineBreak)
+            newArray.push(lotFooterTable)
+            if(lotIndex < lotCollection.length - 1)
+                newArray.push(pageBreak)
         }
         return newArray
     }
