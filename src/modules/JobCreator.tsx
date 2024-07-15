@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from 'react'
+import { useState } from 'react'
 import '../App.css'
-import { Routes, Route, Outlet, Link, useNavigate} from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import InputSearch from '../modules/InputSearch.tsx';
 import { JobInterface } from '../types/LotTableInterface.ts';
 
@@ -39,31 +39,31 @@ function JobCreator({}) {
         <form onSubmit={goToOptionsCreator}>
           <h2>Enter Job Details:</h2>
           <div className="formRow">
-            <label>Builder: </label>
+            <label htmlFor={"builder"}>Builder: </label>
             <InputSearch inputName={"builder"} formState={jobForm} onFormChange={onFormChange} isDropDown={true}></InputSearch>
           </div>
           <div className="formRow">
-            <label>Project: </label>
+            <label htmlFor={"project"}>Project: </label>
             <InputSearch inputName={"project"} formState={jobForm} onFormChange={onFormChange} isDropDown={true}></InputSearch>
           </div>
           <div className="formRow">
-            <label>Phase: </label>
+            <label htmlFor={"phase"}>Phase: </label>
             <InputSearch inputName={"phase"} formState={jobForm} onFormChange={onFormChange} isDropDown={false}></InputSearch>
           </div>
           <div className="formRow">
-            <label>Superintendent: </label>
+            <label htmlFor={"superintendent"}>Superintendent: </label>
             <InputSearch inputName={"superintendent"} formState={jobForm} onFormChange={onFormChange} isDropDown={false}></InputSearch>
           </div>
           <div className="formRow">
-            <label>Phone Number: </label>
+            <label htmlFor={"phone"}>Phone Number: </label>
             <InputSearch inputName={"phone"} formState={jobForm} onFormChange={onFormChange} isDropDown={false}></InputSearch>
           </div>
           <div className="formRow">
-            <label>Area Foreman: </label>
-            <InputSearch inputName={"foreman"} formState={jobForm} onFormChange={onFormChange} isDropDown={false}></InputSearch>
+            <label htmlFor={"foreman"}>Area Foreman: </label>
+            <InputSearch inputName={"foreman"} formState={jobForm} onFormChange={onFormChange} isDropDown={true}></InputSearch>
           </div>
           <div className="formRow">
-            <label>Job ID: </label>
+            <label htmlFor={"jobID"}>Job ID: </label>
             <InputSearch inputName={"jobID"} formState={jobForm} onFormChange={onFormChange} isDropDown={false}></InputSearch>
           </div>
           <button id="createJobButton">Create Form</button>

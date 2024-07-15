@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef, useCallback, useContext } from "react"
+import { useState, useEffect, useCallback, useContext } from "react"
 import React from 'react'
 import { JobInterface, LotTableInterface, PartOfLot } from "../types/LotTableInterface";
 import { FormOptionsContext } from "./OptionsTemplateContext";
-import { FormOptionsContextType, FormOptionsInterface } from "../types/FormOptions"
+import { FormOptionsContextType } from "../types/FormOptions"
 
 type inputOptions = {
     isDropDown: boolean;
@@ -18,7 +18,7 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
     const [focusedIndex, setFocusedIndex] = useState(-1);
     const [value, setValue] = useState<string>("");
     const [hasError, setError] = useState(false)
-    const { formOptions, retrieveDropDown, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
+    const { retrieveDropDown, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const suggestedChoices = retrieveDropDown(inputName)
 
     const getPartOfLotValue = () => {
@@ -69,6 +69,7 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
       };
 
     function handleOnFocus():void {
+        setSuggestion(suggestedChoices.slice(0, 50));
         setInFocus(true)
     }
 
@@ -97,7 +98,7 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
 
         if(suggestion != undefined) {
             let prefix = input.target.value.toLowerCase()
-            let stringArray:string[] = suggestedChoices as string[]
+            let stringArray:string[] = suggestedChoices
             setSuggestion(stringArray?.filter((x: string) => x.toLowerCase().includes(prefix)).slice(0, 50));
         }
     }
@@ -110,6 +111,7 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
                     style={{border: hasError && isCheckingError ? "1px solid red" : "black"}}
                     value={!isDropDown ? getPartOfLotValue() : value}
                     placeholder={getPartOfLotValue()} 
+                    id={inputName}
                     onChange={readInput}
                     onFocus={handleOnFocus}
                     onBlur={handleOnBlur}

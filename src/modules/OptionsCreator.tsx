@@ -1,10 +1,8 @@
 import LotTable from "./LotTable";
 import { useLocation, Link } from "react-router-dom";
 import { LotTableInterface, JobInterface, PartOfLot } from '../types/LotTableInterface.ts';
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import docxConverter from "../hooks/docxConverter.tsx";
-import { FormOptionsContext } from './OptionsTemplateContext.tsx';
-import { FormOptionsContextType, FormOptionsInterface } from "../types/FormOptions"
 
 type Props = {}
 
@@ -31,7 +29,7 @@ function OptionsCreator({}: Props) {
         drawerGuides: "",
         doorHinges: "",
         pulls: "",
-        isPull: true
+        handleType: "pull",
     }
 
     const createLotTable = (jobInfo: JobInterface, lotNum: string): LotTableInterface => {

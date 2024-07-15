@@ -1,9 +1,6 @@
-import React from 'react'
 import { Link } from "react-router-dom";
 
-type Props = {}
-
-const Navigation = (props: Props) => {
+const Navigation = () => {
   return (
     <header id="mainNav">
         <div id="navigation">

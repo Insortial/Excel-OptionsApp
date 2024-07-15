@@ -1,7 +1,7 @@
 export interface PartOfLot {
     roomID: string, //ex. Throughout, Balance of the House, etc.
     material?: string, //[string, number]
-    isPull?: boolean,
+    handleType?: string,
     stain?: string, //[string, number]
     doors?: string,
     fingerpull?: string,

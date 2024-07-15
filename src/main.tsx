@@ -5,7 +5,6 @@ import {
   Navigate,
   RouterProvider
 } from "react-router-dom";
-import App from './App.tsx'
 import './index.css'
 import OptionsCreator from './modules/OptionsCreator.tsx';
 import JobCreator from './modules/JobCreator.tsx';

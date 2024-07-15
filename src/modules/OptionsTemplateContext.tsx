@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FormOptionsInterface, FormOptionsContextType} from '../types/FormOptions';
 
 export const FormOptionsContext = React.createContext<FormOptionsContextType | null>(null);
