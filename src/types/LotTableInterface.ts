@@ -15,17 +15,31 @@ export interface PartOfLot {
     appliances?: string
 }
 
-export interface LotTableInterface {
+export interface ProductionSchedule {
     builder: string,
     project: string,
+    foreman: string,
     phase: string,
+    date: string,
+    jobID: number,
     superintendent?: string,
     phone?: string,
-    foreman: string,
-    jobID: number,
+    lotFooter?: string,
+    kitchen?: string,
+    master?: string,
+    bath2?: string,
+    bath3?: string,
+    bath4?: string,
+    powder?: string,
+    laundry?: string,
+    footerNotes?: string
+}
+
+export interface LotTableInterface {
     boxStyle?: string, //[string, number]
     interiors?: string, //[string, number]
     upperHeight?: string,
+    lotOptionsValue?: number,
     islands?: string,
     crown?: string,
     lightRail?: string,
@@ -35,14 +49,6 @@ export interface LotTableInterface {
     lotFooter?: string,
     lot?: string,
     plan?: string,
-    kitchen?: string,
-    master?: string,
-    bath2?: string,
-    bath3?: string,
-    bath4?: string,
-    powder?: string,
-    laundry?: string,
-    footerNotes?: string,
     partsOfLot: PartOfLot[],
 }
 
@@ -54,4 +60,5 @@ export interface JobInterface {
     phone?: string,
     foreman: string,
     jobID: string,
+    date: string
 }

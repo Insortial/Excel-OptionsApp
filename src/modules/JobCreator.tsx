@@ -12,7 +12,8 @@ function JobCreator({}) {
     superintendent: "",
     phone: "",
     foreman: "",
-    jobID: ""
+    jobID: "",
+    date: ""
   }
 
   const [jobForm, setJobForm] = useState<JobInterface>(defaultJobForm);
@@ -65,6 +66,10 @@ function JobCreator({}) {
           <div className="formRow">
             <label htmlFor={"jobID"}>Job ID: </label>
             <InputSearch inputName={"jobID"} formState={jobForm} onFormChange={onFormChange} isDropDown={false}></InputSearch>
+          </div>
+          <div className="formRow">
+            <label htmlFor={"date"}>Date: </label>
+            <InputSearch inputName={"date"} formState={jobForm} onFormChange={onFormChange} isDropDown={false}></InputSearch>
           </div>
           <button id="createJobButton">Create Form</button>
         </form>

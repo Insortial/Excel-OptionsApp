@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback, useContext } from "react"
 import React from 'react'
-import { JobInterface, LotTableInterface, PartOfLot } from "../types/LotTableInterface";
+import { JobInterface, LotTableInterface, PartOfLot, ProductionSchedule } from "../types/LotTableInterface";
 import { FormOptionsContext } from "./OptionsTemplateContext";
 import { FormOptionsContextType } from "../types/FormOptions"
 
 type inputOptions = {
     isDropDown: boolean;
-    formState: LotTableInterface | JobInterface;
+    formState: LotTableInterface | JobInterface | ProductionSchedule;
     optionSectionNum?: number;
     onFormChange?: (value: string, key: string, optSectionNum?: number) => void;
     inputName: string;
@@ -15,7 +15,7 @@ type inputOptions = {
 const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChange, inputName, optionSectionNum}) => {
     const [suggestion, setSuggestion] = useState<string[]>([]);
     const [inFocus, setInFocus] = useState<boolean | boolean>(false);
-    const [focusedIndex, setFocusedIndex] = useState(-1);
+    const [focusedIndex, setFocusedIndex] = useState(0);
     const [value, setValue] = useState<string>("");
     const [hasError, setError] = useState(false)
     const { retrieveDropDown, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
@@ -36,13 +36,13 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
     }, [])
 
     useEffect(() => {
-        if(isDropDown && "partsOfLot" in formState) {
+        if(isDropDown) {
             setError(getPartOfLotValue() === "")
         }
     }, [isCheckingError, formState])
 
     const resetSearchComplete = useCallback(() => {
-        setFocusedIndex(-1);
+        setFocusedIndex(0);
         setInFocus(false);
     }, []);
 
@@ -111,7 +111,7 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
                     style={{border: hasError && isCheckingError ? "1px solid red" : "black"}}
                     value={!isDropDown ? getPartOfLotValue() : value}
                     placeholder={getPartOfLotValue()} 
-                    id={inputName}
+                    id={inputName + `${(typeof optionSectionNum === 'undefined' || optionSectionNum === 0) ? "" : optionSectionNum}`}
                     onChange={readInput}
                     onFocus={handleOnFocus}
                     onBlur={handleOnBlur}

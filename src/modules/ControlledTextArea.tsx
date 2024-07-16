@@ -1,8 +1,8 @@
 import React from 'react'
-import { LotTableInterface, PartOfLot } from '../types/LotTableInterface'
+import { LotTableInterface, PartOfLot, ProductionSchedule } from '../types/LotTableInterface'
 
 type inputOptions = {
-    formState: LotTableInterface;
+    formState: LotTableInterface | ProductionSchedule;
     optionSectionNum?: number;
     onFormChange: (value: string, key: string, optSectionNum?: number) => void;
     inputName: string;

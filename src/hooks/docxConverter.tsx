@@ -1,9 +1,9 @@
 import { Document, Packer, Paragraph, TextRun, PageBreak, HeadingLevel, AlignmentType, Table, TableRow, TableCell, WidthType, VerticalAlign } from "docx";
-import { LotTableInterface, PartOfLot } from "../types/LotTableInterface";
+import { LotTableInterface, PartOfLot, ProductionSchedule } from "../types/LotTableInterface";
 import { saveAs } from "file-saver";
 
 
-export default function docxConverter(lotCollection: LotTableInterface[]) {
+export default function docxConverter(prodSchedule:ProductionSchedule, lotCollection: LotTableInterface[]) {
     const readNewLine = (inputString:string | undefined):TextRun[] => {
         inputString = inputString ?? ""
         return inputString.split("\n").map(line=>new TextRun({break:1,text:line}))
@@ -55,37 +55,37 @@ export default function docxConverter(lotCollection: LotTableInterface[]) {
                 children: [
                     new TableCell({
                         children: [new Paragraph({
-                            text: lotCollection[0].builder,
+                            text: prodSchedule.builder,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: lotCollection[0].project,
+                            text: prodSchedule.project,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: lotCollection[0].phase,
+                            text: prodSchedule.phase,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: lotCollection[0].superintendent ?? "",
+                            text: prodSchedule.superintendent ?? "",
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: lotCollection[0].phone ?? "",
+                            text: prodSchedule.phone ?? "",
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: lotCollection[0].foreman,
+                            text: prodSchedule.foreman,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
@@ -113,7 +113,7 @@ export default function docxConverter(lotCollection: LotTableInterface[]) {
                         }),
                         new TableCell({
                             children: [new Paragraph({
-                                text: selectedLot.jobID.toString(),
+                                text: prodSchedule.jobID.toString(),
                                 alignment: AlignmentType.CENTER
                             })],
                         })
@@ -526,55 +526,55 @@ export default function docxConverter(lotCollection: LotTableInterface[]) {
                 children: [
                     new TableCell({
                         children: [new Paragraph({
-                            text: lotCollection[0].lotFooter,
+                            text: prodSchedule.lotFooter,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: lotCollection[0].kitchen,
+                            text: prodSchedule.kitchen,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: lotCollection[0].master,
+                            text: prodSchedule.master,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: lotCollection[0].bath2,
+                            text: prodSchedule.bath2,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: lotCollection[0].bath3,
+                            text: prodSchedule.bath3,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: lotCollection[0].bath4,
+                            text: prodSchedule.bath4,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: lotCollection[0].powder,
+                            text: prodSchedule.powder,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: lotCollection[0].laundry,
+                            text: prodSchedule.laundry,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            children: readNewLine(lotCollection[0].footerNotes),
+                            children: readNewLine(prodSchedule.footerNotes),
                             alignment: AlignmentType.CENTER
                         })],
                     }),
@@ -591,7 +591,7 @@ export default function docxConverter(lotCollection: LotTableInterface[]) {
 
     const pageTitle = new Paragraph({
         children: [new TextRun({
-            text: "APPROVED PRODUCTION SCHEDULE",
+            text: `APPROVED PRODUCTION SCHEDULE ${prodSchedule.date}`,
             bold: true,
             color: "000000",
         }),
