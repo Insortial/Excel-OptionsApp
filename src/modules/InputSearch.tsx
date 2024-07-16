@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback, useContext } from "react"
 import React from 'react'
-import { JobInterface, LotTableInterface, PartOfLot, ProductionSchedule } from "../types/LotTableInterface";
+import { LotTableInterface, PartOfLot, ProductionSchedule, ErrorObject } from "../types/LotTableInterface";
 import { FormOptionsContext } from "./OptionsTemplateContext";
 import { FormOptionsContextType } from "../types/FormOptions"
 
 type inputOptions = {
     isDropDown: boolean;
-    formState: LotTableInterface | JobInterface | ProductionSchedule;
+    formState: LotTableInterface | ProductionSchedule;
     optionSectionNum?: number;
     onFormChange?: (value: string, key: string, optSectionNum?: number) => void;
     inputName: string;
@@ -18,16 +18,16 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
     const [focusedIndex, setFocusedIndex] = useState(0);
     const [value, setValue] = useState<string>("");
     const [hasError, setError] = useState(false)
-    const { retrieveDropDown, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
+    const { errors, retrieveDropDown, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const suggestedChoices = retrieveDropDown(inputName)
 
     const getPartOfLotValue = () => {
         if((optionSectionNum !== undefined) && ("partsOfLot" in formState)) {
             //Represents a PartOfLot Value
-            return formState.partsOfLot[optionSectionNum][inputName as keyof (LotTableInterface | JobInterface | PartOfLot)] ?? ""
+            return formState.partsOfLot[optionSectionNum][inputName as keyof (LotTableInterface | ProductionSchedule | PartOfLot)] ?? ""
         } else {
             //Represents all other interfaces values
-            return formState[inputName as keyof (LotTableInterface | JobInterface | PartOfLot)] ?? ""
+            return formState[inputName as keyof (LotTableInterface | ProductionSchedule | PartOfLot)] ?? ""
         }
     }
 
@@ -36,10 +36,8 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
     }, [])
 
     useEffect(() => {
-        if(isDropDown) {
-            setError(getPartOfLotValue() === "")
-        }
-    }, [isCheckingError, formState])
+        setError(errors[inputName as keyof ErrorObject] != null)
+    }, [isCheckingError, errors])
 
     const resetSearchComplete = useCallback(() => {
         setFocusedIndex(0);
@@ -106,7 +104,7 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
     return (
         <div className="optionSearchContainer" tabIndex={1} onKeyDown={handleKeyDown}>
             <input 
-                    type="text" 
+                    type={inputName === "date" ? "date" : "text"} 
                     className="optionSearch" 
                     style={{border: hasError && isCheckingError ? "1px solid red" : "black"}}
                     value={!isDropDown ? getPartOfLotValue() : value}
@@ -121,8 +119,8 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
                     return <div key={index} onMouseDown={() => handleOptionClick(index)}
                     style={{
                         backgroundColor:
-                          index === focusedIndex ? "#f2eeed" : "",
-                      }}
+                        index === focusedIndex ? "#f2eeed" : "",
+                    }}
                     >{x}</div>
                 })}
             </div>

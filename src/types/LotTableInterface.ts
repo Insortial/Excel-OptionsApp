@@ -1,8 +1,12 @@
+export interface ErrorObject {
+    [index: string]: string | ErrorObject
+}
+
 export interface PartOfLot {
     roomID: string, //ex. Throughout, Balance of the House, etc.
     material?: string, //[string, number]
     handleType?: string,
-    stain?: string, //[string, number]
+    color?: string, //[string, number]
     doors?: string,
     fingerpull?: string,
     drawerFronts?: string, //[string, number]
@@ -47,18 +51,8 @@ export interface LotTableInterface {
     recyclingBins?: string,
     jobNotes?: string,
     lotFooter?: string,
+    hasError?: boolean,
     lot?: string,
     plan?: string,
     partsOfLot: PartOfLot[],
-}
-
-export interface JobInterface {
-    builder: string,
-    project: string,
-    phase: string,
-    superintendent?: string,
-    phone?: string,
-    foreman: string,
-    jobID: string,
-    date: string
 }

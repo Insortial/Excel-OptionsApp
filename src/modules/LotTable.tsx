@@ -14,7 +14,7 @@ const LotTable: React.FC<LotTable> = ({prodSchedule, lotTableDetails, saveLotTab
     let throughoutLot:PartOfLot = {
         roomID: "Throughout",
         material: "",
-        stain: "",
+        color: "",
         doors: "",
         fingerpull: "",
         drawerFronts: "",
@@ -185,12 +185,17 @@ const LotTable: React.FC<LotTable> = ({prodSchedule, lotTableDetails, saveLotTab
                 <tbody>
                     <tr>
                         <th colSpan={2}>Lot Option Contract Value</th>
-                        <td colSpan={3}><InputSearch inputName={"optionValue"} formState={formState} onFormChange={onFormChange} isDropDown={false}></InputSearch></td>
+                        <td colSpan={3}>
+                            <section id="optionsValueCell">
+                                <span>$</span>
+                                <InputSearch inputName={"lotOptionsValue"} formState={formState} onFormChange={onFormChange} isDropDown={false}></InputSearch>
+                            </section>
+                        </td>
                     </tr>
                     <tr>
                         <th>LOT</th>
                         <th>PLAN</th>
-                        <th>Material/Stain</th>
+                        <th>Material/Color</th>
                         <th>Option</th>
                         {/* <th>Notes:</th> */}
                     </tr>
@@ -211,8 +216,8 @@ const LotTable: React.FC<LotTable> = ({prodSchedule, lotTableDetails, saveLotTab
                                     <td>
                                         <label htmlFor={`material${idNumber}`}>Material:</label>
                                         <InputSearch inputName={`material`} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch>
-                                        <label htmlFor={`stain${idNumber}`}>Color:</label>
-                                        <InputSearch inputName={`stain`} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                                        <label htmlFor={`color${idNumber}`}>Color:</label>
+                                        <InputSearch inputName={`color`} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch>
                                         <button style={{display: currentRow === (formState.partsOfLot?.length - 1) ? "block" : "none"}} onClick={addOptionRow}>Add Material</button>
                                     </td>
                                     <td className="optionCell">

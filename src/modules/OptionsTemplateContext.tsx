@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { FormOptionsInterface, FormOptionsContextType} from '../types/FormOptions';
+import { ErrorObject } from '../types/LotTableInterface';
 
 export const FormOptionsContext = React.createContext<FormOptionsContextType | null>(null);
 
@@ -16,11 +17,12 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
         drawerGuides: [],
         doorHinges: [], 
         material: [], 
-        stain: [],
+        color: [],
         doors: [], 
         pulls: [],
     })
     
+    const [errors, setErrors] = useState<ErrorObject>({})
     const [isCheckingError, setIsCheckingError] = useState<boolean>(false);
 
     useEffect(() => {
@@ -42,7 +44,7 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
                         drawerGuides: formList.drawerGuides,
                         doorHinges: formList.doorHinges, 
                         material: formList.material, 
-                        stain: formList.stain,
+                        color: formList.color,
                         doors: formList.doors, 
                         pulls: formList.pulls,
                     }
@@ -74,7 +76,7 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
     }
 
     return (
-        <FormOptionsContext.Provider value={{ isCheckingError, setIsCheckingError, formOptions, saveFormOptions, retrieveDropDown }}>
+        <FormOptionsContext.Provider value={{ errors, setErrors, isCheckingError, setIsCheckingError, formOptions, saveFormOptions, retrieveDropDown }}>
             {children}
         </FormOptionsContext.Provider>
     )

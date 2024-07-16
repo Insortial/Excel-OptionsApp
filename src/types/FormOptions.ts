@@ -1,3 +1,5 @@
+import { ErrorObject } from "./LotTableInterface";
+
 export interface FormOptionsInterface {
     builder: string[],
     project: string[], 
@@ -10,7 +12,7 @@ export interface FormOptionsInterface {
     drawerGuides: [number, string][],
     doorHinges: [number, string][], 
     material: [number, string][], 
-    stain: [number, string][],
+    color: [number, string][],
     doors: string[], 
     pulls: string[],
 }
@@ -21,4 +23,6 @@ export type FormOptionsContextType = {
     setIsCheckingError: (bool: boolean) => void;
     saveFormOptions: (formOptions: FormOptionsInterface) => void;
     retrieveDropDown: (propertyName: string) => string[];
+    errors: ErrorObject;
+    setErrors: (errors: ErrorObject) => void;
 }

@@ -4,6 +4,9 @@ import { saveAs } from "file-saver";
 
 
 export default function docxConverter(prodSchedule:ProductionSchedule, lotCollection: LotTableInterface[]) {
+    console.log(prodSchedule)
+    console.log(lotCollection)
+    
     const readNewLine = (inputString:string | undefined):TextRun[] => {
         inputString = inputString ?? ""
         return inputString.split("\n").map(line=>new TextRun({break:1,text:line}))
@@ -375,7 +378,7 @@ export default function docxConverter(prodSchedule:ProductionSchedule, lotCollec
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: lotSection.material + "/" + lotSection.stain,
+                            text: lotSection.material + "/" + lotSection.color,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
@@ -421,7 +424,7 @@ export default function docxConverter(prodSchedule:ProductionSchedule, lotCollec
                         }),
                         new TableCell({
                             children: [new Paragraph({
-                                children: readNewLine("Material/Stain\n"),
+                                children: readNewLine("Material/Color\n"),
                                 alignment: AlignmentType.CENTER
                             })],
                         }),

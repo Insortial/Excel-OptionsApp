@@ -35,7 +35,8 @@ test('check job info in lot table', async ({ page }) => {
     phone: "9095678901",
     foreman: "Rogelio (GD Cabinets)",
     jobID: "10023",
-    lot: "12"
+    lot: "12",
+    date:"2023-02-12"
   }
 
 
@@ -61,6 +62,7 @@ test('check job info in lot table', async ({ page }) => {
   await page.getByLabel("foreman").fill(testJobObj.foreman)
   await page.locator('#foreman').locator('xpath=following-sibling::*[1]').click();
   await page.locator("#jobID").fill(testJobObj.jobID)
+  await page.locator("#date").fill(testJobObj.date)
 
   //Fill out lot number and navigate to lot table
   await page.locator("#createJobButton").click()

@@ -35,9 +35,9 @@ input {
     justify-content: space-between;
 }
 
-#lotList {
+.optionsList {
     width: 80%;
-    margin-top: 4em;
+    margin-top: 2em;
     background-color: white;
     display: flex;
     flex-direction: column;
@@ -49,6 +49,22 @@ input {
     box-sizing: border-box;
     padding-bottom: 15px;
 }
+
+#errorList {
+    overflow-y: scroll;
+    min-height: 200px;
+}
+
+.errorRow {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.errorRow > p {
+    margin: 0;
+}
+
 .listOfLotsRow {
     margin-top: 10px;
     height: 40px;
@@ -72,7 +88,7 @@ input {
     color: white;
 }
 
-#lotList > h3 {
+.optionsList > h3 {
     margin: 0;
     padding: 5px 10px;
     background-color: #945766;
@@ -100,6 +116,24 @@ input {
     color: white;
     padding: 5px 10px;
     box-sizing: border-box;
+}
+
+#optionsValueCell {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-content: center;
+}
+
+#optionsValueCell > div {
+    border: 1px solid black;
+}
+#optionsValueCell > span {
+    padding: 1px;
+}
+
+#lotOptionsValue {
+    text-align: left;
 }
 
 .modalRow {
@@ -194,7 +228,7 @@ td > input {
 }
 
 #titleCover {
-    width: 40vw;
+    width: 30vw;
     height: 100vh;
     background-color: #B90606;
     padding-left: 2em;
@@ -236,7 +270,7 @@ td > input {
 
 #formSection {
     margin-top: 2em;
-    width: 60vw;
+    width: 70vw;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -282,23 +316,30 @@ a:visited {
 }
 
 .formRow {
-    margin-top: 1.5em;
-    height: 40px;
     width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    display: grid;
+    grid-template-areas: "rowLabel"
+                         "rowInput"
+                         "rowError";
+    grid-template-rows: 30px 40px 10px;
+    grid-template-columns: 100%;
 }
 
 .formRow > label {
+    grid-area: rowLabel;
     font-size: 1.2em;
 }
 
 .formRow > div {
+    grid-area: rowInput;
     height: 100%;
-    width: 75%;
-    margin-left: 30px;
     border: 1px black solid;
+}
+
+.errorMsg {
+    grid-area: rowError;
+    color: red;
+    margin: 0;
 }
 
 .formRow > div > input {
@@ -339,6 +380,7 @@ td {
 
 .optionSearchContainer {
     position: relative;
+    width: 100%;
     padding: 0;
     box-sizing: border-box;
     display: flex;
@@ -526,6 +568,7 @@ h1 {
     background-color: #f2eeed;
     cursor: pointer;
 }
+
 @media only screen and (min-width: 1000px) {
     th {
         padding: 5px;
@@ -557,5 +600,15 @@ h1 {
     
     .optionResults {
         font-size: 1em;
+    }
+}
+
+@media only screen and (min-width: 1450px) {
+    .formRow {
+        margin-top: 1em;
+        grid-template-areas: "rowLabel . rowInput"
+                         ". . rowError";
+        grid-template-rows: 40px 10px;
+        grid-template-columns: 10% 10% 80%;
     }
 }
