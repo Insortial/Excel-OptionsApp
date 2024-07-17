@@ -25,4 +25,5 @@ export type FormOptionsContextType = {
     retrieveDropDown: (propertyName: string) => string[];
     errors: ErrorObject;
     setErrors: (errors: ErrorObject) => void;
+    getFormIDs: (value:string, propertyName:string) => number;
 }

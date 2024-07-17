@@ -57,6 +57,15 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
         setFormOptions(formOptions)
     }
 
+    const getFormIDs = (value:string, propertyName:string):number => {
+        if(value !== "" && propertyName in formOptions) {
+            let matchingTuple = formOptions[propertyName as keyof FormOptionsInterface]
+                                 .find((tuple: string | [number, string]) => tuple[1] == value)
+            return (typeof matchingTuple == "string") ? 1 : matchingTuple?.[0] ?? 1
+        }
+        return 1
+    }
+
     const retrieveDropDown = (propertyName: string) => {
         let listOfOptions:string[] = []
 
@@ -76,7 +85,7 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
     }
 
     return (
-        <FormOptionsContext.Provider value={{ errors, setErrors, isCheckingError, setIsCheckingError, formOptions, saveFormOptions, retrieveDropDown }}>
+        <FormOptionsContext.Provider value={{ getFormIDs, errors, setErrors, isCheckingError, setIsCheckingError, formOptions, saveFormOptions, retrieveDropDown }}>
             {children}
         </FormOptionsContext.Provider>
     )

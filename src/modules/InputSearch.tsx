@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback, useContext } from "react"
 import React from 'react'
-import { LotTableInterface, PartOfLot, ProductionSchedule, ErrorObject } from "../types/LotTableInterface";
+import { LotTableInterface, PartOfLot, JobDetails, ErrorObject } from "../types/LotTableInterface";
 import { FormOptionsContext } from "./OptionsTemplateContext";
 import { FormOptionsContextType } from "../types/FormOptions"
 
 type inputOptions = {
     isDropDown: boolean;
-    formState: LotTableInterface | ProductionSchedule;
+    formState: LotTableInterface | JobDetails;
     optionSectionNum?: number;
     onFormChange?: (value: string, key: string, optSectionNum?: number) => void;
     inputName: string;
@@ -24,10 +24,10 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
     const getPartOfLotValue = () => {
         if((optionSectionNum !== undefined) && ("partsOfLot" in formState)) {
             //Represents a PartOfLot Value
-            return formState.partsOfLot[optionSectionNum][inputName as keyof (LotTableInterface | ProductionSchedule | PartOfLot)] ?? ""
+            return formState.partsOfLot[optionSectionNum][inputName as keyof (LotTableInterface | JobDetails | PartOfLot)] ?? ""
         } else {
             //Represents all other interfaces values
-            return formState[inputName as keyof (LotTableInterface | ProductionSchedule | PartOfLot)] ?? ""
+            return formState[inputName as keyof (LotTableInterface | JobDetails | PartOfLot)] ?? ""
         }
     }
 

@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import InputSearch from "./InputSearch"
-import { LotTableInterface, PartOfLot, ProductionSchedule } from '../types/LotTableInterface';
+import { LotTableInterface, PartOfLot, JobDetails } from '../types/LotTableInterface';
 import ControlledTextArea from "./ControlledTextArea"
 
 type LotTable = {
     lotTableDetails: LotTableInterface;
-    prodSchedule: ProductionSchedule;
-    setProdSchedule: (prodSchedule: ProductionSchedule) => void;
-    saveLotTable: (lotTableDetails: LotTableInterface) => void;
+    jobDetails: JobDetails;
+    setJobDetails: (jobDetails: JobDetails) => void;
+    saveLotTable: (lotTableDetails: LotTableInterface, lotNumber: string) => void;
 }
 
-const LotTable: React.FC<LotTable> = ({prodSchedule, lotTableDetails, saveLotTable, setProdSchedule}) => {
+const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable, setJobDetails}) => {
     let throughoutLot:PartOfLot = {
         roomID: "Throughout",
         material: "",
@@ -23,6 +23,7 @@ const LotTable: React.FC<LotTable> = ({prodSchedule, lotTableDetails, saveLotTab
         drawerGuides: "",
         doorHinges: "",
         pulls: "",
+        handleType: "pull"
     }
 
     let initialLotTableInterface:LotTableInterface = {
@@ -37,6 +38,8 @@ const LotTable: React.FC<LotTable> = ({prodSchedule, lotTableDetails, saveLotTab
         jobNotes: "",
         lot: "",
         plan: "",
+        lotOptionsValue: 0,
+        hasError: false,
         partsOfLot: [throughoutLot],
     }
 
@@ -47,7 +50,7 @@ const LotTable: React.FC<LotTable> = ({prodSchedule, lotTableDetails, saveLotTab
         let updatedTable:LotTableInterface = {...formState}
         updatedTable.partsOfLot.splice(lotSectionIndex, 1)
         setFormState(updatedTable)
-        saveLotTable(updatedTable)
+        saveLotTable(updatedTable, formState.lot)
     }
 
     const onFormChange = (value: string | boolean, key: string, optionSectionNum: number=-1) => {
@@ -61,16 +64,17 @@ const LotTable: React.FC<LotTable> = ({prodSchedule, lotTableDetails, saveLotTab
             updatedTable = {...formState}
             updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot, index:number) => (index === optionSectionNum ? { ...partOfLot, [key]: value } : partOfLot))
         }
+
         setFormState(updatedTable)
-        saveLotTable(updatedTable)
+        saveLotTable(updatedTable, formState.lot)
     }
 
-    const onProdScheduleChange = (value: string | boolean, key: string) => {
+    const onJobDetailsChange = (value: string | boolean, key: string) => {
         let updatedTable = {
-            ...prodSchedule,
+            ...jobDetails,
             [key]: value
         }
-        setProdSchedule(updatedTable)
+        setJobDetails(updatedTable)
     }
 
     const addOptionRow = () => {
@@ -81,6 +85,12 @@ const LotTable: React.FC<LotTable> = ({prodSchedule, lotTableDetails, saveLotTab
             drawerBoxes: formState.partsOfLot[0].drawerBoxes ?? "",
             drawerGuides: formState.partsOfLot[0].drawerGuides ?? "",
             doorHinges: formState.partsOfLot[0].doorHinges ?? "",
+            material: "",
+            color: "",
+            doors: "",
+            fingerpull: "",
+            knobs: "",
+            pulls: "",
         }
 
         let newPartsOfLot = [...formState.partsOfLot, lotSection]
@@ -108,12 +118,12 @@ const LotTable: React.FC<LotTable> = ({prodSchedule, lotTableDetails, saveLotTab
                         <th>Area Foreman</th>
                     </tr>
                     <tr>
-                        <td><InputSearch inputName={"builder"} formState={prodSchedule} onFormChange={onProdScheduleChange} isDropDown={true}></InputSearch></td>
-                        <td><InputSearch inputName={"project"} formState={prodSchedule} onFormChange={onProdScheduleChange} isDropDown={true}></InputSearch></td>
-                        <td><InputSearch inputName={"phase"} formState={prodSchedule} onFormChange={onProdScheduleChange} isDropDown={false}></InputSearch></td>
-                        <td><InputSearch inputName={"superintendent"} formState={prodSchedule} onFormChange={onProdScheduleChange} isDropDown={false}></InputSearch></td>
-                        <td><InputSearch inputName={"phone"} formState={prodSchedule} onFormChange={onProdScheduleChange} isDropDown={false}></InputSearch></td>
-                        <td><InputSearch inputName={"foreman"} formState={prodSchedule} onFormChange={onProdScheduleChange} isDropDown={true} ></InputSearch></td>
+                        <td><InputSearch inputName={"builder"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}></InputSearch></td>
+                        <td><InputSearch inputName={"project"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}></InputSearch></td>
+                        <td><InputSearch inputName={"phase"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={false}></InputSearch></td>
+                        <td><InputSearch inputName={"superintendent"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={false}></InputSearch></td>
+                        <td><InputSearch inputName={"phone"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={false}></InputSearch></td>
+                        <td><InputSearch inputName={"foreman"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true} ></InputSearch></td>
                     </tr>
                 </tbody>
             </table>
@@ -121,7 +131,7 @@ const LotTable: React.FC<LotTable> = ({prodSchedule, lotTableDetails, saveLotTab
                 <tbody>
                     <tr>
                         <th>Job ID</th>
-                        <td><InputSearch inputName={"jobID"} formState={prodSchedule} onFormChange={onProdScheduleChange} isDropDown={false}></InputSearch></td>
+                        <td><InputSearch inputName={"jobID"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={false}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Box Style</th>
@@ -293,15 +303,15 @@ const LotTable: React.FC<LotTable> = ({prodSchedule, lotTableDetails, saveLotTab
                         <th>Notes</th>
                     </tr>
                     <tr>
-                        <td><InputSearch inputName={"lotFooter"} formState={prodSchedule} onFormChange={onProdScheduleChange} isDropDown={false}/></td>
-                        <td><InputSearch inputName={"kitchen"} formState={prodSchedule} onFormChange={onProdScheduleChange} isDropDown={true}/></td>
-                        <td><InputSearch inputName={"master"} formState={prodSchedule} onFormChange={onProdScheduleChange} isDropDown={true}/></td>
-                        <td><InputSearch inputName={"bath2"} formState={prodSchedule} onFormChange={onProdScheduleChange} isDropDown={true}/></td>
-                        <td><InputSearch inputName={"bath3"} formState={prodSchedule} onFormChange={onProdScheduleChange} isDropDown={true}/></td>
-                        <td><InputSearch inputName={"bath4"} formState={prodSchedule} onFormChange={onProdScheduleChange} isDropDown={true}/></td>
-                        <td><InputSearch inputName={"powder"} formState={prodSchedule} onFormChange={onProdScheduleChange} isDropDown={true}/></td>
-                        <td><InputSearch inputName={"laundry"} formState={prodSchedule} onFormChange={onProdScheduleChange} isDropDown={true}/></td>
-                        <td style={{width: "25%"}}><ControlledTextArea inputName={"footerNotes"} formState={prodSchedule} onFormChange={onProdScheduleChange}/></td>
+                        <td><InputSearch inputName={"lotFooter"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={false}/></td>
+                        <td><InputSearch inputName={"kitchen"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}/></td>
+                        <td><InputSearch inputName={"master"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}/></td>
+                        <td><InputSearch inputName={"bath2"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}/></td>
+                        <td><InputSearch inputName={"bath3"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}/></td>
+                        <td><InputSearch inputName={"bath4"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}/></td>
+                        <td><InputSearch inputName={"powder"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}/></td>
+                        <td><InputSearch inputName={"laundry"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}/></td>
+                        <td style={{width: "25%"}}><ControlledTextArea inputName={"footerNotes"} formState={jobDetails} onFormChange={onJobDetailsChange}/></td>
                     </tr>
                 </tbody>
             </table>

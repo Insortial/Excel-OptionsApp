@@ -2,11 +2,11 @@ import { useState } from 'react'
 import '../App.css'
 import { useNavigate} from "react-router-dom";
 import InputSearch from '../modules/InputSearch.tsx';
-import { ErrorObject, ProductionSchedule } from '../types/LotTableInterface.ts';
+import { ErrorObject, JobDetails } from '../types/LotTableInterface.ts';
 import InputError from './InputError.tsx';
 
 function JobCreator({}) {
-  let defaultProdSchedule:ProductionSchedule = {
+  let defaultJobDetails:JobDetails = {
     builder: "",
     project: "",
     phase: "",
@@ -14,16 +14,25 @@ function JobCreator({}) {
     phone: "",
     foreman: "",
     jobID: 0,
-    date: ""
+    date: "",
+    lotFooter: "",
+    kitchen: "",
+    master: "",
+    bath2: "",
+    bath3: "",
+    bath4: "",
+    powder: "",
+    laundry: "",
+    footerNotes: ""
   }
 
-  const [prodSchedule, setProdSchedule] = useState<ProductionSchedule>(defaultProdSchedule);
+  const [jobDetails, setJobDetails] = useState<JobDetails>(defaultJobDetails);
   const [errors, setErrors] = useState<ErrorObject>({})
   const navigate = useNavigate();
 
   const onFormChange = (value: string, key: string) => {
-    setProdSchedule(prevProdSchedule => ({
-        ...prevProdSchedule,
+    setJobDetails(prevJobDetails => ({
+        ...prevJobDetails,
         [key]: value
     }));
   }
@@ -31,11 +40,11 @@ function JobCreator({}) {
   const validate = () => {
     const requiredFields = ["builder", "project", "foreman", "phase", "date", "jobID"];
     const newErrors:ErrorObject = {};
-    Object.keys(prodSchedule).forEach((key) => {
-      if(requiredFields.includes(key) && !prodSchedule[key as keyof ProductionSchedule]) 
+    Object.keys(jobDetails).forEach((key) => {
+      if(requiredFields.includes(key) && !jobDetails[key as keyof JobDetails]) 
         newErrors[key] = "Field is required, please fill out"
 
-      if(key === "jobID" && isNaN(Number(prodSchedule[key as keyof ProductionSchedule])))
+      if(key === "jobID" && isNaN(Number(jobDetails[key as keyof JobDetails])))
         newErrors[key] = "Incorrect format, must be a number"
     })
     setErrors(newErrors)
@@ -45,7 +54,7 @@ function JobCreator({}) {
   const goToOptionsCreator = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if(validate())
-      navigate("/creatingOptions/", {state: prodSchedule})
+      navigate("/creatingOptions/", {state: jobDetails})
   }
 
   return (
@@ -58,42 +67,42 @@ function JobCreator({}) {
           <h2>Enter Job Details:</h2>
           <div className="formRow">
             <label htmlFor={"builder"}>Builder: </label>
-            <InputSearch inputName={"builder"} formState={prodSchedule} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+            <InputSearch inputName={"builder"} formState={jobDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
             <InputError errorKey={"builder"} errorState={errors}></InputError>
           </div>
           <div className="formRow">
             <label htmlFor={"project"}>Project: </label>
-            <InputSearch inputName={"project"} formState={prodSchedule} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+            <InputSearch inputName={"project"} formState={jobDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
             <InputError errorKey={"project"} errorState={errors}></InputError>
           </div>
           <div className="formRow">
             <label htmlFor={"phase"}>Phase: </label>
-            <InputSearch inputName={"phase"} formState={prodSchedule} onFormChange={onFormChange} isDropDown={false}></InputSearch>
+            <InputSearch inputName={"phase"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
             <InputError errorKey={"phase"} errorState={errors}></InputError>
           </div>
           <div className="formRow">
             <label htmlFor={"superintendent"}>Superintendent: </label>
-            <InputSearch inputName={"superintendent"} formState={prodSchedule} onFormChange={onFormChange} isDropDown={false}></InputSearch>
+            <InputSearch inputName={"superintendent"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
             <InputError errorKey={"superintendent"} errorState={errors}></InputError>
           </div>
           <div className="formRow">
             <label htmlFor={"phone"}>Phone Number: </label>
-            <InputSearch inputName={"phone"} formState={prodSchedule} onFormChange={onFormChange} isDropDown={false}></InputSearch>
+            <InputSearch inputName={"phone"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
             <InputError errorKey={"phone"} errorState={errors}></InputError>
           </div>
           <div className="formRow">
             <label htmlFor={"foreman"}>Area Foreman: </label>
-            <InputSearch inputName={"foreman"} formState={prodSchedule} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+            <InputSearch inputName={"foreman"} formState={jobDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
             <InputError errorKey={"foreman"} errorState={errors}></InputError>
           </div>
           <div className="formRow">
             <label htmlFor={"jobID"}>Job ID: </label>
-            <InputSearch inputName={"jobID"} formState={prodSchedule} onFormChange={onFormChange} isDropDown={false}></InputSearch>
+            <InputSearch inputName={"jobID"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
             <InputError errorKey={"jobID"} errorState={errors}></InputError>
           </div>
           <div className="formRow">
             <label htmlFor={"date"}>Date: </label>
-            <InputSearch inputName={"date"} formState={prodSchedule} onFormChange={onFormChange} isDropDown={false}></InputSearch>
+            <InputSearch inputName={"date"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
             <InputError errorKey={"date"} errorState={errors}></InputError>
           </div>
           <button id="createJobButton">Create Form</button>
