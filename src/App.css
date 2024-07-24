@@ -50,6 +50,84 @@ input {
     padding-bottom: 15px;
 }
 
+#jobMenuScreen {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+}
+
+#jobMenuHeader {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    min-height: 150px;
+    background-color: #a8193d ;
+    color: white;
+    padding: 0px 30px;
+    align-items: center;
+    position: fixed;
+    box-sizing: border-box;
+}
+
+#jobMenuHeader > button {
+    height: 40px;
+}
+
+#jobList {
+    align-self: center;
+    margin-top: 180px;
+    width: 90%;
+    box-sizing: border-box;
+    display: grid;   
+    padding: 10px;
+    grid-template-columns: 100%;
+    grid-auto-rows: 200px;
+    column-gap: 10px;
+    row-gap: 50px;
+}
+
+.jobDocument {
+    cursor: pointer;
+    place-self: center;
+    height: 100%;
+    box-sizing: border-box;
+    width: 95%;
+    border-radius: 11px;
+    background-color: rgb(248, 248, 248);
+}
+
+.jobDocument > header {
+    width: 100%;
+    height: 35%;
+    border-radius: 11px 11px 0 0;
+    background-color: #B90606;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+
+.jobDocumentBody {
+    height: 65%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+}
+
+.jobDocumentBody > h4 {
+    margin: 0;
+    margin-top: 8px;
+}
+
+#jobMenuHeader > h1 {
+    margin: 0;
+}
+
 #errorList {
     overflow-y: scroll;
     min-height: 200px;
@@ -569,6 +647,12 @@ h1 {
     cursor: pointer;
 }
 
+@media only screen and (min-width: 550px) {
+    #jobList {
+        grid-template-columns: 33% 33% 33%;
+    }
+}
+
 @media only screen and (min-width: 1000px) {
     th {
         padding: 5px;
@@ -582,6 +666,15 @@ h1 {
     
     input {
         font-size: 1em;
+    }
+
+    #jobList {
+        align-self: center;
+        width: 85%;
+        grid-template-columns: 25% 25% 25% 25%;
+        grid-auto-rows: 200px;
+        column-gap: 10px;
+        row-gap: 50px;
     }
 
     .exampleSection {
@@ -610,5 +703,9 @@ h1 {
                          ". . rowError";
         grid-template-rows: 40px 10px;
         grid-template-columns: 10% 10% 80%;
+    }
+
+    #jobList {
+        width: 75%;
     }
 }

@@ -1,5 +1,5 @@
 import { Document, Packer, Paragraph, TextRun, PageBreak, HeadingLevel, AlignmentType, Table, TableRow, TableCell, WidthType, VerticalAlign } from "docx";
-import { LotTableInterface, PartOfLot, ProductionSchedule } from "../types/LotTableInterface";
+import { LotTableInterface, PartOfLot, ProductionSchedule } from "../../../types/LotTableInterface";
 import { saveAs } from "file-saver";
 
 

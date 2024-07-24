@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { FormOptionsInterface, FormOptionsContextType} from '../types/FormOptions';
-import { ErrorObject } from '../types/LotTableInterface';
+import { FormOptionsInterface, FormOptionsContextType} from '../../../types/FormOptions';
+import { ErrorObject } from '../../../types/LotTableInterface';
 
 export const FormOptionsContext = React.createContext<FormOptionsContextType | null>(null);
 

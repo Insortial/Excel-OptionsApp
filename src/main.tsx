@@ -9,11 +9,12 @@ import './index.css'
 import OptionsCreator from './modules/OptionsCreator.tsx';
 import JobCreator from './modules/JobCreator.tsx';
 import FormOptionsProvider from './modules/OptionsTemplateContext.tsx';
+import JobMenu from './modules/JobMenu.tsx';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to="/creatingJob" />
+    element: <Navigate to="/jobMenu" />
   },
   {
     path: "/creatingJob",
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
   {
     path: "/creatingOptions",
     element: <OptionsCreator />
+  },
+  {
+    path: "/jobMenu",
+    element: <JobMenu />
   }
 ]);
 

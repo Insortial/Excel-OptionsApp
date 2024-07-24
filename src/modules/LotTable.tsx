@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import InputSearch from "./InputSearch"
-import { LotTableInterface, PartOfLot, JobDetails } from '../types/LotTableInterface';
+import { LotTableInterface, PartOfLot, JobDetails } from '../../../types/LotTableInterface';
 import ControlledTextArea from "./ControlledTextArea"
 
 type LotTable = {
@@ -8,9 +8,10 @@ type LotTable = {
     jobDetails: JobDetails;
     setJobDetails: (jobDetails: JobDetails) => void;
     saveLotTable: (lotTableDetails: LotTableInterface, lotNumber: string) => void;
+    setCurrentLotNum: (lotNum: string) => void; 
 }
 
-const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable, setJobDetails}) => {
+const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable, setJobDetails, setCurrentLotNum}) => {
     let throughoutLot:PartOfLot = {
         roomID: "Throughout",
         material: "",
@@ -64,6 +65,9 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
             updatedTable = {...formState}
             updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot, index:number) => (index === optionSectionNum ? { ...partOfLot, [key]: value } : partOfLot))
         }
+
+        if(key === "lot" && typeof value === "string") 
+            setCurrentLotNum(value)
 
         setFormState(updatedTable)
         saveLotTable(updatedTable, formState.lot)
@@ -187,7 +191,7 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
                     </tr>
                     <tr>
                         <th>Job Specific Notes</th>
-                        <td><ControlledTextArea inputName={"jobNotes"} formState={formState} onFormChange={onFormChange}></ControlledTextArea></td>
+                        <td><ControlledTextArea inputName={"jobNotes"} formState={jobDetails} onFormChange={onJobDetailsChange}></ControlledTextArea></td>
                     </tr>
                 </tbody>
             </table>
@@ -303,15 +307,15 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
                         <th>Notes</th>
                     </tr>
                     <tr>
-                        <td><InputSearch inputName={"lotFooter"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={false}/></td>
-                        <td><InputSearch inputName={"kitchen"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}/></td>
-                        <td><InputSearch inputName={"master"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}/></td>
-                        <td><InputSearch inputName={"bath2"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}/></td>
-                        <td><InputSearch inputName={"bath3"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}/></td>
-                        <td><InputSearch inputName={"bath4"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}/></td>
-                        <td><InputSearch inputName={"powder"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}/></td>
-                        <td><InputSearch inputName={"laundry"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}/></td>
-                        <td style={{width: "25%"}}><ControlledTextArea inputName={"footerNotes"} formState={jobDetails} onFormChange={onJobDetailsChange}/></td>
+                        <td><InputSearch inputName={"lotFooter"} formState={formState} onFormChange={onFormChange} isDropDown={false}/></td>
+                        <td><InputSearch inputName={"kitchen"} formState={formState} onFormChange={onFormChange} isDropDown={true}/></td>
+                        <td><InputSearch inputName={"master"} formState={formState} onFormChange={onFormChange} isDropDown={true}/></td>
+                        <td><InputSearch inputName={"bath2"} formState={formState} onFormChange={onFormChange} isDropDown={true}/></td>
+                        <td><InputSearch inputName={"bath3"} formState={formState} onFormChange={onFormChange} isDropDown={true}/></td>
+                        <td><InputSearch inputName={"bath4"} formState={formState} onFormChange={onFormChange} isDropDown={true}/></td>
+                        <td><InputSearch inputName={"powder"} formState={formState} onFormChange={onFormChange} isDropDown={true}/></td>
+                        <td><InputSearch inputName={"laundry"} formState={formState} onFormChange={onFormChange} isDropDown={true}/></td>
+                        <td style={{width: "25%"}}><ControlledTextArea inputName={"footerNotes"} formState={formState} onFormChange={onFormChange}/></td>
                     </tr>
                 </tbody>
             </table>

@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useContext } from "react"
 import React from 'react'
-import { LotTableInterface, PartOfLot, JobDetails, ErrorObject } from "../types/LotTableInterface";
+import { LotTableInterface, PartOfLot, JobDetails, ErrorObject } from "../../../types/LotTableInterface";
 import { FormOptionsContext } from "./OptionsTemplateContext";
-import { FormOptionsContextType } from "../types/FormOptions"
+import { FormOptionsContextType } from "../../../types/FormOptions"
 
 type inputOptions = {
     isDropDown: boolean;

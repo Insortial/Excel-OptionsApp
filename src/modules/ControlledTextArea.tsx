@@ -1,5 +1,5 @@
 import React from 'react'
-import { LotTableInterface, PartOfLot, JobDetails } from '../types/LotTableInterface'
+import { LotTableInterface, PartOfLot, JobDetails } from '../../../types/LotTableInterface'
 
 type inputOptions = {
     formState: LotTableInterface | JobDetails;

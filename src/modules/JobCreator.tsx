@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import '../App.css'
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import InputSearch from '../modules/InputSearch.tsx';
-import { ErrorObject, JobDetails } from '../types/LotTableInterface.ts';
+import { ErrorObject, JobDetails } from "../../../types/LotTableInterface";
 import InputError from './InputError.tsx';
 
 function JobCreator({}) {
@@ -30,6 +30,9 @@ function JobCreator({}) {
   const [errors, setErrors] = useState<ErrorObject>({})
   const navigate = useNavigate();
 
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
   const onFormChange = (value: string, key: string) => {
     setJobDetails(prevJobDetails => ({
         ...prevJobDetails,
@@ -37,23 +40,44 @@ function JobCreator({}) {
     }));
   }
 
-  const validate = () => {
+  const checkValidLotNumJobID = async(lotNum:string[], jobID:number):Promise<any> => {
+    const raw = JSON.stringify({
+        "lotNumber": lotNum,
+        "jobID": jobID
+    });
+
+    const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+    };
+
+    const response = await fetch("http://localhost:3000/isValidLotNumAndJobID", requestOptions)
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    const data = await response.json()
+    return data
+  }
+
+  const validate = async () => {
     const requiredFields = ["builder", "project", "foreman", "phase", "date", "jobID"];
     const newErrors:ErrorObject = {};
+    let jobIDIsValid = (await checkValidLotNumJobID([], Number(jobDetails["jobID"]))).isJobIDValid
+    if(!jobIDIsValid)
+      newErrors["jobID"] = "Invalid Job ID"
+
     Object.keys(jobDetails).forEach((key) => {
       if(requiredFields.includes(key) && !jobDetails[key as keyof JobDetails]) 
         newErrors[key] = "Field is required, please fill out"
-
-      if(key === "jobID" && isNaN(Number(jobDetails[key as keyof JobDetails])))
-        newErrors[key] = "Incorrect format, must be a number"
     })
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0;
   }
 
-  const goToOptionsCreator = (e: React.FormEvent<HTMLFormElement>) => {
+  const goToOptionsCreator = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if(validate())
+    if(await validate())
       navigate("/creatingOptions/", {state: jobDetails})
   }
 
@@ -104,6 +128,11 @@ function JobCreator({}) {
             <label htmlFor={"date"}>Date: </label>
             <InputSearch inputName={"date"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
             <InputError errorKey={"date"} errorState={errors}></InputError>
+          </div>
+          <div className="formRow">
+            <label htmlFor={"jobID"}>Options Coordinator: </label>
+            <InputSearch inputName={"foreman"} formState={jobDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+            <InputError errorKey={"foreman"} errorState={errors}></InputError>
           </div>
           <button id="createJobButton">Create Form</button>
         </form>
