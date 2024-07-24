@@ -399,7 +399,7 @@ a:visited {
     grid-template-areas: "rowLabel"
                          "rowInput"
                          "rowError";
-    grid-template-rows: 30px 40px 10px;
+    grid-template-rows: 30px 40px 25px;
     grid-template-columns: 100%;
 }
 
@@ -412,6 +412,11 @@ a:visited {
     grid-area: rowInput;
     height: 100%;
     border: 1px black solid;
+}
+
+.jobDisplay {
+    border: 2px solid black; 
+    padding-left: 10px;
 }
 
 .errorMsg {
@@ -703,6 +708,14 @@ h1 {
                          ". . rowError";
         grid-template-rows: 40px 10px;
         grid-template-columns: 10% 10% 80%;
+    }
+
+    .formRow:first-of-type {
+        grid-template-areas: "rowLabel"
+                         "rowInput"
+                         "rowError";
+        grid-template-rows: 30px 40px 25px;
+        grid-template-columns: 100%;
     }
 
     #jobList {

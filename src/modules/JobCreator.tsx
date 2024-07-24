@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import '../App.css'
 import { useNavigate } from "react-router-dom";
 import InputSearch from '../modules/InputSearch.tsx';
@@ -11,6 +11,8 @@ function JobCreator({}) {
     project: "",
     phase: "",
     superintendent: "",
+    optionCoordinator: "",
+    jobNotes: "",
     phone: "",
     foreman: "",
     jobID: 0,
@@ -27,11 +29,36 @@ function JobCreator({}) {
   }
 
   const [jobDetails, setJobDetails] = useState<JobDetails>(defaultJobDetails);
+  const [validJobID, setValidJobID] = useState<boolean>(false)
   const [errors, setErrors] = useState<ErrorObject>({})
   const navigate = useNavigate();
 
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
+
+  useEffect(() => {
+    const requestOptions = {
+      method: "GET",
+      redirect: "follow"
+    };
+    if (jobDetails.jobID.length > 0) {
+      fetch(import.meta.env.VITE_BACKEND_URL + `/getJobDetails/${jobDetails.jobID}`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        if(result.isValidJobID) {
+          setValidJobID(true)
+          setJobDetails(prevJobDetails => ({
+            ...prevJobDetails,
+            builder: result.customerName,
+            project: result.projectName,
+            phase: result.phase,
+          }));
+        } else {
+          setValidJobID(false)
+        }
+      }).catch((error) => console.error(error));
+    }
+  }, [jobDetails.jobID])
 
   const onFormChange = (value: string, key: string) => {
     setJobDetails(prevJobDetails => ({
@@ -52,7 +79,7 @@ function JobCreator({}) {
         body: raw,
     };
 
-    const response = await fetch("http://localhost:3000/isValidLotNumAndJobID", requestOptions)
+    const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/isValidLotNumAndJobID", requestOptions)
     if (!response.ok) {
         throw new Error(response.statusText);
     }
@@ -61,7 +88,7 @@ function JobCreator({}) {
   }
 
   const validate = async () => {
-    const requiredFields = ["builder", "project", "foreman", "phase", "date", "jobID"];
+    const requiredFields = ["builder", "project", "optionCoordinator", "phase", "date", "jobID"];
     const newErrors:ErrorObject = {};
     let jobIDIsValid = (await checkValidLotNumJobID([], Number(jobDetails["jobID"]))).isJobIDValid
     if(!jobIDIsValid)
@@ -89,7 +116,7 @@ function JobCreator({}) {
       <section id="formSection">
         <form onSubmit={goToOptionsCreator}>
           <h2>Enter Job Details:</h2>
-          <div className="formRow">
+          {/* <div className="formRow">
             <label htmlFor={"builder"}>Builder: </label>
             <InputSearch inputName={"builder"} formState={jobDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
             <InputError errorKey={"builder"} errorState={errors}></InputError>
@@ -118,11 +145,20 @@ function JobCreator({}) {
             <label htmlFor={"foreman"}>Area Foreman: </label>
             <InputSearch inputName={"foreman"} formState={jobDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
             <InputError errorKey={"foreman"} errorState={errors}></InputError>
-          </div>
+          </div> */}
           <div className="formRow">
             <label htmlFor={"jobID"}>Job ID: </label>
             <InputSearch inputName={"jobID"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
             <InputError errorKey={"jobID"} errorState={errors}></InputError>
+          </div>
+          <div className="jobDisplay">
+            {validJobID ? (
+              <>
+                <h4>Customer Name: {jobDetails.builder}</h4>
+                <h4>Project Name: {jobDetails.project}</h4>
+                <h4>Phase: {jobDetails.phase}</h4>
+              </>
+            ): (<h3 style={{color: "red"}}>Invalid Job ID</h3>)}
           </div>
           <div className="formRow">
             <label htmlFor={"date"}>Date: </label>
@@ -130,9 +166,9 @@ function JobCreator({}) {
             <InputError errorKey={"date"} errorState={errors}></InputError>
           </div>
           <div className="formRow">
-            <label htmlFor={"jobID"}>Options Coordinator: </label>
-            <InputSearch inputName={"foreman"} formState={jobDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
-            <InputError errorKey={"foreman"} errorState={errors}></InputError>
+            <label htmlFor={"optionCoordinator"}>Options Coordinator: </label>
+            <InputSearch inputName={"optionCoordinator"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
+            <InputError errorKey={"optionCoordinator"} errorState={errors}></InputError>
           </div>
           <button id="createJobButton">Create Form</button>
         </form>

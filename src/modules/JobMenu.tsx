@@ -8,7 +8,7 @@ type Props = {}
 const JobMenu = (props: Props) => {
     const [jobDocuments, setJobDocuments] = useState<JobDocumentInterface[]>([])
     useEffect(() => {
-        fetch("http://localhost:3000/getListOfJobDocuments")
+        fetch(import.meta.env.VITE_BACKEND_URL + "/getListOfJobDocuments")
                 .then((response) => response.text())
                 .then((result) => {
                     let listOfJobDocuments:JobDocumentInterface[] = JSON.parse(result)

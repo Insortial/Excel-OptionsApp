@@ -26,7 +26,7 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
     const [isCheckingError, setIsCheckingError] = useState<boolean>(false);
 
     useEffect(() => {
-        fetch("http://localhost:3000/dropDownInfo")
+        fetch(import.meta.env.VITE_BACKEND_URL + "/dropDownInfo")
                 .then((response) => response.text())
                 .then((result) => {
                     console.log(JSON.parse(result))

@@ -15,6 +15,7 @@ function OptionsCreator() {
         phase: "",
         superintendent: "",
         jobNotes: "",
+        optionCoordinator: "",
         phone: "",
         foreman: "",
         date: "",
@@ -352,7 +353,6 @@ function OptionsCreator() {
 
     useEffect(() => {
         //console.log("Checking Error: " + isCheckingError)
-        console.log(listOfLots)
         if(isCheckingError)
             validate()
     }, [currentLotNum])

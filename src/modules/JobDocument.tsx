@@ -17,7 +17,7 @@ const JobDocument: React.FC<JobDocument> = ({JobDocumentDetails}) => {
             method: "GET",
         };
     
-        const response = await fetch(`http://localhost:3000/getJobDocument/${jobDocumentID}`, requestOptions)
+        const response = await fetch(import.meta.env.VITE_BACKEND_URL + `/getJobDocument/${jobDocumentID}`, requestOptions)
         if (!response.ok) {
             throw new Error(response.statusText);
         }
