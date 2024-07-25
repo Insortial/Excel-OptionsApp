@@ -1,5 +1,6 @@
 import LotTable from "./LotTable";
 import { useLocation, Link, useNavigate } from "react-router-dom";
+import InputSearch from "./InputSearch"
 import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL } from '../../../types/LotTableInterface.ts';
 import React, { useContext, useEffect, useState } from "react";
 import docxConverter from "../hooks/docxConverter.tsx";
@@ -75,7 +76,7 @@ function OptionsCreator() {
             body: raw,
         };
     
-        const response = await fetch("http://localhost:3000/isValidLotNumAndJobID", requestOptions)
+        const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/isValidLotNumAndJobID", requestOptions)
         if (!response.ok) {
             throw new Error(response.statusText);
         }
@@ -337,7 +338,7 @@ function OptionsCreator() {
             body: JSON.stringify(jobDetailsSQL),
         };
     
-        const response = await fetch("http://localhost:3000/lotDetails", requestOptions)
+        const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/lotDetails", requestOptions)
         if (!response.ok) {
             throw new Error(response.statusText);
         }
@@ -391,18 +392,8 @@ function OptionsCreator() {
             setCurrentLot(requestedJobDetails.listOfLots[0])
             setCurrentLotNum(requestedJobDetails.listOfLots[0].lot)
         } else if (listOfLots.length == 0 && requestedJobDetails != null) {
-            let newJobDetails = {...requestedJobDetails,
-                kitchen: "",
-                master: "",
-                bath2: "",
-                bath3: "",
-                bath4: "",
-                powder: "",
-                laundry: "",
-                footerNotes: ""
-            }
             switchModal(true, "lotID")
-            setJobDetails(newJobDetails)
+            setJobDetails(requestedJobDetails)
         }
     }, [])
 
@@ -415,6 +406,7 @@ function OptionsCreator() {
                         <h2>Enter Lot Number:</h2>
                         <div className="modalRow">
                             <input ref={lotNumRef}></input>
+                            {/* <InputSearch inputName={"lot"} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch> */}
                             <button onClick={addLotTable}>Submit</button>
                         </div>
                     </>) : modalType === "prod" 
@@ -439,6 +431,7 @@ function OptionsCreator() {
             </div>
             <div id="optionsNav">
                 <h1>Options Creator</h1>
+                <h2>PRODUCTION APPROVED</h2>
                 <h2>Current Lot: {currentLotNum}</h2>
                 <h2>Date: {jobDetails.date}</h2>
                 <section className="optionsList" id="lotList">
