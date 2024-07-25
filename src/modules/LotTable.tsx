@@ -6,12 +6,12 @@ import ControlledTextArea from "./ControlledTextArea"
 type LotTable = {
     lotTableDetails: LotTableInterface;
     jobDetails: JobDetails;
-    setJobDetails: (jobDetails: JobDetails) => void;
+    onJobDetailsChange: (value: string | boolean, key: string) => void;
     saveLotTable: (lotTableDetails: LotTableInterface, lotNumber: string) => void;
     setCurrentLotNum: (lotNum: string) => void; 
 }
 
-const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable, setJobDetails, setCurrentLotNum}) => {
+const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable, onJobDetailsChange, setCurrentLotNum}) => {
     let throughoutLot:PartOfLot = {
         roomID: "Throughout",
         material: "",
@@ -24,7 +24,9 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
         drawerGuides: "",
         doorHinges: "",
         pulls: "",
-        handleType: "pull"
+        handleType: "pull",
+        details: "",
+        appliances: ""
     }
 
     let initialLotTableInterface:LotTableInterface = {
@@ -73,14 +75,6 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
         saveLotTable(updatedTable, formState.lot)
     }
 
-    const onJobDetailsChange = (value: string | boolean, key: string) => {
-        let updatedTable = {
-            ...jobDetails,
-            [key]: value
-        }
-        setJobDetails(updatedTable)
-    }
-
     const addOptionRow = () => {
         let lotSection:PartOfLot = {
             roomID: "",
@@ -95,6 +89,8 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
             fingerpull: "",
             knobs: "",
             pulls: "",
+            details: "",
+            appliances: ""
         }
 
         let newPartsOfLot = [...formState.partsOfLot, lotSection]
@@ -179,7 +175,7 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
                     </tr>
                     <tr>
                         <th>Light Rail</th>
-                        <td><InputSearch inputName={"lightRail"} formState={formState} onFormChange={onFormChange} isDropDown={false}></InputSearch></td>
+                        <td><InputSearch inputName={"lightRail"} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Base Shoe</th>
@@ -307,7 +303,7 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
                         <th>Notes</th>
                     </tr>
                     <tr>
-                        <td><InputSearch inputName={"lotFooter"} formState={formState} onFormChange={onFormChange} isDropDown={false}/></td>
+                        <td><InputSearch inputName={"lot"} formState={formState} onFormChange={onFormChange} isDropDown={false}/></td>
                         <td><InputSearch inputName={"kitchen"} formState={formState} onFormChange={onFormChange} isDropDown={true}/></td>
                         <td><InputSearch inputName={"master"} formState={formState} onFormChange={onFormChange} isDropDown={true}/></td>
                         <td><InputSearch inputName={"bath2"} formState={formState} onFormChange={onFormChange} isDropDown={true}/></td>

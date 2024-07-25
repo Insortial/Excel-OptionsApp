@@ -80,6 +80,8 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
             }
         } else if (["kitchen", "master", "bath2", "bath3", "bath4", "powder", "laundry"].includes(propertyName)) {
             listOfOptions = ['N/A', '5/8" Rough Top', 'Build Up', 'Pedestal']
+        } else if (propertyName === "lightRail") {
+            listOfOptions = ["Drywall Back w/ Metal Bracket Supports", "Finished Backs", "Posts", "Corbels"]
         }
         return listOfOptions
     }

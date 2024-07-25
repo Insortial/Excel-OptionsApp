@@ -17,7 +17,6 @@ function JobCreator({}) {
     foreman: "",
     jobID: 0,
     date: "",
-    lotFooter: "",
     kitchen: "",
     master: "",
     bath2: "",
@@ -52,6 +51,7 @@ function JobCreator({}) {
             builder: result.customerName,
             project: result.projectName,
             phase: result.phase,
+            foreman: result.foreman
           }));
         } else {
           setValidJobID(false)
@@ -157,6 +157,7 @@ function JobCreator({}) {
                 <h4>Customer Name: {jobDetails.builder}</h4>
                 <h4>Project Name: {jobDetails.project}</h4>
                 <h4>Phase: {jobDetails.phase}</h4>
+                <h4>Area Foreman: {jobDetails.foreman}</h4>
               </>
             ): (<h3 style={{color: "red"}}>Invalid Job ID</h3>)}
           </div>

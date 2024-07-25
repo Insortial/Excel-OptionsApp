@@ -241,6 +241,30 @@ input {
     box-sizing: border-box;
 }
 
+.modalCheckboxRow {
+    height: 60px;
+    margin: auto 0;
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    align-self: center;
+}
+
+.modalCheckboxRow > label {
+    font-size: 2em;
+    margin-right: 10px;
+}
+.modalCheckboxRow > button {
+    margin-left: auto;
+    width: 30%;
+}
+
+.modalCheckboxRow > input[type|="checkbox"] {
+    height: 80%;
+    width: 60px;
+    margin-right: 20px;
+}
+
 input:focus {
     border: 1px solid #ffb74a !important;
 }

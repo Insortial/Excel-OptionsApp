@@ -325,7 +325,7 @@ export default function docxConverter(prodSchedule:ProductionSchedule, lotCollec
                         new TableCell({
                             verticalAlign: VerticalAlign.CENTER,
                             children: [new Paragraph({
-                                children: readNewLine(selectedLot.jobNotes),
+                                children: readNewLine(prodSchedule.jobNotes),
                                 alignment: AlignmentType.CENTER
                             })],
                         })
@@ -464,132 +464,134 @@ export default function docxConverter(prodSchedule:ProductionSchedule, lotCollec
         })
     }
 
-    const lotFooterTable = new Table({
-        rows: [
-            new TableRow({
-                children: [
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: "Lot",
-                            alignment: AlignmentType.CENTER
-                        })],
-                        verticalAlign: VerticalAlign.CENTER,
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: "Kitchen",
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: "Master",
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: "Bath 2",
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: "Bath 3",
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: "Bath 4",
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: "Powder",
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: "Laundry",
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: "Notes",
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                ],
-            }),
-            new TableRow({
-                children: [
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: prodSchedule.lotFooter,
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: prodSchedule.kitchen,
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: prodSchedule.master,
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: prodSchedule.bath2,
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: prodSchedule.bath3,
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: prodSchedule.bath4,
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: prodSchedule.powder,
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: prodSchedule.laundry,
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            children: readNewLine(prodSchedule.footerNotes),
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                ],
-            }),
-        ],
-        alignment: AlignmentType.CENTER,
-        width: {
-            size: 10000,
-            type: WidthType.DXA
-        }
-    })
+    const createlotFooterTable = (selectedLot:LotTableInterface) => {
+        return new Table({
+            rows: [
+                new TableRow({
+                    children: [
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: "Lot",
+                                alignment: AlignmentType.CENTER
+                            })],
+                            verticalAlign: VerticalAlign.CENTER,
+                        }),
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: "Kitchen",
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: "Master",
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: "Bath 2",
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: "Bath 3",
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: "Bath 4",
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: "Powder",
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: "Laundry",
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: "Notes",
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                    ],
+                }),
+                new TableRow({
+                    children: [
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: selectedLot.lot,
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: selectedLot.kitchen,
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: selectedLot.master,
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: selectedLot.bath2,
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: selectedLot.bath3,
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: selectedLot.bath4,
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: selectedLot.powder,
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                        new TableCell({
+                            children: [new Paragraph({
+                                text: selectedLot.laundry,
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                        new TableCell({
+                            children: [new Paragraph({
+                                children: readNewLine(selectedLot.footerNotes),
+                                alignment: AlignmentType.CENTER
+                            })],
+                        }),
+                    ],
+                }),
+            ],
+            alignment: AlignmentType.CENTER,
+            width: {
+                size: 10000,
+                type: WidthType.DXA
+            }
+        })
+    }
 
 
     const pageTitle = new Paragraph({
@@ -628,7 +630,7 @@ export default function docxConverter(prodSchedule:ProductionSchedule, lotCollec
             newArray.push(lineBreak)
             newArray.push(createOptionsInfoTable(lotCollection[lotIndex]))
             newArray.push(lineBreak)
-            newArray.push(lotFooterTable)
+            newArray.push(createlotFooterTable(lotCollection[lotIndex]))
             if(lotIndex < lotCollection.length - 1)
                 newArray.push(pageBreak)
         }

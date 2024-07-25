@@ -9,7 +9,6 @@ CREATE TABLE [EXCELP&D].[dbo].[LotDocument] (
 	baseShoe varchar(50),
 	recyclingBins varchar(50),
 	lotOptionsValue float,
-	lotFooter varchar(50),
 	kitchen varchar(50),
 	masterBath varchar(50),
 	bath2 varchar(50),

@@ -41,12 +41,12 @@ function OptionsCreator() {
 
     const lotNumRef = React.useRef<HTMLInputElement>(null);
     const { getFormIDs, errors, setErrors, setIsCheckingError, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
-    //const [errors, setErrors] = useState<ErrorObject>({})
     const [listOfLots, setListOfLots] = useState<LotTableInterface[]>([])
     const [jobDetails, setJobDetails] = useState<JobDetails>(initialJobDetails)
     const [currentLotNum, setCurrentLotNum] = useState<string>("")
     const [currentLot, setCurrentLot] = useState<LotTableInterface>()
-    const [needLotID, setNeedLotID] = useState<boolean>(false)
+    const [modal, setModal] = useState<boolean>(false)
+    const [modalType, setModalType] = useState<string>("lotID")
     const [isLotCopy, setIsLotCopy] = useState<boolean>(false)
     const location = useLocation();
     const navigate = useNavigate();
@@ -87,7 +87,7 @@ function OptionsCreator() {
         const requiredFieldsJob = ["jobID"];
         const requiredFieldsLotTable = ["boxStyle", "interiors", "upperHeight", 
                                 "islands", "crown", "lightRail", "baseShoe", 
-                                "recyclingBins", "lotOptionsValue", "lotFooter", "kitchen",
+                                "recyclingBins", "lotOptionsValue", "kitchen",
                                     "master","bath2","bath3",
                                     "bath4","powder","laundry"]
         const requiredFieldsLotPart = ["drawerFronts", "drawerBoxes", "drawerGuides", 
@@ -159,6 +159,11 @@ function OptionsCreator() {
         return Object.keys(newErrors).length === 0 && !listOfLotsHasError;
     }
 
+    const switchModal = (value:boolean, type:string) => {
+        setModal(value)
+        setModalType(type)
+    }
+
     const createLotTable = (lotNum: string): LotTableInterface => {
         let lotDetails:LotTableInterface = {
             lot: lotNum,
@@ -174,7 +179,6 @@ function OptionsCreator() {
             hasError: false,
             plan: "",
             partsOfLot: [throughoutLot],
-            lotFooter: "",
             kitchen: "",
             master: "",
             bath2: "",
@@ -186,6 +190,14 @@ function OptionsCreator() {
         }
 
         return lotDetails;
+    }
+
+    const onJobDetailsChange = (value: string | boolean, key: string) => {
+        let updatedTable = {
+            ...jobDetails,
+            [key]: value
+        }
+        setJobDetails(updatedTable)
     }
 
     const saveLotTable = (lotTableData: LotTableInterface, lotNumber: string) => {
@@ -227,16 +239,16 @@ function OptionsCreator() {
 
             setCurrentLotNum(lotNumRef.current.value)
             setCurrentLot(table)
-            setNeedLotID(false)
+            switchModal(false, "lotID")
         }
     }
 
     const createNewLot = () => {
-        setNeedLotID(true)
+        switchModal(true, "lotID")
     }
 
     const createLotCopy = () => {
-        setNeedLotID(true)
+        switchModal(true, "lotID")
         setIsLotCopy(true)
     }
 
@@ -284,14 +296,12 @@ function OptionsCreator() {
                 jobNotes: lotTable.jobNotes,
                 partsOfLot: listOfSQLPartsOfLot,
                 //Start of LotDocument properties
-                lotID: "", //What is this for
                 upperHeight: lotTable.upperHeight,
                 islands: lotTable.islands,
                 crown: lotTable.crown,
                 lightRail: lotTable.lightRail,
                 baseShoe: lotTable.baseShoe,
                 recyclingBins: lotTable.recyclingBins,
-                lotFooter: lotTable.lotFooter,
                 kitchen: lotTable.kitchen,
                 masterBath: lotTable.master,
                 bath2: lotTable.bath2,
@@ -303,16 +313,20 @@ function OptionsCreator() {
             }
             listOfSQLLots.push(lotTableSQL)
         }
-
+        console.log(jobDetails.optionCoordinator)
         const jobDetailsSQL:JobDetailsSQL = {
             jobID: jobDetails.jobID,
             doorBuyOut: false,
             drawerBoxBuyOut: false,
             hardwareComments: "",
             jobNotes: jobDetails.jobNotes,
+            optionCoordinator: jobDetails.optionCoordinator,
             lots: listOfSQLLots,
             date: jobDetails.date,
-            prodReady: false
+            foreman: jobDetails.foreman,
+            superintendent: jobDetails.superintendent,
+            phone: jobDetails.phone,
+            prodReady: jobDetails.prodReady
         }
 
         console.log(jobDetailsSQL)
@@ -343,12 +357,17 @@ function OptionsCreator() {
         console.log(listOfLots)
         let lotTablesAreValid = await validate()
         if(lotTablesAreValid) {
-            postJobDetailsSql()
+            setModalType("submit")
+            await postJobDetailsSql()
+            console.log("Returned")
+            turnOffModal()
+        } else {
+            turnOffModal()
         }
     }
 
     const turnOffModal = () => {
-        setNeedLotID(false)
+        switchModal(false, "lotID")
     }
 
     useEffect(() => {
@@ -373,7 +392,6 @@ function OptionsCreator() {
             setCurrentLotNum(requestedJobDetails.listOfLots[0].lot)
         } else if (listOfLots.length == 0 && requestedJobDetails != null) {
             let newJobDetails = {...requestedJobDetails,
-                lotFooter: "",
                 kitchen: "",
                 master: "",
                 bath2: "",
@@ -383,20 +401,39 @@ function OptionsCreator() {
                 laundry: "",
                 footerNotes: ""
             }
-            setNeedLotID(true)
+            switchModal(true, "lotID")
             setJobDetails(newJobDetails)
         }
     }, [])
 
     return (
         <>
-            <div className='modalScreen' style={{display: needLotID ? "flex": "none"}}>
+            <div className='modalScreen' style={{display: modal ? "flex": "none"}}>
                 <div className='modal'>
-                    <h2>Enter Lot Number:</h2>
-                    <div className="modalRow">
-                        <input ref={lotNumRef}></input>
-                        <button onClick={addLotTable}>Submit</button>
-                    </div>
+                    {modalType === "lotID" ? 
+                    (<>
+                        <h2>Enter Lot Number:</h2>
+                        <div className="modalRow">
+                            <input ref={lotNumRef}></input>
+                            <button onClick={addLotTable}>Submit</button>
+                        </div>
+                    </>) : modalType === "prod" 
+                    ? (
+                        <>
+                            <h2>Is This Production Schedule Final?</h2>
+                            <div className="modalCheckboxRow">
+                                <label>Yes:</label>
+                                <input type="checkbox" checked={jobDetails.prodReady} onChange={() => onJobDetailsChange(true, "prodReady")}></input>
+                                <label>No:</label>
+                                <input type="checkbox" checked={!jobDetails.prodReady} onChange={() => onJobDetailsChange(false, "prodReady")}></input>
+                                <button onClick={() => saveLotTablesSQL()}>Submit</button>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <h1>Waiting for Result</h1>
+                        </>
+                    )}
                     <span className="exitButton" onClick={() => turnOffModal()}></span>
                 </div>
             </div>
@@ -419,7 +456,7 @@ function OptionsCreator() {
                     <button onClick={() => createNewLot()}>New Lot Table</button>
                     <button onClick={() => createLotCopy()}>Copy Details</button>
                     <button onClick={() => testCreateDocument()}>Create Document</button>
-                    <button onClick={() => saveLotTablesSQL()}>Save to Access DB</button>
+                    <button onClick={() => switchModal(true, "prod")}>Save to Database</button>
                 </section>
                 <section className="optionsList" id="errorList" style={{display: isCheckingError ? "flex" :"none"}}>
                     <h3>Errors</h3>
@@ -435,7 +472,7 @@ function OptionsCreator() {
                 <Link to="/jobMenu" style={{marginTop: "auto"}}>Back to Job Menu</Link>
             </div>
             <div id="optionsEditor">
-                {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} setJobDetails={setJobDetails} jobDetails={jobDetails} 
+                {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} onJobDetailsChange={onJobDetailsChange} jobDetails={jobDetails} 
                                                                             lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable}/>)}
             </div>
         </>
