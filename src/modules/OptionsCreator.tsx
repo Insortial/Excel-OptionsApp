@@ -1,6 +1,5 @@
 import LotTable from "./LotTable";
 import { useLocation, Link, useNavigate } from "react-router-dom";
-import InputSearch from "./InputSearch"
 import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL } from '../../../types/LotTableInterface.ts';
 import React, { useContext, useEffect, useState } from "react";
 import docxConverter from "../hooks/docxConverter.tsx";
@@ -8,7 +7,12 @@ import { FormOptionsContext } from "./OptionsTemplateContext.tsx";
 import { FormOptionsContextType } from '../../../types/FormOptions.ts'
 import InputError from "./InputError.tsx";
 
-
+type lotJobResponse = {
+    isJobIDValid: boolean,
+    invalidLots: string[],
+    validLots: string[]
+  }
+  
 function OptionsCreator() {
     const initialJobDetails: JobDetails = {
         builder: "",
@@ -21,6 +25,7 @@ function OptionsCreator() {
         foreman: "",
         date: "",
         jobID: -1,
+        prodReady: false
     }
 
     const throughoutLot:PartOfLot = {
@@ -39,7 +44,7 @@ function OptionsCreator() {
         details: "",
         appliances: ""
     }
-
+    
     const lotNumRef = React.useRef<HTMLInputElement>(null);
     const { getFormIDs, errors, setErrors, setIsCheckingError, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const [listOfLots, setListOfLots] = useState<LotTableInterface[]>([])
@@ -64,7 +69,7 @@ function OptionsCreator() {
         setListOfLots(updatedListOfLots.sort((a, b) => parseInt(a.lot ?? "0") - parseInt(b.lot ?? "0")))
     }
 
-    const checkValidLotNumJobID = async(lotNum:string[], jobID:number):Promise<any> => {
+    const checkValidLotNumJobID = async(lotNum:string[], jobID:number):Promise<lotJobResponse> => {
         const raw = JSON.stringify({
             "lotNumber": lotNum,
             "jobID": jobID
@@ -104,10 +109,10 @@ function OptionsCreator() {
                 newErrors[key] = "Field is required, please fill out"
         })
 
-        let lotIDArray = listOfLots.map(lotTable => lotTable.lot)
-        let lotJobValidation = await checkValidLotNumJobID(lotIDArray, jobDetails.jobID)
-        let invalidLotArray = lotJobValidation.invalidLots
-        console.log(lotJobValidation)
+        const lotIDArray = listOfLots.map(lotTable => lotTable.lot)
+        const lotJobValidation = await checkValidLotNumJobID(lotIDArray, jobDetails.jobID)
+        const invalidLotArray = lotJobValidation.invalidLots
+    
         if(!lotJobValidation.isJobIDValid)
             newErrors["jobID"] = "Job ID is not valid"
 
@@ -115,7 +120,6 @@ function OptionsCreator() {
         part has input error, only records it if it is current lot */
         listOfLots.map(async (lot: LotTableInterface) => {
             if(invalidLotArray.includes(lot.lot)) {
-                console.log("REGISTERING INVALID LOT")
                 listOfLotsHasError = true
                 lot.hasError = true
                 if(lot.lot === currentLotNum) {
@@ -166,7 +170,8 @@ function OptionsCreator() {
     }
 
     const createLotTable = (lotNum: string): LotTableInterface => {
-        let lotDetails:LotTableInterface = {
+        const lotDetails:LotTableInterface = {
+            jobID: jobDetails.jobID,
             lot: lotNum,
             boxStyle: "",
             interiors: "",
@@ -194,7 +199,7 @@ function OptionsCreator() {
     }
 
     const onJobDetailsChange = (value: string | boolean, key: string) => {
-        let updatedTable = {
+        const updatedTable = {
             ...jobDetails,
             [key]: value
         }
@@ -202,7 +207,7 @@ function OptionsCreator() {
     }
 
     const saveLotTable = (lotTableData: LotTableInterface, lotNumber: string) => {
-        let filteredTableList = listOfLots.filter((lotDetails:LotTableInterface) => lotDetails.lot !== lotNumber)
+        const filteredTableList = listOfLots.filter((lotDetails:LotTableInterface) => lotDetails.lot !== lotNumber)
         sortListOfLots(filteredTableList, lotTableData)
     }
     
@@ -211,7 +216,7 @@ function OptionsCreator() {
     }
 
     const deleteLotTable = (lotNum: string) => {
-        let filteredTableList = listOfLots.filter((lotDetails:LotTableInterface) => lotDetails.lot !== lotNum)
+        const filteredTableList = listOfLots.filter((lotDetails:LotTableInterface) => lotDetails.lot !== lotNum)
         sortListOfLots(filteredTableList)
         setCurrentLot(filteredTableList[0])
         setCurrentLotNum(filteredTableList[0].lot ?? "")
@@ -219,7 +224,7 @@ function OptionsCreator() {
 
     const changeLotTable = (lotNum: string) => {
         setCurrentLotNum(lotNum)
-        let foundLot = listOfLots.find((lotDetails:LotTableInterface) => {return lotDetails.lot === lotNum})
+        const foundLot = listOfLots.find((lotDetails:LotTableInterface) => {return lotDetails.lot === lotNum})
         setCurrentLot(foundLot)
 
     }
@@ -254,11 +259,11 @@ function OptionsCreator() {
     }
 
     const postJobDetailsSql = async () => {
-        let listOfSQLLots:LotTableSQL[] = []
-        for(let lotTable of listOfLots) {
-            let listOfSQLPartsOfLot:PartOfLotSQL[] = []
-            for(let lotSection of lotTable.partsOfLot) {
-                let partOfLot:PartOfLotSQL = {
+        const listOfSQLLots:LotTableSQL[] = []
+        for(const lotTable of listOfLots) {
+            const listOfSQLPartsOfLot:PartOfLotSQL[] = []
+            for(const lotSection of lotTable.partsOfLot) {
+                const partOfLot:PartOfLotSQL = {
                     roomID: lotSection.roomID,
                     material: getFormIDs(lotSection.material, "material"), 
                     glassDoors: "NO",
@@ -286,15 +291,15 @@ function OptionsCreator() {
                     handleType: lotSection.handleType,
                     details: lotSection.details,
                     appliances: lotSection.appliances,
+                    prodReady: jobDetails.prodReady
                 }
                 listOfSQLPartsOfLot.push(partOfLot)
             }
-            let lotTableSQL:LotTableSQL = {
+            const lotTableSQL:LotTableSQL = {
                 lot: lotTable.lot,
                 boxStyle: getFormIDs(lotTable.boxStyle, "boxStyle"),
                 interiors: getFormIDs(lotTable.interiors, "interiors"),
                 lotOptionsValue: lotTable.lotOptionsValue,
-                jobNotes: lotTable.jobNotes,
                 partsOfLot: listOfSQLPartsOfLot,
                 //Start of LotDocument properties
                 upperHeight: lotTable.upperHeight,
@@ -324,10 +329,8 @@ function OptionsCreator() {
             optionCoordinator: jobDetails.optionCoordinator,
             lots: listOfSQLLots,
             date: jobDetails.date,
-            foreman: jobDetails.foreman,
             superintendent: jobDetails.superintendent,
             phone: jobDetails.phone,
-            prodReady: jobDetails.prodReady
         }
 
         console.log(jobDetailsSQL)
@@ -343,10 +346,11 @@ function OptionsCreator() {
             throw new Error(response.statusText);
         }
         const data = await response.json()
+        return data
     }
 
     const testCreateDocument = async () => {
-        let lotTablesAreValid = await validate()
+        const lotTablesAreValid = await validate()
         if(lotTablesAreValid) {
             console.log(lotTablesAreValid)
             docxConverter(jobDetails, listOfLots)
@@ -356,11 +360,9 @@ function OptionsCreator() {
     const saveLotTablesSQL = async () => {
         console.log(jobDetails)
         console.log(listOfLots)
-        let lotTablesAreValid = await validate()
+        const lotTablesAreValid = await validate()
         if(lotTablesAreValid) {
-            setModalType("submit")
             await postJobDetailsSql()
-            console.log("Returned")
             turnOffModal()
         } else {
             turnOffModal()
@@ -383,10 +385,11 @@ function OptionsCreator() {
 
 
     useEffect(() => {
+        setIsCheckingError(false)
         if (requestedJobDetails == null)
             navigate("/")
 
-        if(requestedJobDetails.hasOwnProperty('jobDetails')) {
+        if(Object.prototype.hasOwnProperty.call(requestedJobDetails, 'jobDetails')) {
             setJobDetails(requestedJobDetails.jobDetails)
             setListOfLots(requestedJobDetails.listOfLots)
             setCurrentLot(requestedJobDetails.listOfLots[0])
@@ -431,7 +434,7 @@ function OptionsCreator() {
             </div>
             <div id="optionsNav">
                 <h1>Options Creator</h1>
-                <h2>PRODUCTION APPROVED</h2>
+                <h2 style={{display: jobDetails.prodReady ? "block" : "none"}}>PRODUCTION APPROVED</h2>
                 <h2>Current Lot: {currentLotNum}</h2>
                 <h2>Date: {jobDetails.date}</h2>
                 <section className="optionsList" id="lotList">

@@ -1,9 +1,9 @@
 import { Document, Packer, Paragraph, TextRun, PageBreak, HeadingLevel, AlignmentType, Table, TableRow, TableCell, WidthType, VerticalAlign } from "docx";
-import { LotTableInterface, PartOfLot, ProductionSchedule } from "../../../types/LotTableInterface";
+import { LotTableInterface, PartOfLot, JobDetails } from "../../../types/LotTableInterface";
 import { saveAs } from "file-saver";
 
 
-export default function docxConverter(prodSchedule:ProductionSchedule, lotCollection: LotTableInterface[]) {
+export default function docxConverter(prodSchedule:JobDetails, lotCollection: LotTableInterface[]) {
     console.log(prodSchedule)
     console.log(lotCollection)
     
@@ -342,7 +342,7 @@ export default function docxConverter(prodSchedule:ProductionSchedule, lotCollec
 
     const outputOptionCellInfo = (partOfLot:PartOfLot) => {
         let optionCellInfo = []
-        let hardwareLine = [new TextRun({
+        const hardwareLine = [new TextRun({
             text: `Doors: ${partOfLot.doors} ${partOfLot.fingerpull}`
         }),
         new TextRun({
@@ -360,8 +360,8 @@ export default function docxConverter(prodSchedule:ProductionSchedule, lotCollec
     }
 
     const generateOptionsSectionRows = (selectedLot:LotTableInterface) => {
-        let optionSectionRows = []
-        for(let lotSection of selectedLot.partsOfLot) {
+        const optionSectionRows = []
+        for(const lotSection of selectedLot.partsOfLot) {
             optionSectionRows.push(new TableRow({
                 children: [
                     new TableCell({
@@ -621,7 +621,7 @@ export default function docxConverter(prodSchedule:ProductionSchedule, lotCollec
     })
 
     const iterateOverTables = () => {
-        let newArray = []
+        const newArray = []
         for (let lotIndex = 0; lotIndex < lotCollection.length; lotIndex++) {
             newArray.push(pageTitle)
             newArray.push(jobDetailsTable)

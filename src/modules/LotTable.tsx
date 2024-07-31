@@ -12,7 +12,7 @@ type LotTable = {
 }
 
 const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable, onJobDetailsChange, setCurrentLotNum}) => {
-    let throughoutLot:PartOfLot = {
+    const throughoutLot:PartOfLot = {
         roomID: "Throughout",
         material: "",
         color: "",
@@ -29,7 +29,8 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
         appliances: ""
     }
 
-    let initialLotTableInterface:LotTableInterface = {
+    const initialLotTableInterface:LotTableInterface = {
+        jobID: jobDetails.jobID,
         boxStyle: "",
         interiors: "",
         upperHeight: "",
@@ -38,19 +39,26 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
         lightRail: "",
         baseShoe: "",
         recyclingBins: "",
-        jobNotes: "",
         lot: "",
         plan: "",
         lotOptionsValue: 0,
         hasError: false,
-        partsOfLot: [throughoutLot],
+        kitchen: "",
+        master: "",
+        bath2: "",
+        bath3: "",
+        bath4: "",
+        powder: "",
+        laundry: "",
+        footerNotes: "",
+        partsOfLot: [throughoutLot]
     }
 
     const[formState, setFormState] = useState<LotTableInterface>(initialLotTableInterface)
 
     const deleteLotSection = (lotSectionIndex:number) => {
         console.log(lotSectionIndex)
-        let updatedTable:LotTableInterface = {...formState}
+        const updatedTable:LotTableInterface = {...formState}
         updatedTable.partsOfLot.splice(lotSectionIndex, 1)
         setFormState(updatedTable)
         saveLotTable(updatedTable, formState.lot)
@@ -76,7 +84,7 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
     }
 
     const addOptionRow = () => {
-        let lotSection:PartOfLot = {
+        const lotSection:PartOfLot = {
             roomID: "",
             handleType: "pull",
             drawerFronts: formState.partsOfLot[0].drawerFronts ?? "",
@@ -93,7 +101,7 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
             appliances: ""
         }
 
-        let newPartsOfLot = [...formState.partsOfLot, lotSection]
+        const newPartsOfLot = [...formState.partsOfLot, lotSection]
 
         setFormState({...formState,
             partsOfLot: newPartsOfLot
@@ -210,7 +218,7 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
                         {/* <th>Notes:</th> */}
                     </tr>
                     {formState.partsOfLot?.map((lotSection:PartOfLot, currentRow:number) => {
-                        let idNumber = currentRow > 0 ? currentRow : ""
+                        const idNumber = currentRow > 0 ? currentRow : ""
                         return <tr key={currentRow}>
                                     <td>
                                         {currentRow == 0 &&

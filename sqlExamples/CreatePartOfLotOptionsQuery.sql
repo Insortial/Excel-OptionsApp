@@ -1,4 +1,4 @@
-CREATE TABLE [EXCELP&D].[dbo].[PartOfLotDocument] (
+CREATE TABLE [EXCELP&D].[dbo].[PartOfLotOptions] (
 	lotDocumentID int NOT NULL,
 	lotID int NOT NULL,
 	roomID nvarchar(255) NOT NULL,

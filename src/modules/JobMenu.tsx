@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import JobDocument from './JobDocument.tsx';
 import { Link } from 'react-router-dom';
 import { JobDocumentInterface } from '../../../types/LotTableInterface.ts';
+import { FormOptionsContext } from './OptionsTemplateContext.tsx';
+import { FormOptionsContextType } from '../../../types/FormOptions.ts';
 
-type Props = {}
 
-const JobMenu = (props: Props) => {
+const JobMenu = () => {
     const [jobDocuments, setJobDocuments] = useState<JobDocumentInterface[]>([])
+    const { setIsCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
+    
     useEffect(() => {
-        fetch(import.meta.env.VITE_BACKEND_URL + "/getListOfJobDocuments")
+        setIsCheckingError(false)
+        fetch(import.meta.env.VITE_BACKEND_URL + "/getListOfJobOptions")
             .then((response) => response.text())
             .then((result) => {
-                let listOfJobDocuments:JobDocumentInterface[] = JSON.parse(result)
+                const listOfJobDocuments:JobDocumentInterface[] = JSON.parse(result)
                 setJobDocuments(listOfJobDocuments)
             })
             .catch((error) => console.error(error));

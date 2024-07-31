@@ -1,4 +1,4 @@
-CREATE TABLE [EXCELP&D].[dbo].[LotDocument] (
+CREATE TABLE [EXCELP&D].[dbo].[LotOptions] (
 	lotDocumentID int IDENTITY(1,1) NOT NULL UNIQUE,
 	jobDocumentID int NOT NULL,
 	lotID int NOT NULL,

@@ -7,9 +7,8 @@ type JobDocument = {
 }
 
 const JobDocument: React.FC<JobDocument> = ({JobDocumentDetails}) => {
-    const { customerName, jobDocumentID, jobID, optionCoordinator, phase, projectName } = JobDocumentDetails
+    const { customerName, jobOptionID, jobID, optionCoordinator, phase, projectName } = JobDocumentDetails
     const navigate = useNavigate();
-    const myHeaders = new Headers();
 
     
     const getJobDocumentDetails = async () => {
@@ -17,7 +16,7 @@ const JobDocument: React.FC<JobDocument> = ({JobDocumentDetails}) => {
             method: "GET",
         };
     
-        const response = await fetch(import.meta.env.VITE_BACKEND_URL + `/getJobDocument/${jobDocumentID}`, requestOptions)
+        const response = await fetch(import.meta.env.VITE_BACKEND_URL + `/getJobOption/${jobOptionID}`, requestOptions)
         if (!response.ok) {
             throw new Error(response.statusText);
         }
@@ -25,13 +24,13 @@ const JobDocument: React.FC<JobDocument> = ({JobDocumentDetails}) => {
         return data
     }
 
-    const goToLotCreator = async (e: React.FormEvent<HTMLFormElement>) => {
+    const goToLotCreator = async () => {
         const jobDocumentDetails = await getJobDocumentDetails()
         navigate("/creatingOptions/", {state: jobDocumentDetails})
     }
 
     return (
-        <div className='jobDocument' onClick={() => goToLotCreator()}>
+        <div className='jobDocument' onClick={goToLotCreator}>
             <header>{customerName} - {projectName}<br />Job ID: {jobID}</header>
             <div className='jobDocumentBody'>
                 <h4>Phase: {phase}</h4>

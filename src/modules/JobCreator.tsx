@@ -1,46 +1,54 @@
-import { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import '../App.css'
 import { useNavigate } from "react-router-dom";
 import InputSearch from '../modules/InputSearch.tsx';
 import { ErrorObject, JobDetails } from "../../../types/LotTableInterface";
 import InputError from './InputError.tsx';
+import { FormOptionsContext } from './OptionsTemplateContext.tsx';
+import { FormOptionsContextType } from '../../../types/FormOptions.ts';
 
-function JobCreator({}) {
-  let defaultJobDetails:JobDetails = {
+type lotJobResponse = {
+  isJobIDValid: boolean,
+  invalidLots: string[],
+  validLots: string[]
+}
+
+function JobCreator() {
+  const defaultJobDetails:JobDetails = {
     builder: "",
     project: "",
-    phase: "",
     superintendent: "",
     optionCoordinator: "",
     jobNotes: "",
     phone: "",
     foreman: "",
+    phase: "",
     jobID: 0,
     date: "",
-    kitchen: "",
-    master: "",
-    bath2: "",
-    bath3: "",
-    bath4: "",
-    powder: "",
-    laundry: "",
-    footerNotes: ""
+    prodReady: false
   }
 
   const [jobDetails, setJobDetails] = useState<JobDetails>(defaultJobDetails);
   const [validJobID, setValidJobID] = useState<boolean>(false)
   const [errors, setErrors] = useState<ErrorObject>({})
+  const { setIsCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
   const navigate = useNavigate();
 
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
   useEffect(() => {
-    const requestOptions = {
+    setIsCheckingError(false)
+  }, [])
+  
+
+  useEffect(() => {
+    const requestOptions: object = {
       method: "GET",
       redirect: "follow"
     };
-    if (jobDetails.jobID.length > 0) {
+
+    if (String(jobDetails.jobID).length > 0) {
       fetch(import.meta.env.VITE_BACKEND_URL + `/getJobDetails/${jobDetails.jobID}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -67,7 +75,7 @@ function JobCreator({}) {
     }));
   }
 
-  const checkValidLotNumJobID = async(lotNum:string[], jobID:number):Promise<any> => {
+  const checkValidLotNumJobID = async(lotNum:string[], jobID:number):Promise<lotJobResponse> => {
     const raw = JSON.stringify({
         "lotNumber": lotNum,
         "jobID": jobID
@@ -90,7 +98,7 @@ function JobCreator({}) {
   const validate = async () => {
     const requiredFields = ["builder", "project", "optionCoordinator", "phase", "date", "jobID"];
     const newErrors:ErrorObject = {};
-    let jobIDIsValid = (await checkValidLotNumJobID([], Number(jobDetails["jobID"]))).isJobIDValid
+    const jobIDIsValid = (await checkValidLotNumJobID([], Number(jobDetails["jobID"]))).isJobIDValid
     if(!jobIDIsValid)
       newErrors["jobID"] = "Invalid Job ID"
 
