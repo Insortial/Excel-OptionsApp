@@ -75,18 +75,32 @@ input {
     height: 40px;
 }
 
-#jobList {
+#jobMenuBody {
     align-self: center;
+    display: flex;
+    flex-direction: column;
     margin-top: 180px;
+    width: 100%;
+}
+
+.jobMenuSection {
+    align-self: center;
+    padding: 10px;
     width: 90%;
+    margin-bottom: 2em;
+}
+
+.jobList {
+    align-self: center;
+    width: 100%;
     box-sizing: border-box;
     display: grid;   
-    padding: 10px;
     grid-template-columns: 100%;
     grid-auto-rows: 200px;
     column-gap: 10px;
     row-gap: 50px;
 }
+
 
 .jobDocument {
     cursor: pointer;
@@ -243,7 +257,7 @@ input {
     color: white;
 }
 
-.modalRow > input {
+.modalRow > input, .modalRow > select {
     height: 100%;
     width: 75%;
     font-size: 2em;
@@ -686,7 +700,7 @@ h1 {
 }
 
 @media only screen and (min-width: 550px) {
-    #jobList {
+    .jobList {
         grid-template-columns: 33% 33% 33%;
     }
 }
@@ -706,9 +720,12 @@ h1 {
         font-size: 1em;
     }
 
-    #jobList {
-        align-self: center;
+    .jobMenuSection {
         width: 85%;
+    }
+
+    .jobList {
+        align-self: center;
         grid-template-columns: 25% 25% 25% 25%;
         grid-auto-rows: 200px;
         column-gap: 10px;
@@ -751,7 +768,7 @@ h1 {
         grid-template-columns: 100%;
     }
 
-    #jobList {
+    .jobMenuSection {
         width: 75%;
     }
 }

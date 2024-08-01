@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import JobDocument from './JobDocument.tsx';
 import { Link } from 'react-router-dom';
 import { JobDocumentInterface } from '../../../types/LotTableInterface.ts';
@@ -27,11 +27,26 @@ const JobMenu = () => {
                 <h1>Job Menu</h1>
                 <Link to="/creatingJob">Create New Job Document</Link>
             </header>
-            <section id="jobList">
-                {jobDocuments.map((jobDocument:JobDocumentInterface, index:number) => {
-                    return <JobDocument key={index} JobDocumentDetails={jobDocument}/>
-                })}
-            </section>
+            <div id="jobMenuBody">
+                <section className='jobMenuSection'>
+                    <h2>Production Ready Jobs</h2>
+                    <section className="jobList">
+                        {jobDocuments.map((jobDocument:JobDocumentInterface, index:number) => {
+                            if(jobDocument.prodReady)
+                            return <JobDocument key={index} JobDocumentDetails={jobDocument}/>
+                        })}
+                    </section>
+                </section>
+                <section className='jobMenuSection'>
+                    <h2>Draft Jobs</h2>
+                    <section className="jobList">
+                        {jobDocuments.map((jobDocument:JobDocumentInterface, index:number) => {
+                            if(!jobDocument.prodReady)
+                                return <JobDocument key={index} JobDocumentDetails={jobDocument}/>
+                        })}
+                    </section>
+                </section>
+            </div>
         </div>
     )
 }

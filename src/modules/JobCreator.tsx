@@ -21,6 +21,7 @@ function JobCreator() {
     optionCoordinator: "",
     jobNotes: "",
     phone: "",
+    lotNums: [],
     foreman: "",
     phase: "",
     jobID: 0,
@@ -59,7 +60,8 @@ function JobCreator() {
             builder: result.customerName,
             project: result.projectName,
             phase: result.phase,
-            foreman: result.foreman
+            foreman: result.foreman,
+            lotNums: result.lotNums
           }));
         } else {
           setValidJobID(false)

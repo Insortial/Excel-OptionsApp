@@ -24,6 +24,7 @@ function OptionsCreator() {
         phone: "",
         foreman: "",
         date: "",
+        lotNums: [],
         jobID: -1,
         prodReady: false
     }
@@ -98,7 +99,7 @@ function OptionsCreator() {
                                     "bath4","powder","laundry"]
         const requiredFieldsLotPart = ["drawerFronts", "drawerBoxes", "drawerGuides", 
                                         "doorHinges", "doors", "fingerpull",
-                                        "material", "color"]
+                                        "material", "color", "pulls", "roomID"]
         const newErrors:ErrorObject = {};
         let listOfLotsHasError = false
         
@@ -127,21 +128,19 @@ function OptionsCreator() {
                 }
             }
 
-            //Lot only has throughout part
-            if(lot.partsOfLot.length === 1) {
-                //Iterates through "Throughout" lot 
-                Object.keys(lot.partsOfLot[0]).forEach((key) => {
+            lot.partsOfLot.map((partOfLot:PartOfLot, index:number) => {
+                //Iterates through each Part of Lot
+                Object.keys(partOfLot).forEach((key) => {
                     //Checks if key has value, also checks if it is part of requiredFields list
-                    if(requiredFieldsLotPart.includes(key) && !lot.partsOfLot[0][key as keyof PartOfLot]) {
+                    if(requiredFieldsLotPart.includes(key) && !lot.partsOfLot[index][key as keyof PartOfLot]) {
                         listOfLotsHasError = true
                         lot.hasError = true
                         if(lot.lot === currentLotNum)
-                            newErrors[key] = "Field is required, please fill out"
+                            newErrors[key] = `Field is required, please fill out - roomID: ${partOfLot.roomID}`
                     }
                 })
-            } else {
-                //Write the code for more than one partsOfLot here
-            }
+            })
+            
 
             Object.keys(lot).forEach((key) => {
                 if(requiredFieldsLotTable.includes(key) && !lot[key as keyof LotTableInterface]) {
@@ -231,7 +230,7 @@ function OptionsCreator() {
 
     const addLotTable = () => {
         let table:LotTableInterface;
-        if(lotNumRef.current) {
+        if(lotNumRef.current && lotNumRef.current.value != "") {
             if(!isLotCopy) 
                 table = createLotTable(lotNumRef.current.value)
             else {
@@ -385,6 +384,7 @@ function OptionsCreator() {
 
 
     useEffect(() => {
+        console.log(requestedJobDetails)
         setIsCheckingError(false)
         if (requestedJobDetails == null)
             navigate("/")
@@ -408,8 +408,12 @@ function OptionsCreator() {
                     (<>
                         <h2>Enter Lot Number:</h2>
                         <div className="modalRow">
-                            <input ref={lotNumRef}></input>
-                            {/* <InputSearch inputName={"lot"} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch> */}
+                            <select ref={lotNumRef}>
+                                {jobDetails.lotNums.map((lotNum, index) => {
+                                    if(!listOfLots.find((lot) => lot.lot === lotNum))
+                                        return <option key={index}>{lotNum}</option>
+                                })}
+                            </select>
                             <button onClick={addLotTable}>Submit</button>
                         </div>
                     </>) : modalType === "prod" 
