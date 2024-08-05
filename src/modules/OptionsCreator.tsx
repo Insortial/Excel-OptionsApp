@@ -48,6 +48,7 @@ function OptionsCreator() {
     
     const { getFormIDs, errors, setErrors, setIsCheckingError, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const [selectLotNum, setSelectLotNum] = useState<string>("")
+    const [isChangingDate, setIsChangingDate] = useState<boolean>(false)
     const [listOfLots, setListOfLots] = useState<LotTableInterface[]>([])
     const [jobDetails, setJobDetails] = useState<JobDetails>(initialJobDetails)
     const [currentLotNum, setCurrentLotNum] = useState<string>("")
@@ -113,7 +114,12 @@ function OptionsCreator() {
         const lotIDArray = listOfLots.map(lotTable => lotTable.lot)
         const lotJobValidation = await checkValidLotNumJobID(lotIDArray, jobDetails.jobID)
         const invalidLotArray = lotJobValidation.invalidLots
+        const availableLots = findAvailableLots()
     
+        if(availableLots.length !== 0 && jobDetails.prodReady) {
+            newErrors["Lots Not Created"] = `Must make lot(s): ${availableLots.join(", ")}`
+        }
+
         if(!lotJobValidation.isJobIDValid)
             newErrors["jobID"] = "Job ID is not valid"
 
@@ -136,7 +142,7 @@ function OptionsCreator() {
                         listOfLotsHasError = true
                         lot.hasError = true
                         if(lot.lot === currentLotNum)
-                            newErrors[key] = `Field is required, please fill out - roomID: ${partOfLot.roomID}`
+                            newErrors[`${key}${(index === 0) ? "" : index}`] = `Field is required, please fill out`
                     }
                 })
             })
@@ -218,7 +224,7 @@ function OptionsCreator() {
         const filteredTableList = listOfLots.filter((lotDetails:LotTableInterface) => lotDetails.lot !== lotNum)
         sortListOfLots(filteredTableList)
         setCurrentLot(filteredTableList[0])
-        setCurrentLotNum(filteredTableList[0].lot ?? "")
+        setCurrentLotNum(filteredTableList[0]?.lot ?? "")
     }
 
     const changeLotTable = (lotNum: string) => {
@@ -371,24 +377,31 @@ function OptionsCreator() {
 
     const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         event.preventDefault()
-        console.log(event.target.value)
         setSelectLotNum(event.target.value)
+    }
+
+    const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        event.preventDefault()
+        onJobDetailsChange(event.target.value, "date")
     }
 
     const turnOffModal = () => {
         switchModal(false, "lotID")
     }
 
+    const findAvailableLots = ():string[] => {
+        return jobDetails.lotNums.filter(
+            lotNum => !listOfLots.find(lot => lot.lot === lotNum)
+          );
+    }
+
     useEffect(() => {
-        const availableLots = jobDetails.lotNums.filter(
-          lotNum => !listOfLots.find(lot => lot.lot === lotNum)
-        );
-    
+        const availableLots = findAvailableLots()
         if(availableLots.length > 0)
             setSelectLotNum(availableLots[0]);
         else 
             setSelectLotNum("")
-      }, [listOfLots]);
+      }, [jobDetails, listOfLots]);
 
     useEffect(() => {
         //console.log("Checking Error: " + isCheckingError)
@@ -398,7 +411,6 @@ function OptionsCreator() {
 
 
     useEffect(() => {
-        console.log(requestedJobDetails)
         setIsCheckingError(false)
         if (requestedJobDetails == null)
             navigate("/")
@@ -455,7 +467,10 @@ function OptionsCreator() {
                 <h1>Options Creator</h1>
                 <h2 style={{display: jobDetails.prodReady ? "block" : "none"}}>PRODUCTION APPROVED</h2>
                 <h2>Current Lot: {currentLotNum}</h2>
-                <h2>Date: {jobDetails.date}</h2>
+                <section id="classRow">
+                    {isChangingDate ? <input type="date" value={jobDetails.date} onChange={handleDateChange}></input>: <h2>Date: {jobDetails.date}</h2>}
+                    {isChangingDate ? <button onClick={() => setIsChangingDate(false)}>Submit Change</button> : <button onClick={() => setIsChangingDate(true)}>Change Date</button>}
+                </section>
                 <section className="optionsList" id="lotList">
                     <h3>List of Lots</h3>
                     {listOfLots.map((lotDetails:LotTableInterface, index:number) => {

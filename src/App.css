@@ -6,6 +6,7 @@
     z-index: 2000;
     width: 100vw;
 }
+
 #rootDiv {
     display: flex;
     flex-direction: row;
@@ -49,6 +50,7 @@ input {
     background-color: white;
     display: flex;
     flex-direction: column;
+    overflow-y: scroll;
     align-items: center;
     align-self: center;
     justify-self: center;
@@ -96,6 +98,20 @@ input {
     padding: 10px;
     width: 90%;
     margin-bottom: 2em;
+}
+
+#classRow {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+#classRow > h2 {
+    margin: 0;
+}
+
+#classRow > button {
+    margin-top: 5px;
 }
 
 .jobList {
@@ -176,7 +192,8 @@ input {
 
 .listOfLotsRow {
     margin-top: 10px;
-    height: 40px;
+    min-height: 30px;
+    max-height: 40px;
     width: 90%;
     box-sizing: border-box;
     display: flex;
@@ -760,6 +777,20 @@ h1 {
 }
 
 @media only screen and (min-width: 1450px) {
+    #classRow {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #classRow > button {
+        height: 60%;
+    }
+
+    #classRow > input {
+        min-height: 30px;
+    }
+
     .formRow {
         margin-top: 1em;
         grid-template-areas: "rowLabel . rowInput"

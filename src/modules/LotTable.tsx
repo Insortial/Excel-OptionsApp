@@ -80,7 +80,7 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
             setCurrentLotNum(value)
 
         setFormState(updatedTable)
-        saveLotTable(updatedTable, formState.lot)
+        saveLotTable(updatedTable, updatedTable.lot)
     }
 
     const addOptionRow = () => {
@@ -102,10 +102,11 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
         }
 
         const newPartsOfLot = [...formState.partsOfLot, lotSection]
-
-        setFormState({...formState,
+        const updatedLot = {...formState,
             partsOfLot: newPartsOfLot
-        })
+        }
+        setFormState(updatedLot)
+        saveLotTable(updatedLot, updatedLot.lot)
     }
     
     useEffect(() => {

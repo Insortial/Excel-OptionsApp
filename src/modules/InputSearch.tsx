@@ -36,7 +36,7 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
     }, [])
 
     useEffect(() => {
-        setError(errors[inputName as keyof ErrorObject] != null)
+        setError(errors[(`${inputName}${(typeof optionSectionNum === 'undefined' || optionSectionNum === 0) ? "" : optionSectionNum}`) as keyof ErrorObject] != null)
     }, [isCheckingError, errors])
 
     const resetSearchComplete = useCallback(() => {
