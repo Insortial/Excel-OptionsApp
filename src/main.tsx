@@ -33,6 +33,7 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <FormOptionsProvider>
+      <section id="bannerAnnouncement">THIS IS A TEST SITE</section>
       <RouterProvider router={router} />
     </FormOptionsProvider>
   </React.StrictMode>,

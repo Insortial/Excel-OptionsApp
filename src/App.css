@@ -1,3 +1,11 @@
+#bannerAnnouncement {
+    background-color: yellow;
+    text-align: center;
+    font-weight: bold;
+    position: fixed;
+    z-index: 2000;
+    width: 100vw;
+}
 #rootDiv {
     display: flex;
     flex-direction: row;
