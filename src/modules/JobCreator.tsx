@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import '../App.css'
 import { useNavigate } from "react-router-dom";
 import InputSearch from '../modules/InputSearch.tsx';
-import { ErrorObject, JobDetails } from "../../../types/LotTableInterface";
+import { ErrorObject, JobDetails, JobDocumentInterface } from "../../../types/LotTableInterface";
 import InputError from './InputError.tsx';
 import { FormOptionsContext } from './OptionsTemplateContext.tsx';
 import { FormOptionsContextType } from '../../../types/FormOptions.ts';
@@ -97,10 +97,31 @@ function JobCreator() {
     return data
   }
 
+  const checkJobHasBeenMade = async(jobID:number):Promise<boolean> => {
+
+    const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/getListOfJobOptions")
+  
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+
+    const data = await response.text()
+    const listOfJobDocuments:JobDocumentInterface[] = JSON.parse(data)
+
+    let jobHasBeenMade = listOfJobDocuments.some(jobDoc => jobDoc.jobID === jobID)
+    return jobHasBeenMade
+  }
+
+
   const validate = async () => {
     const requiredFields = ["builder", "project", "optionCoordinator", "phase", "date", "jobID"];
     const newErrors:ErrorObject = {};
     const jobIDIsValid = (await checkValidLotNumJobID([], Number(jobDetails["jobID"]))).isJobIDValid
+    const jobHasBeenMade = (await checkJobHasBeenMade(Number(jobDetails["jobID"])))
+    
+    if(jobHasBeenMade)
+      newErrors["jobID"] = "Job Options have already been created"
+    
     if(!jobIDIsValid)
       newErrors["jobID"] = "Invalid Job ID"
 
@@ -108,7 +129,9 @@ function JobCreator() {
       if(requiredFields.includes(key) && !jobDetails[key as keyof JobDetails]) 
         newErrors[key] = "Field is required, please fill out"
     })
+    
     setErrors(newErrors)
+
     return Object.keys(newErrors).length === 0;
   }
 

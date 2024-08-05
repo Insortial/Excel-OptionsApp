@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import JobDocument from './JobDocument.tsx';
 import { Link } from 'react-router-dom';
 import { JobDocumentInterface } from '../../../types/LotTableInterface.ts';

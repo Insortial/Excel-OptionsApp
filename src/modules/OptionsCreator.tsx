@@ -46,8 +46,8 @@ function OptionsCreator() {
         appliances: ""
     }
     
-    const lotNumRef = React.useRef<HTMLInputElement>(null);
     const { getFormIDs, errors, setErrors, setIsCheckingError, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
+    const [selectLotNum, setSelectLotNum] = useState<string>("")
     const [listOfLots, setListOfLots] = useState<LotTableInterface[]>([])
     const [jobDetails, setJobDetails] = useState<JobDetails>(initialJobDetails)
     const [currentLotNum, setCurrentLotNum] = useState<string>("")
@@ -229,20 +229,21 @@ function OptionsCreator() {
     }
 
     const addLotTable = () => {
+        console.log(selectLotNum)
         let table:LotTableInterface;
-        if(lotNumRef.current && lotNumRef.current.value != "") {
+        if(selectLotNum !== "") {
             if(!isLotCopy) 
-                table = createLotTable(lotNumRef.current.value)
+                table = createLotTable(selectLotNum)
             else {
                 table = Object.assign({},  listOfLots.find((lotDetails:LotTableInterface) => {return lotDetails.lot === currentLotNum}))
                 table.partsOfLot = table.partsOfLot?.filter((partOfLot:PartOfLot) => partOfLot.roomID === "Throughout")
-                table.lot = lotNumRef.current.value
+                table.lot = selectLotNum
                 setIsLotCopy(false)
             }
             sortListOfLots(listOfLots, table)
-            changeLotTable(lotNumRef.current.value)
+            changeLotTable(selectLotNum)
 
-            setCurrentLotNum(lotNumRef.current.value)
+            setCurrentLotNum(selectLotNum)
             setCurrentLot(table)
             switchModal(false, "lotID")
         }
@@ -368,19 +369,32 @@ function OptionsCreator() {
         }
     }
 
+    const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        event.preventDefault()
+        console.log(event.target.value)
+        setSelectLotNum(event.target.value)
+    }
+
     const turnOffModal = () => {
         switchModal(false, "lotID")
     }
+
+    useEffect(() => {
+        const availableLots = jobDetails.lotNums.filter(
+          lotNum => !listOfLots.find(lot => lot.lot === lotNum)
+        );
+    
+        if(availableLots.length > 0)
+            setSelectLotNum(availableLots[0]);
+        else 
+            setSelectLotNum("")
+      }, [listOfLots]);
 
     useEffect(() => {
         //console.log("Checking Error: " + isCheckingError)
         if(isCheckingError)
             validate()
     }, [currentLotNum])
-
-    useEffect(() => {
-        lotNumRef.current?.focus()
-    }, [lotNumRef])
 
 
     useEffect(() => {
@@ -408,10 +422,11 @@ function OptionsCreator() {
                     (<>
                         <h2>Enter Lot Number:</h2>
                         <div className="modalRow">
-                            <select ref={lotNumRef}>
+                            <select value={selectLotNum} onChange={handleSelectChange}>
                                 {jobDetails.lotNums.map((lotNum, index) => {
-                                    if(!listOfLots.find((lot) => lot.lot === lotNum))
-                                        return <option key={index}>{lotNum}</option>
+                                    if(!listOfLots.find((lot) => lot.lot === lotNum)) {
+                                        return <option key={index} value={lotNum}>{lotNum}</option>
+                                    }
                                 })}
                             </select>
                             <button onClick={addLotTable}>Submit</button>
