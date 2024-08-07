@@ -108,7 +108,7 @@ function JobCreator() {
     const data = await response.text()
     const listOfJobDocuments:JobDocumentInterface[] = JSON.parse(data)
 
-    let jobHasBeenMade = listOfJobDocuments.some(jobDoc => jobDoc.jobID === jobID)
+    const jobHasBeenMade = listOfJobDocuments.some(jobDoc => jobDoc.jobID === jobID)
     return jobHasBeenMade
   }
 
