@@ -3,6 +3,7 @@ CREATE TABLE [EXCELP&D].[dbo].[JobOptions] (
 	jobIDFK int NOT NULL UNIQUE,
 	jobNotes varchar(500),
 	phaseDate DATE,
+	prodReady bit NOT NULL,
 	phone varchar(30),
 	superintendent varchar(50),
 	optionCoordinator varchar(300),

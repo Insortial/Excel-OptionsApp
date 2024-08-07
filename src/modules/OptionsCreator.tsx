@@ -297,7 +297,6 @@ function OptionsCreator() {
                     handleType: lotSection.handleType,
                     details: lotSection.details,
                     appliances: lotSection.appliances,
-                    prodReady: jobDetails.prodReady
                 }
                 listOfSQLPartsOfLot.push(partOfLot)
             }
@@ -337,6 +336,7 @@ function OptionsCreator() {
             date: jobDetails.date,
             superintendent: jobDetails.superintendent,
             phone: jobDetails.phone,
+            prodReady: jobDetails.prodReady
         }
 
         console.log(jobDetailsSQL)
