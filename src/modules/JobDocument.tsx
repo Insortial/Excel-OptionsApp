@@ -1,6 +1,7 @@
 import React from 'react'
-import { JobDocumentInterface } from '../../../types/LotTableInterface'
+import { JobDocumentInterface, LotTableInterface, PartOfLot } from '../../../types/LotTableInterface'
 import { useNavigate } from "react-router-dom";
+import useFetch from '../hooks/useFetch';
 
 type JobDocument = {
     JobDocumentDetails: JobDocumentInterface
@@ -8,15 +9,12 @@ type JobDocument = {
 
 const JobDocument: React.FC<JobDocument> = ({JobDocumentDetails}) => {
     const { customerName, jobOptionID, jobID, optionCoordinator, phase, projectName } = JobDocumentDetails
+    const fetchHook = useFetch()
     const navigate = useNavigate();
 
     
     const getJobDocumentDetails = async () => {
-        const requestOptions = {
-            method: "GET",
-        };
-    
-        const response = await fetch(import.meta.env.VITE_BACKEND_URL + `/getJobOption/${jobOptionID}`, requestOptions)
+        const response = await fetchHook(`/getJobOption/${jobOptionID}`, "GET")
         if (!response.ok) {
             throw new Error(response.statusText);
         }
@@ -26,6 +24,11 @@ const JobDocument: React.FC<JobDocument> = ({JobDocumentDetails}) => {
 
     const goToLotCreator = async () => {
         const jobDocumentDetails = await getJobDocumentDetails()
+        jobDocumentDetails.listOfLots.map((lot:LotTableInterface) => {
+            const throughoutLotIdx = lot.partsOfLot.findIndex((partOfLot:PartOfLot) => partOfLot.roomID === "Throughout")
+            const throughoutLot = lot.partsOfLot.splice(throughoutLotIdx, 1)
+            lot.partsOfLot.unshift(throughoutLot[0])
+        })
         navigate("/creatingOptions/", {state: jobDocumentDetails})
     }
 

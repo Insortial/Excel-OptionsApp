@@ -6,12 +6,13 @@ import ControlledTextArea from "./ControlledTextArea"
 type LotTable = {
     lotTableDetails: LotTableInterface;
     jobDetails: JobDetails;
+    isOptionsMode: boolean;
     onJobDetailsChange: (value: string | boolean, key: string) => void;
     saveLotTable: (lotTableDetails: LotTableInterface, lotNumber: string) => void;
     setCurrentLotNum: (lotNum: string) => void; 
 }
 
-const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable, onJobDetailsChange, setCurrentLotNum}) => {
+const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetails, saveLotTable, onJobDetailsChange, setCurrentLotNum}) => {
     const throughoutLot:PartOfLot = {
         roomID: "Throughout",
         material: "",
@@ -37,6 +38,7 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
         islands: "",
         crown: "",
         lightRail: "",
+        throughoutIsLot: false,
         baseShoe: "",
         recyclingBins: "",
         lot: "",
@@ -65,6 +67,7 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
     }
 
     const onFormChange = (value: string | boolean, key: string, optionSectionNum: number=-1) => {
+        console.log(value)
         let updatedTable:LotTableInterface;
         if(optionSectionNum === -1) {
             updatedTable = {
@@ -76,17 +79,17 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
             updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot, index:number) => (index === optionSectionNum ? { ...partOfLot, [key]: value } : partOfLot))
         }
 
-        if(key === "lot" && typeof value === "string") 
+        if((key === "lot" || key === "plan") && typeof value === "string") 
             setCurrentLotNum(value)
 
         setFormState(updatedTable)
-        saveLotTable(updatedTable, updatedTable.lot)
+        saveLotTable(updatedTable, (isOptionsMode ? updatedTable.lot : updatedTable.plan))
     }
 
     const addOptionRow = () => {
         const lotSection:PartOfLot = {
             roomID: "",
-            handleType: "pull",
+            handleType: "none",
             drawerFronts: formState.partsOfLot[0].drawerFronts ?? "",
             drawerBoxes: formState.partsOfLot[0].drawerBoxes ?? "",
             drawerGuides: formState.partsOfLot[0].drawerGuides ?? "",
@@ -106,7 +109,7 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
             partsOfLot: newPartsOfLot
         }
         setFormState(updatedLot)
-        saveLotTable(updatedLot, updatedLot.lot)
+        saveLotTable(updatedLot, (isOptionsMode ? updatedLot.lot : updatedLot.plan))
     }
     
     useEffect(() => {
@@ -138,10 +141,12 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
             </table>
             <table className='lotInfo'>
                 <tbody>
-                    <tr>
-                        <th>Job ID</th>
-                        <td><InputSearch inputName={"jobID"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={false}></InputSearch></td>
-                    </tr>
+                    {isOptionsMode ? (
+                        <tr>
+                            <th>Job ID</th>
+                            <td><InputSearch inputName={"jobID"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={false}></InputSearch></td>
+                        </tr>
+                    ) : <></>}
                     <tr>
                         <th>Box Style</th>
                         <td><InputSearch inputName={"boxStyle"} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch></td>
@@ -176,7 +181,7 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
                     </tr>
                     <tr>
                         <th>Islands</th>
-                        <td><InputSearch inputName={"islands"} formState={formState} onFormChange={onFormChange} isDropDown={false}></InputSearch></td>
+                        <td><InputSearch inputName={"islands"} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Crown</th>
@@ -212,7 +217,7 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
                         </td>
                     </tr>
                     <tr>
-                        <th>LOT</th>
+                        {isOptionsMode ? <th>LOT</th> : <></>}
                         <th>PLAN</th>
                         <th>Material/Color</th>
                         <th>Option</th>
@@ -221,23 +226,33 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
                     {formState.partsOfLot?.map((lotSection:PartOfLot, currentRow:number) => {
                         const idNumber = currentRow > 0 ? currentRow : ""
                         return <tr key={currentRow}>
-                                    <td>
-                                        {currentRow == 0 &&
-                                            <InputSearch inputName={"lot"} formState={formState} onFormChange={onFormChange} isDropDown={false}></InputSearch>
-                                        }
-                                        <button className="deleteButton" style={{display: currentRow !== 0 ? "block" : "none"}} onClick={() => deleteLotSection(currentRow)}>Delete Row</button>
-                                    </td>
+                                    {isOptionsMode &&
+                                        <td>
+                                            {currentRow == 0 &&
+                                                <InputSearch inputName={"lot"} formState={formState} onFormChange={onFormChange} isDropDown={false}></InputSearch>
+                                            }
+                                            <button className="deleteButton" style={{display: currentRow !== 0 ? "block" : "none"}} onClick={() => deleteLotSection(currentRow)}>Delete Row</button>
+                                        </td>
+                                    }
                                     <td>
                                         {currentRow == 0 &&
                                             <InputSearch inputName={"plan"} formState={formState} onFormChange={onFormChange} isDropDown={false}></InputSearch>
                                         }
+                                        {!isOptionsMode && <button className="deleteButton" style={{display: currentRow !== 0 ? "block" : "none"}} onClick={() => deleteLotSection(currentRow)}>Delete Row</button>}
                                     </td>
                                     <td>
-                                        <label htmlFor={`material${idNumber}`}>Material:</label>
-                                        <InputSearch inputName={`material`} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch>
-                                        <label htmlFor={`color${idNumber}`}>Color:</label>
-                                        <InputSearch inputName={`color`} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch>
-                                        <button style={{display: currentRow === (formState.partsOfLot?.length - 1) ? "block" : "none"}} onClick={addOptionRow}>Add Material</button>
+                                        {currentRow === 0 && <button onClick={() => {
+                                            onFormChange(!formState.throughoutIsLot, "throughoutIsLot")
+                                            console.log(lotTableDetails)
+                                            }}>{formState.throughoutIsLot ? "Keep Throughout as Details" : "Make Throughout a Lot"}</button>}
+                                        {(formState.throughoutIsLot || currentRow !== 0) &&
+                                            <>
+                                                <label htmlFor={`material${idNumber}`}>Material:</label>
+                                                <InputSearch inputName={`material`} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                                                <label htmlFor={`color${idNumber}`}>Color:</label>
+                                                <InputSearch inputName={`color`} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                                            </>
+                                        }
                                     </td>
                                     <td className="optionCell">
                                     <label htmlFor={`roomID${idNumber}`}>Room ID: </label>
@@ -250,21 +265,27 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
                                         <input id={`knobsButton${idNumber}`} type="checkbox" onChange={() => onFormChange("knob", "handleType", currentRow)} checked={lotSection.handleType == "knob" ? true : false}/>
                                         <label htmlFor={`bothButton${idNumber}`}>Both</label>
                                         <input id={`bothButton${idNumber}`} type="checkbox" onChange={() => onFormChange("both", "handleType", currentRow)} checked={lotSection.handleType == "both" ? true : false}/>
+                                        <label htmlFor={`noneButton${idNumber}`}>None</label>
+                                        <input id={`noneButton${idNumber}`} type="checkbox" onChange={() => onFormChange("none", "handleType", currentRow)} checked={lotSection.handleType == "none" ? true : false}/>
                                     </section>
                                     <section className="optionParts">
-                                        <div className={"doorList"}>
-                                            <label htmlFor={`doors${idNumber}`}>Door:</label>
-                                            <InputSearch inputName={`doors`} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch>
-                                        </div>
-                                        <div className={"fingerPullList"}>
-                                            <label htmlFor={`fingerpull${idNumber}`}>Fingerpull:</label>
-                                            <InputSearch inputName={`fingerpull`} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} isDropDown={false}></InputSearch>
-                                        </div>
-                                        <div className={"pullList"} style={{display: ["both", "pull"].includes(lotSection.handleType ?? "") ? "block" : "none"}}>
+                                        {(formState.throughoutIsLot || currentRow !== 0) && 
+                                            <>
+                                                <div className={"doorList"}>
+                                                    <label htmlFor={`doors${idNumber}`}>Door:</label>
+                                                    <InputSearch inputName={`doors`} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                                                </div>
+                                                <div className={"fingerPullList"}>
+                                                    <label htmlFor={`fingerpull${idNumber}`}>Fingerpull:</label>
+                                                    <InputSearch inputName={`fingerpull`} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} isDropDown={false}></InputSearch>
+                                                </div>
+                                            </>
+                                        }
+                                        <div className={"pullList"} style={{display: ["both", "pull"].includes(lotSection.handleType ?? "") && lotSection.handleType !== "none" ? "block" : "none"}}>
                                             <label htmlFor={`pulls${idNumber}`}>{"Pulls:"}</label>
                                             <InputSearch inputName={`pulls`} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch>
                                         </div>
-                                        <div className={"knobList"} style={{display: ["both", "knob"].includes(lotSection.handleType ?? "") ? "block" : "none"}}>
+                                        <div className={"knobList"} style={{display: ["both", "knob"].includes(lotSection.handleType ?? "") && lotSection.handleType !== "none" ? "block" : "none"}}>
                                             <label htmlFor={`knobs${idNumber}`}>{"Knobs:"}</label>
                                             <InputSearch inputName={`knobs`} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch>
                                         </div>
@@ -293,6 +314,7 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
                                             <ControlledTextArea inputName={"appliances"} optionSectionNum={currentRow} formState={formState} onFormChange={onFormChange}></ControlledTextArea>
                                         </>
                                     }
+                                    <button style={{display: currentRow === (formState.partsOfLot?.length - 1) ? "block" : "none"}} onClick={addOptionRow} className='newPartOfLotButton'>Add Part Of Lot</button>
                                 </td>
                             </tr>
                     })}
@@ -301,7 +323,7 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
             <table className="lotFooter">
                 <tbody>
                     <tr>
-                        <th>Lot</th>
+                        {isOptionsMode && <th>Lot</th>}
                         <th>Kitchen</th>
                         <th>Master</th>
                         <th>Bath 2</th>
@@ -312,7 +334,7 @@ const LotTable: React.FC<LotTable> = ({jobDetails, lotTableDetails, saveLotTable
                         <th>Notes</th>
                     </tr>
                     <tr>
-                        <td><InputSearch inputName={"lot"} formState={formState} onFormChange={onFormChange} isDropDown={false}/></td>
+                        {isOptionsMode && <td><InputSearch inputName={"lot"} formState={formState} onFormChange={onFormChange} isDropDown={false}/></td>}
                         <td><InputSearch inputName={"kitchen"} formState={formState} onFormChange={onFormChange} isDropDown={true}/></td>
                         <td><InputSearch inputName={"master"} formState={formState} onFormChange={onFormChange} isDropDown={true}/></td>
                         <td><InputSearch inputName={"bath2"} formState={formState} onFormChange={onFormChange} isDropDown={true}/></td>

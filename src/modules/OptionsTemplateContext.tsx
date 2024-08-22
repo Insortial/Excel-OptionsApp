@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { FormOptionsInterface, FormOptionsContextType} from '../../../types/FormOptions';
 import { ErrorObject } from '../../../types/LotTableInterface';
+import { AuthInfo } from './AuthContext';
 
 export const FormOptionsContext = React.createContext<FormOptionsContextType | null>(null);
 
@@ -20,19 +21,28 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
         color: [],
         doors: [], 
         pulls: [],
+        knobs: []
     })
     
     const [errors, setErrors] = useState<ErrorObject>({})
     const [isCheckingError, setIsCheckingError] = useState<boolean>(false);
-
+    const { accessToken } = AuthInfo()
+    
     useEffect(() => {
-        fetch(import.meta.env.VITE_BACKEND_URL + "/dropDownInfo")
+        const myHeaders = new Headers()
+        myHeaders.append("Authorization", `Bearer ${accessToken}`)
+        const config:RequestInit = {
+            method: "GET",
+            headers: myHeaders,
+        }
+
+        fetch(import.meta.env.VITE_BACKEND_URL + "/dropDownInfo", config)
                 .then((response) => response.text())
                 .then((result) => {
                     console.log(JSON.parse(result))
-                    let formListObject = JSON.parse(result)
-                    let formList = formListObject.formList
-                    let formOptions:FormOptionsInterface = {
+                    const formListObject = JSON.parse(result)
+                    const formList = formListObject.formList
+                    const formOptions:FormOptionsInterface = {
                         builder: formList.builder,
                         project: formList.project, 
                         foreman: formList.foreman,
@@ -44,6 +54,7 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
                         drawerGuides: formList.drawerGuides,
                         doorHinges: formList.doorHinges, 
                         material: formList.material, 
+                        knobs: formList.knobs,
                         color: formList.color,
                         doors: formList.doors, 
                         pulls: formList.pulls,
@@ -59,20 +70,46 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
 
     const getFormIDs = (value:string, propertyName:string):number => {
         if(value !== "" && propertyName in formOptions) {
-            let matchingTuple = formOptions[propertyName as keyof FormOptionsInterface]
-                                 .find((tuple: string | [number, string]) => tuple[1] == value)
-            return (typeof matchingTuple == "string") ? 1 : matchingTuple?.[0] ?? 1
+            const matchingTuple = formOptions[propertyName as keyof FormOptionsInterface]
+                                 .find((tuple: string | [number, string] | [number, string, string]) => tuple[1] == value)
+            return (typeof matchingTuple == "string") ? 0 : matchingTuple?.[0] ?? 0
         }
-        return 1
+        return 0
+    }
+
+    const filterColors = (materialName:string):string[] => {
+        let filterWord = ""
+        switch(materialName) {
+            case "Soft Maple":
+                filterWord = "Stain 1 Pass"
+                break;
+            case "White Oak Rift":
+                return ["Unfinished", "Clear", "Alto", "True Maple"]
+            case "MDF":
+                filterWord = "Painted Finish"
+                break;
+            case "Thermofoil 1-sided":
+            case "Thermofoil 2-sided":
+                filterWord = "Thermofoil"
+                break;
+            case "Acrylic":
+                break;
+            case "Melamine":
+            case "Laminate":
+            default:
+        }
+
+        
+        return formOptions.color.filter((colorTuple:[number, string, string]) => colorTuple[2] === filterWord).map((colorTuple:[number, string, string]) => colorTuple[1])
     }
 
     const retrieveDropDown = (propertyName: string) => {
         let listOfOptions:string[] = []
 
         if(propertyName in formOptions) {
-            let optionArray = formOptions[propertyName as keyof FormOptionsInterface]
+            const optionArray = formOptions[propertyName as keyof FormOptionsInterface]
             if(optionArray && Array.isArray(optionArray[0])) {
-                for (let tuple of optionArray) {
+                for (const tuple of optionArray) {
                    listOfOptions.push(tuple[1])
                 }
             } else {
@@ -80,14 +117,17 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
             }
         } else if (["kitchen", "master", "bath2", "bath3", "bath4", "powder", "laundry"].includes(propertyName)) {
             listOfOptions = ['N/A', '5/8" Rough Top', 'Build Up', 'Pedestal']
-        } else if (propertyName === "lightRail") {
+        } else if (propertyName === "islands") {
             listOfOptions = ["Drywall Back w/ Metal Bracket Supports", "Finished Backs", "Posts", "Corbels"]
+        } else if (propertyName === "lightRail") {
+            listOfOptions = ["None", "Behind Door"]
         }
+
         return listOfOptions
     }
 
     return (
-        <FormOptionsContext.Provider value={{ getFormIDs, errors, setErrors, isCheckingError, setIsCheckingError, formOptions, saveFormOptions, retrieveDropDown }}>
+        <FormOptionsContext.Provider value={{ getFormIDs, errors, setErrors, isCheckingError, setIsCheckingError, formOptions, saveFormOptions, retrieveDropDown, filterColors }}>
             {children}
         </FormOptionsContext.Provider>
     )

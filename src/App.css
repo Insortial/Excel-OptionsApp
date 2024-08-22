@@ -17,9 +17,13 @@
 
 #root {
     box-sizing: border-box;
+    min-height: 100vh;
     width: 100vw;
+    display: flex;
+    flex-direction: row;
     padding: 0;
 }
+
 #mainScreen {
     display: flex;
     flex-direction: row;
@@ -28,6 +32,7 @@
 input {
     outline: none;
     font-size: .7em;
+    padding: 5px 5px;
 }
 
 #mainNav {
@@ -337,6 +342,13 @@ td > div > input {
     height: 100%;
 }
 
+.jobMenuButtons {
+    padding: 7px;
+    background-color: #da1b1b;
+    margin-left: 15px;
+    border-radius: 4px;
+}
+
 .modalScreen {
     display: flex;
     position: fixed;
@@ -394,9 +406,6 @@ td > input {
 #optionsNav {
     width: 30%;
     background-color: #a8193d;
-    float: left;
-    height: 100vh;
-    position: fixed;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
@@ -412,9 +421,19 @@ td > input {
     margin: 0;
 }
 
+.newPartOfLotButton {
+  width: 100%;
+  height: 30px;
+  background-color: #945766;
+  padding: 5px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+}
+
 #optionsEditor {
-    float: right;
-    width: 70vw;
+    width: 70%;
     box-sizing: border-box;
     display: flex;
     justify-content: center;
@@ -443,7 +462,7 @@ button:hover {
     cursor: pointer;
 }
 
-#createJobButton {
+.createButton {
     min-height: 50px;
     width: 100%;
     align-self: flex-end;
@@ -488,8 +507,45 @@ a:visited {
     border: 1px black solid;
 }
 
-.jobDisplay {
+.formRow > input {
+    grid-area: rowInput;
+}
+
+.creatorDisplay {
     border: 2px solid black; 
+}
+
+#packageDisplay {
+    display: flex;
+    flex-direction: column;
+}
+
+#packageDisplay > div {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 20% 80%;
+    grid-template-rows: 50px;
+    justify-items: center;
+}
+
+#packageDisplay > div > * {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    outline: 1px solid black; 
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#packageDisplay > div > section {
+    justify-content: space-between;
+    padding: 0 15px;
+    box-sizing: border-box;
+}
+
+#jobDisplay {
     padding-left: 10px;
 }
 
@@ -796,9 +852,9 @@ h1 {
     .formRow {
         margin-top: 1em;
         grid-template-areas: "rowLabel . rowInput"
-                         ". . rowError";
+                            ". . rowError";
         grid-template-rows: 40px 10px;
-        grid-template-columns: 10% 10% 80%;
+        grid-template-columns: 20% 5% 75%;
     }
 
     .formRow:first-of-type {

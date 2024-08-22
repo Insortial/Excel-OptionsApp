@@ -1,7 +1,7 @@
 CREATE TABLE [EXCELP&D].[dbo].[LotOptions] (
 	lotOptionID int IDENTITY(1,1) NOT NULL UNIQUE,
-	jobOptionID int NOT NULL,
-	lotID int NOT NULL,
+	jobOptionIDFK int NOT NULL,
+	lotIDFK int,
 	upperHeight varchar(50),
 	islands varchar(50),
 	crown varchar(50),
@@ -9,7 +9,9 @@ CREATE TABLE [EXCELP&D].[dbo].[LotOptions] (
 	baseShoe varchar(50),
 	recyclingBins varchar(50),
 	lotOptionsValue float,
+	appliances varchar(MAX),
 	kitchen varchar(50),
+	throughoutIsLot bit NOT NULL,
 	masterBath varchar(50),
 	bath2 varchar(50),
 	bath3 varchar(50),
@@ -17,7 +19,7 @@ CREATE TABLE [EXCELP&D].[dbo].[LotOptions] (
 	powder varchar(50),
 	laundry varchar(50),
 	lotFooterNotes varchar(200),
-	FOREIGN KEY (jobOptionID) REFERENCES [EXCELP&D].[dbo].[JobOptions](jobOptionID) ON DELETE CASCADE,
-	FOREIGN KEY (lotID) REFERENCES [EXCELP&D].[dbo].[Lots]([Lot ID]),
-	PRIMARY KEY (jobOptionID, lotOptionID)
+	FOREIGN KEY (jobOptionIDFK) REFERENCES [EXCELP&D].[dbo].[JobOptions](jobOptionID) ON DELETE CASCADE,
+	FOREIGN KEY (lotIDFK) REFERENCES [EXCELP&D].[dbo].[Lots]([Lot ID]),
+	PRIMARY KEY (jobOptionIDFK, lotOptionID)
 )

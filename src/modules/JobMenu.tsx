@@ -1,18 +1,21 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { useContext, useEffect, useState } from 'react'
 import JobDocument from './JobDocument.tsx';
 import { Link } from 'react-router-dom';
 import { JobDocumentInterface } from '../../../types/LotTableInterface.ts';
 import { FormOptionsContext } from './OptionsTemplateContext.tsx';
 import { FormOptionsContextType } from '../../../types/FormOptions.ts';
+import useFetch from '../hooks/useFetch.ts';
 
 
 const JobMenu = () => {
     const [jobDocuments, setJobDocuments] = useState<JobDocumentInterface[]>([])
     const { setIsCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
+    const fetchHook = useFetch()
     
     useEffect(() => {
         setIsCheckingError(false)
-        fetch(import.meta.env.VITE_BACKEND_URL + "/getListOfJobOptions")
+        fetchHook("/getListOfJobOptions", "GET")
             .then((response) => response.text())
             .then((result) => {
                 const listOfJobDocuments:JobDocumentInterface[] = JSON.parse(result)
@@ -25,7 +28,10 @@ const JobMenu = () => {
         <div id="jobMenuScreen">
             <header id="jobMenuHeader">
                 <h1>Job Menu</h1>
-                <Link to="/creatingJob">Create New Job Document</Link>
+                <nav>
+                    <Link to="/creatingJob" className='jobMenuButtons'>Create Job Document</Link>
+                    <Link to="/creatingJobPackage" className='jobMenuButtons'>Edit/Create Job Package</Link>
+                </nav>
             </header>
             <div id="jobMenuBody">
                 <section className='jobMenuSection'>

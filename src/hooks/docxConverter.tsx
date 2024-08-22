@@ -1,9 +1,9 @@
-import { Document, Packer, Paragraph, TextRun, PageBreak, HeadingLevel, AlignmentType, Table, TableRow, TableCell, WidthType, VerticalAlign } from "docx";
+import { Document, Packer, Paragraph, TextRun, PageBreak, HeadingLevel, AlignmentType, Table, TableRow, TableCell, WidthType, VerticalAlign, Footer } from "docx";
 import { LotTableInterface, PartOfLot, JobDetails } from "../../../types/LotTableInterface";
 import { saveAs } from "file-saver";
 
 
-export default function docxConverter(prodSchedule:JobDetails, lotCollection: LotTableInterface[]) {
+export default function docxConverter(prodSchedule:JobDetails, lotCollection: LotTableInterface[], name:string, phone:string, email:string) {
     console.log(prodSchedule)
     console.log(lotCollection)
     
@@ -653,6 +653,18 @@ export default function docxConverter(prodSchedule:JobDetails, lotCollection: Lo
             {
                 properties: {},
                 children: iterateOverTables(),
+                footers: {
+                    default: new Footer({
+                        children: [new Paragraph({
+                            children : [new TextRun({text: name, break: 1}), 
+                                        new TextRun({text: '\nOptions Coordinator', break: 1}), 
+                                        new TextRun({text: '\n225 Jason Court, Corona CA 92879', break: 1}),
+                                        new TextRun({text: '\nOffice (951) 279-4545 Ext 215', break: 1}), 
+                                        new TextRun({text: '\nFax (951) 279-4544', break: 1})],
+                            alignment: AlignmentType.CENTER
+                        })]
+                    }) 
+                }
             },
         ],
     });

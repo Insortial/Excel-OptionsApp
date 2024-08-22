@@ -6,6 +6,7 @@ import { ErrorObject, JobDetails, JobDocumentInterface } from "../../../types/Lo
 import InputError from './InputError.tsx';
 import { FormOptionsContext } from './OptionsTemplateContext.tsx';
 import { FormOptionsContextType } from '../../../types/FormOptions.ts';
+import useFetch from '../hooks/useFetch.ts';
 
 type lotJobResponse = {
   isJobIDValid: boolean,
@@ -34,6 +35,7 @@ function JobCreator() {
   const [errors, setErrors] = useState<ErrorObject>({})
   const { setIsCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
   const navigate = useNavigate();
+  const fetchHook = useFetch()
 
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -44,15 +46,11 @@ function JobCreator() {
   
 
   useEffect(() => {
-    const requestOptions: object = {
-      method: "GET",
-      redirect: "follow"
-    };
-
     if (String(jobDetails.jobID).length > 0) {
-      fetch(import.meta.env.VITE_BACKEND_URL + `/getJobDetails/${jobDetails.jobID}`, requestOptions)
-      .then((response) => response.json())
+      fetchHook(`/getJobDetails/${jobDetails.jobID}`, "GET")
+      .then((response) => response.status === 200 ? response.json() : undefined)
       .then((result) => {
+        console.log(result)
         if(result.isValidJobID) {
           setValidJobID(true)
           setJobDetails(prevJobDetails => ({
@@ -83,13 +81,7 @@ function JobCreator() {
         "jobID": jobID
     });
 
-    const requestOptions = {
-        method: "POST",
-        headers: myHeaders,
-        body: raw,
-    };
-
-    const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/isValidLotNumAndJobID", requestOptions)
+    const response = await fetchHook("/isValidLotNumAndJobID", "POST", raw)
     if (!response.ok) {
         throw new Error(response.statusText);
     }
@@ -99,7 +91,7 @@ function JobCreator() {
 
   const checkJobHasBeenMade = async(jobID:number):Promise<boolean> => {
 
-    const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/getListOfJobOptions")
+    const response = await fetchHook("/getListOfJobOptions", "GET")
   
     if (!response.ok) {
         throw new Error(response.statusText);
@@ -184,7 +176,7 @@ function JobCreator() {
             <InputSearch inputName={"jobID"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
             <InputError errorKey={"jobID"} errorState={errors}></InputError>
           </div>
-          <div className="jobDisplay">
+          <div id="jobDisplay" className="creatorDisplay">
             {validJobID ? (
               <>
                 <h4>Customer Name: {jobDetails.builder}</h4>
@@ -204,7 +196,7 @@ function JobCreator() {
             <InputSearch inputName={"optionCoordinator"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
             <InputError errorKey={"optionCoordinator"} errorState={errors}></InputError>
           </div>
-          <button id="createJobButton">Create Form</button>
+          <button className="createButton">Create Form</button>
         </form>
       </section>
     </div>
