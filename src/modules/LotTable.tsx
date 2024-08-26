@@ -63,7 +63,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
         const updatedTable:LotTableInterface = {...formState}
         updatedTable.partsOfLot.splice(lotSectionIndex, 1)
         setFormState(updatedTable)
-        saveLotTable(updatedTable, formState.lot)
+        saveLotTable(updatedTable, isOptionsMode ? formState.lot : formState.plan)
     }
 
     const onFormChange = (value: string | boolean, key: string, optionSectionNum: number=-1) => {
@@ -83,7 +83,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
             setCurrentLotNum(value)
 
         setFormState(updatedTable)
-        saveLotTable(updatedTable, (isOptionsMode ? updatedTable.lot : updatedTable.plan))
+        saveLotTable(updatedTable, (isOptionsMode ? formState.lot : formState.plan))
     }
 
     const addOptionRow = () => {
@@ -244,7 +244,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
                                         {currentRow === 0 && <button onClick={() => {
                                             onFormChange(!formState.throughoutIsLot, "throughoutIsLot")
                                             console.log(lotTableDetails)
-                                            }}>{formState.throughoutIsLot ? "Keep Throughout as Details" : "Make Throughout a Lot"}</button>}
+                                            }}>{formState.throughoutIsLot ? "Change Throughout to Lot Details" : "Make Throughout a Lot"}</button>}
                                         {(formState.throughoutIsLot || currentRow !== 0) &&
                                             <>
                                                 <label htmlFor={`material${idNumber}`}>Material:</label>

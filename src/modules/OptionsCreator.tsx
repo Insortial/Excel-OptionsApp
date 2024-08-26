@@ -1,6 +1,6 @@
 import LotTable from "./LotTable";
 import { useLocation, Link, useNavigate } from "react-router-dom";
-import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL } from '../../../types/LotTableInterface.ts';
+import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL, PackageDetailsSQL } from '../../../types/LotTableInterface.ts';
 import React, { useContext, useEffect, useState } from "react";
 import docxConverter from "../hooks/docxConverter.tsx";
 import { FormOptionsContext } from "./OptionsTemplateContext.tsx";
@@ -217,6 +217,7 @@ function OptionsCreator() {
     const saveLotTable = (lotTableData: LotTableInterface, lotInputValue: string) => {
         const filteredTableList = listOfLots.filter((lotDetails:LotTableInterface) => (isOptionsMode && lotDetails.lot !== lotInputValue) ||
                                                                                          (!isOptionsMode && lotDetails.plan !== lotInputValue))
+        console.log(filteredTableList)
         sortListOfLots(filteredTableList, lotTableData)
     }
     
@@ -247,7 +248,7 @@ function OptionsCreator() {
             if(!isLotCopy) 
                 table = createLotTable(lotInputValue)
             else {
-                table = Object.assign({},  listOfLots.find((lotDetails:LotTableInterface) => {return lotDetails.lot === currentLotNum}))
+                table = Object.assign({}, listOfLots.find((lotDetails:LotTableInterface) => {return (isOptionsMode ? lotDetails.lot : lotDetails.plan) === currentLotNum}))
                 table.partsOfLot = Object.assign([], table.partsOfLot)
                 if(isOptionsMode)
                     table.lot = lotInputValue
@@ -316,6 +317,7 @@ function OptionsCreator() {
                 interiors: getFormIDs(lotTable.interiors, "interiors"),
                 lotOptionsValue: lotTable.lotOptionsValue,
                 partsOfLot: listOfSQLPartsOfLot,
+                plan: lotTable.plan,
                 //Start of LotDocument properties
                 upperHeight: lotTable.upperHeight,
                 islands: lotTable.islands,
@@ -350,10 +352,18 @@ function OptionsCreator() {
             prodReady: jobDetails.prodReady
         }
 
-        console.log(jobDetailsSQL)
+        const packageDetailsSQL:PackageDetailsSQL = {
+            builder: jobDetails.builder,
+            projects: [100, 600],
+            packageName: "PACKAGE NAME",
+            plans: listOfSQLLots
+        }
+
         const finalJobDetails = JSON.stringify(jobDetailsSQL)
+        const finalPackageDetails = JSON.stringify(packageDetailsSQL)
+        console.log(packageDetailsSQL)
     
-        const response = await fetchHook("/lotDetails", "POST", finalJobDetails)
+        const response = await fetchHook(isOptionsMode ? "/lotDetails" : "/packageDetails", "POST", isOptionsMode ? finalJobDetails : finalPackageDetails)
         if (!response.ok) {
             throw new Error(response.statusText);
         }

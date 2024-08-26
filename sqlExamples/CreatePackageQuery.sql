@@ -9,7 +9,7 @@ CREATE TABLE [EXCELP&D].[dbo].[Packages] (
 )
 
 CREATE TABLE [EXCELP&D].[dbo].[LotOptionToPackage] (
-	lotOptionIDFK int IDENTITY(1,1) NOT NULL,
+	lotOptionIDFK int NOT NULL,
 	packageIDFK int NOT NULL,
 	FOREIGN KEY (lotOptionIDFK) REFERENCES [EXCELP&D].[dbo].[LotOptions]([lotOptionID]),
 	FOREIGN KEY (packageIDFK) REFERENCES [EXCELP&D].[dbo].[Packages](packageID),

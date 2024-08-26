@@ -1,5 +1,5 @@
 CREATE TABLE [EXCELP&D].[dbo].[LotOptions] (
-	lotOptionID int IDENTITY(1,1) NOT NULL UNIQUE,
+	lotOptionID int IDENTITY(1,1) NOT NULL UNIQUE PRIMARY KEY,
 	jobOptionIDFK int NOT NULL,
 	lotIDFK int,
 	upperHeight varchar(50),
@@ -21,5 +21,4 @@ CREATE TABLE [EXCELP&D].[dbo].[LotOptions] (
 	lotFooterNotes varchar(200),
 	FOREIGN KEY (jobOptionIDFK) REFERENCES [EXCELP&D].[dbo].[JobOptions](jobOptionID) ON DELETE CASCADE,
 	FOREIGN KEY (lotIDFK) REFERENCES [EXCELP&D].[dbo].[Lots]([Lot ID]),
-	PRIMARY KEY (jobOptionIDFK, lotOptionID)
 )
