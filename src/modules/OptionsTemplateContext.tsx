@@ -26,6 +26,7 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
     
     const [errors, setErrors] = useState<ErrorObject>({})
     const [isCheckingError, setIsCheckingError] = useState<boolean>(false);
+    const [loaded, setLoaded] = useState<boolean>(false);
     const { accessToken } = AuthInfo()
     
     useEffect(() => {
@@ -60,8 +61,13 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
                         pulls: formList.pulls,
                     }
                     setFormOptions(formOptions)
+                    setLoaded(true)
+                    console.log("LOADED SUCCESFULLY")
                 })
-                .catch((error) => console.error(error));
+                .catch((error) => {
+                    console.error(error)
+                    setLoaded(false)
+                });
       }, [])
 
     const saveFormOptions = (formOptions: FormOptionsInterface) => {
@@ -127,7 +133,7 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
     }
 
     return (
-        <FormOptionsContext.Provider value={{ getFormIDs, errors, setErrors, isCheckingError, setIsCheckingError, formOptions, saveFormOptions, retrieveDropDown, filterColors }}>
+        <FormOptionsContext.Provider value={{ loaded, getFormIDs, errors, setErrors, isCheckingError, setIsCheckingError, formOptions, saveFormOptions, retrieveDropDown, filterColors }}>
             {children}
         </FormOptionsContext.Provider>
     )

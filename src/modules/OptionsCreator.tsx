@@ -279,7 +279,7 @@ function OptionsCreator() {
         const listOfSQLLots:LotTableSQL[] = []
         for(const lotTable of listOfLots) {
             const listOfSQLPartsOfLot:PartOfLotSQL[] = []
-            for(const lotSection of lotTable.partsOfLot) {
+            for(const [index, lotSection] of lotTable.partsOfLot.entries()) {
                 const partOfLot:PartOfLotSQL = {
                     roomID: lotSection.roomID,
                     material: getFormIDs(lotSection.material, "material"), 
@@ -293,14 +293,14 @@ function OptionsCreator() {
                     drawerGuideQty: 0,
                     pullQty: 0,
                     color: getFormIDs(lotSection.color, "color"), 
-                    doors: lotSection.doors ?? "ECI-000",
+                    doors: lotSection.doors ?? "",
                     fingerpull: lotSection.fingerpull,
                     drawerFronts: getFormIDs(lotSection.drawerFronts, "drawerFronts"), 
-                    knobs: getFormIDs(lotSection.knobs, "knobs"), 
+                    knobs: ["knobs", "both"].includes(lotSection.handleType) ? getFormIDs(lotSection.knobs, "knobs") : 1 , 
                     drawerBoxes: getFormIDs(lotSection.drawerBoxes, "drawerBoxes"), 
                     drawerGuides: getFormIDs(lotSection.drawerGuides, "drawerGuides"), 
                     doorHinges: getFormIDs(lotSection.doorHinges, "doorHinges"), 
-                    pulls: lotSection.pulls,
+                    pulls: ["pull", "both"].includes(lotSection.handleType) ? lotSection.pulls : "",
                     knobs2: "",
                     knobs2Qty: 0,
                     pulls2: "",
@@ -309,6 +309,9 @@ function OptionsCreator() {
                     details: lotSection.details,
                     appliances: lotSection.appliances,
                 }
+
+                if(index === 0 && !lotTable.throughoutIsLot) 
+                    Object.assign(partOfLot, {material: 0, color: 0, doors: ""})
                 listOfSQLPartsOfLot.push(partOfLot)
             }
             const lotTableSQL:LotTableSQL = {

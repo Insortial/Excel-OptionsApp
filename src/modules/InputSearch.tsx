@@ -20,7 +20,7 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
     const [focusedIndex, setFocusedIndex] = useState(0);
     const [value, setValue] = useState<string>("");
     const [hasError, setError] = useState(false)
-    const { errors, retrieveDropDown, isCheckingError, filterColors } = useContext(FormOptionsContext) as FormOptionsContextType
+    const { loaded, errors, retrieveDropDown, isCheckingError, filterColors } = useContext(FormOptionsContext) as FormOptionsContextType
     const inputRef = useRef<HTMLInputElement>(null)
     const dropDownRef = useRef<HTMLDivElement>(null)
 
@@ -42,11 +42,15 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
         }
     }
 
-    useEffect(() => {
+    const updateDropDowns = async () => {
         const retrievedOptions = retrieveDropDown(inputName)
         setDropDownOptions(retrievedOptions)
-        setSuggestion(retrievedOptions.slice(0, 50));
-    }, [])
+        setSuggestion(retrievedOptions.slice(0, 50))
+    }
+
+    useEffect(() => {
+        updateDropDowns()
+    }, [loaded])
 
     useEffect(() => {
         setError(errors[(`${inputName}${(typeof optionSectionNum === 'undefined' || optionSectionNum === 0) ? "" : optionSectionNum}`) as keyof ErrorObject] != null)
@@ -84,6 +88,9 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
       };
 
     function handleOnFocus():void {
+        if(suggestion.length === 0)
+            updateDropDowns()
+
         if((inputName === "color") && ("partsOfLot" in formState && optionSectionNum !== undefined)) {
             const materialSelection = formState.partsOfLot[optionSectionNum].material
             const filteredColors = filterColors(materialSelection)

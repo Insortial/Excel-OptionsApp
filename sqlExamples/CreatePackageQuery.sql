@@ -4,8 +4,10 @@ DROP TABLE [EXCELP&D].[dbo].[Packages];
 
 CREATE TABLE [EXCELP&D].[dbo].[Packages] (
 	packageID int IDENTITY(1,1) NOT NULL UNIQUE,
+	builderIDFK int NOT NULL,
 	packageName VARCHAR(100) UNIQUE,
-	PRIMARY KEY (packageID)
+	FOREIGN KEY (builderIDFK) REFERENCES [EXCELP&D].[dbo].[Customers]([Customer ID]),
+	PRIMARY KEY (packageID, builderIDFK)
 )
 
 CREATE TABLE [EXCELP&D].[dbo].[LotOptionToPackage] (
