@@ -280,6 +280,26 @@ input {
     justify-content: space-between;
 }
 
+.modalPlanRow {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    box-sizing: border-box;
+    padding: 0 20px;
+    margin-top: 10px;
+    height: 20px;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.modalPlanRow:first-of-type {
+    margin-top: 20px;
+}
+
+.modalPlanRow > label {
+    margin-right: 10px;
+}
+
 .deleteButton {
     position: absolute;
     bottom: 0;
@@ -453,6 +473,12 @@ td > input {
     flex-direction: column;
 }
 
+.editPackage {
+    background-color: #945766;
+    color: white;
+    width: 50px;
+}
+
 button {
     outline: none;
     border: none;
@@ -471,16 +497,17 @@ button:hover {
     background-color: #ffb74a;
     font-weight: bold;
 }
+a {
+    color: black;
+}
 
 a:link {
     text-decoration: none;
-    color: white;
 }
 
 a:visited {
     text-decoration: none;
-    color: white;
-  }
+}
 
 #createJobButton:hover {
     cursor: pointer;
@@ -591,6 +618,46 @@ td {
     height: inherit;
 }
 
+.modalProjectDiv {
+    width: 100%;
+    min-height: 60px;
+    margin: 30px auto 0 auto;
+    width: 80%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.modalInputRow {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+.addProject {
+    width: 40%;
+    height: 30px;
+    margin-bottom: 30px;
+}
+
+.modalSubmit {
+    height: 35px;
+    width: 100%;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.modalInputRow > .optionSearchContainer {
+    width: 100%;
+    height: 40px;
+    border: black solid 1px;
+}
+
+.modalProjectDiv > .optionSearchContainer > input {
+    text-align: start;
+}
+
 .optionSearchContainer {
     position: relative;
     width: 100%;
@@ -642,6 +709,7 @@ tr {
 }
 
 .optionSearch {
+    height: 100%;
     border: none;
     outline: none;
 }

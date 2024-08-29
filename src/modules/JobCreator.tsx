@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import InputSearch from '../modules/InputSearch.tsx';
 import { ErrorObject, JobDetails, JobDocumentInterface } from "../../../types/LotTableInterface";
 import InputError from './InputError.tsx';
-import { FormOptionsContext } from './OptionsTemplateContext.tsx';
+import { FormOptionsContext } from '../context/OptionsTemplateContext.tsx';
 import { FormOptionsContextType } from '../../../types/FormOptions.ts';
 import useFetch from '../hooks/useFetch.ts';
 
@@ -122,15 +122,21 @@ function JobCreator() {
         newErrors[key] = "Field is required, please fill out"
     })
     
-    setErrors(newErrors)
 
-    return Object.keys(newErrors).length === 0;
+    return newErrors;
   }
 
   const goToOptionsCreator = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if(await validate())
+    e.preventDefault()
+    const validateValues = await validate()
+    if(Object.keys(validateValues).length === 0) {
       navigate("/creatingOptions/", {state: jobDetails})
+      navigate(0)
+    } else {
+      setErrors(validateValues)
+    }
+      
+
   }
 
   return (
@@ -141,36 +147,6 @@ function JobCreator() {
       <section id="formSection">
         <form onSubmit={goToOptionsCreator}>
           <h2>Enter Job Details:</h2>
-          {/* <div className="formRow">
-            <label htmlFor={"builder"}>Builder: </label>
-            <InputSearch inputName={"builder"} formState={jobDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
-            <InputError errorKey={"builder"} errorState={errors}></InputError>
-          </div>
-          <div className="formRow">
-            <label htmlFor={"project"}>Project: </label>
-            <InputSearch inputName={"project"} formState={jobDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
-            <InputError errorKey={"project"} errorState={errors}></InputError>
-          </div>
-          <div className="formRow">
-            <label htmlFor={"phase"}>Phase: </label>
-            <InputSearch inputName={"phase"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
-            <InputError errorKey={"phase"} errorState={errors}></InputError>
-          </div>
-          <div className="formRow">
-            <label htmlFor={"superintendent"}>Superintendent: </label>
-            <InputSearch inputName={"superintendent"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
-            <InputError errorKey={"superintendent"} errorState={errors}></InputError>
-          </div>
-          <div className="formRow">
-            <label htmlFor={"phone"}>Phone Number: </label>
-            <InputSearch inputName={"phone"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
-            <InputError errorKey={"phone"} errorState={errors}></InputError>
-          </div>
-          <div className="formRow">
-            <label htmlFor={"foreman"}>Area Foreman: </label>
-            <InputSearch inputName={"foreman"} formState={jobDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
-            <InputError errorKey={"foreman"} errorState={errors}></InputError>
-          </div> */}
           <div className="formRow">
             <label htmlFor={"jobID"}>Job ID: </label>
             <InputSearch inputName={"jobID"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { AuthInfo, AuthUpdate } from '../modules/AuthContext';
+import { AuthInfo, AuthUpdate } from '../context/AuthContext';
 
 const useFetch = () => {
     const { saveAccessToken } = AuthUpdate()

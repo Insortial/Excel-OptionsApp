@@ -1,7 +1,7 @@
 import React, { useNavigate } from 'react-router-dom';
 import ExcelLogo from '../assets/excel_logo.svg'
 import useFetch from '../hooks/useFetch'
-import { AuthInfo, LoggedInUpdate } from './AuthContext';
+import { AuthInfo, LoggedInUpdate } from '../context/AuthContext';
 
 const Header = () => {
   const fetchHook = useFetch();

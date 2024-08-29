@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { FormOptionsInterface, FormOptionsContextType} from '../../../types/FormOptions';
 import { ErrorObject } from '../../../types/LotTableInterface';
-import { AuthInfo } from './AuthContext';
+import { AuthInfo } from '../context/AuthContext';
 
 export const FormOptionsContext = React.createContext<FormOptionsContextType | null>(null);
 
@@ -62,7 +62,6 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
                     }
                     setFormOptions(formOptions)
                     setLoaded(true)
-                    console.log("LOADED SUCCESFULLY")
                 })
                 .catch((error) => {
                     console.error(error)
@@ -77,7 +76,7 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
     const getFormIDs = (value:string, propertyName:string):number => {
         if(value !== "" && propertyName in formOptions) {
             const matchingTuple = formOptions[propertyName as keyof FormOptionsInterface]
-                                 .find((tuple: string | [number, string] | [number, string, string]) => tuple[1] == value)
+                                 .find((tuple: string | [number, string] | [number, string, string | number]) => tuple[1] == value)
             return (typeof matchingTuple == "string") ? 0 : matchingTuple?.[0] ?? 0
         }
         return 0
@@ -109,6 +108,11 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
         return formOptions.color.filter((colorTuple:[number, string, string]) => colorTuple[2] === filterWord).map((colorTuple:[number, string, string]) => colorTuple[1])
     }
 
+    const filterProjects = (builderName:string):string[] => {
+        const builderID = getFormIDs(builderName, "builder")
+        return formOptions.project.filter((projectTuple:[number, string, number]) => projectTuple[2] === builderID).map((projectTuple:[number, string, number]) => projectTuple[1])
+    }
+
     const retrieveDropDown = (propertyName: string) => {
         let listOfOptions:string[] = []
 
@@ -133,7 +137,7 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
     }
 
     return (
-        <FormOptionsContext.Provider value={{ loaded, getFormIDs, errors, setErrors, isCheckingError, setIsCheckingError, formOptions, saveFormOptions, retrieveDropDown, filterColors }}>
+        <FormOptionsContext.Provider value={{ filterProjects, loaded, getFormIDs, errors, setErrors, isCheckingError, setIsCheckingError, formOptions, saveFormOptions, retrieveDropDown, filterColors }}>
             {children}
         </FormOptionsContext.Provider>
     )

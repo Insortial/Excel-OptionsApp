@@ -67,7 +67,6 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
     }
 
     const onFormChange = (value: string | boolean, key: string, optionSectionNum: number=-1) => {
-        console.log(value)
         let updatedTable:LotTableInterface;
         if(optionSectionNum === -1) {
             updatedTable = {
@@ -119,7 +118,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
 
     return (
         <div className='exampleSection'>
-            <table className='projectInfo'>
+            {isOptionsMode ? (<table className='projectInfo'>
                 <tbody>
                     <tr>
                         <th>Builder</th>
@@ -138,7 +137,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
                         <td><InputSearch inputName={"foreman"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true} ></InputSearch></td>
                     </tr>
                 </tbody>
-            </table>
+            </table>) : <></>}
             <table className='lotInfo'>
                 <tbody>
                     {isOptionsMode ? (
@@ -147,6 +146,10 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
                             <td><InputSearch inputName={"jobID"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={false}></InputSearch></td>
                         </tr>
                     ) : <></>}
+                    <tr>
+                        <th>Builder</th>
+                        <td><InputSearch inputName={"builder"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}></InputSearch></td>
+                    </tr>
                     <tr>
                         <th>Box Style</th>
                         <td><InputSearch inputName={"boxStyle"} formState={formState} onFormChange={onFormChange} isDropDown={true}></InputSearch></td>

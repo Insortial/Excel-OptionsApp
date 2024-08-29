@@ -1,13 +1,16 @@
 import LotTable from "./LotTable";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useLocation, Link, useNavigate, useLoaderData } from "react-router-dom";
 import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL, PackageDetailsSQL } from '../../../types/LotTableInterface.ts';
 import React, { useContext, useEffect, useState } from "react";
 import docxConverter from "../hooks/docxConverter.tsx";
-import { FormOptionsContext } from "./OptionsTemplateContext.tsx";
-import { AuthInfo } from "./AuthContext.tsx"
+import { FormOptionsContext } from "../context/OptionsTemplateContext.tsx";
+import { AuthInfo } from "../context/AuthContext.tsx"
 import { FormOptionsContextType } from '../../../types/FormOptions.ts'
 import InputError from "./InputError.tsx";
 import useFetch from "../hooks/useFetch.ts";
+import InputSearch from "./InputSearch.tsx";
+import { PackageLoaderResponse } from "../loader/PackageLoader.ts";
+import { JobOptionLoaderResponse } from "../loader/JobOptionLoader.ts";
 
 type lotJobResponse = {
     isJobIDValid: boolean,
@@ -50,16 +53,19 @@ function OptionsCreator() {
     
     const { getFormIDs, errors, setErrors, setIsCheckingError, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const { name, phone, email } = AuthInfo()
-    const [lotInputValue, setLotInputValue] = useState<string>("")
     const [isChangingDate, setIsChangingDate] = useState<boolean>(false)
     const [listOfLots, setListOfLots] = useState<LotTableInterface[]>([])
     const [jobDetails, setJobDetails] = useState<JobDetails>(initialJobDetails)
+    const [hasPackage, setHasPackage] = useState<boolean>(true)
     const [currentLotNum, setCurrentLotNum] = useState<string>("")
     const [currentLot, setCurrentLot] = useState<LotTableInterface>()
     const [modal, setModal] = useState<boolean>(false)
     const [modalType, setModalType] = useState<string>("inputValue")
     const [isLotCopy, setIsLotCopy] = useState<boolean>(false)
+    const [packageProjects, setPackageProjects] = useState<string[]>([""])
     const [isOptionsMode, setIsOptionsMode] = useState<boolean>(true)
+    const [modalInputValue, setModalInputValue] = useState<string>("")
+    const loaderData = useLoaderData() as PackageLoaderResponse | JobOptionLoaderResponse;
     const location = useLocation();
     const navigate = useNavigate();
     const requestedJobDetails = location.state;
@@ -206,7 +212,7 @@ function OptionsCreator() {
         return lotDetails;
     }
 
-    const onJobDetailsChange = (value: string | boolean, key: string) => {
+    const onJobDetailsChange = (value: string | boolean, key: string,) => {
         const updatedTable = {
             ...jobDetails,
             [key]: value
@@ -214,10 +220,15 @@ function OptionsCreator() {
         setJobDetails(updatedTable)
     }
 
+    const onProjectsChange  = (value: string, key: string, optSectionNum:number=-1) => {
+        const modifiedProjects = [...packageProjects]
+        modifiedProjects[optSectionNum] = value
+        setPackageProjects(modifiedProjects)
+    }
+
     const saveLotTable = (lotTableData: LotTableInterface, lotInputValue: string) => {
         const filteredTableList = listOfLots.filter((lotDetails:LotTableInterface) => (isOptionsMode && lotDetails.lot !== lotInputValue) ||
                                                                                          (!isOptionsMode && lotDetails.plan !== lotInputValue))
-        console.log(filteredTableList)
         sortListOfLots(filteredTableList, lotTableData)
     }
     
@@ -230,7 +241,7 @@ function OptionsCreator() {
                                                                                         (!isOptionsMode && lotDetails.plan !== lotInputValue))
         sortListOfLots(filteredTableList)
         setCurrentLot(filteredTableList[0])
-        setCurrentLotNum(filteredTableList[0]?.lot ?? "")
+        setCurrentLotNum(isOptionsMode ? filteredTableList[0]?.lot: filteredTableList[0]?.plan)
     }
 
     const changeLotTable = (lotInputValue: string) => {
@@ -242,25 +253,25 @@ function OptionsCreator() {
     }
 
     const addLotTable = () => {
-        console.log(lotInputValue)
         let table:LotTableInterface;
-        if(lotInputValue !== "") {
+        if(modalInputValue !== "") {
             if(!isLotCopy) 
-                table = createLotTable(lotInputValue)
+                table = createLotTable(modalInputValue)
             else {
                 table = Object.assign({}, listOfLots.find((lotDetails:LotTableInterface) => {return (isOptionsMode ? lotDetails.lot : lotDetails.plan) === currentLotNum}))
                 table.partsOfLot = Object.assign([], table.partsOfLot)
                 if(isOptionsMode)
-                    table.lot = lotInputValue
+                    table.lot = modalInputValue
                 else
-                    table.plan = lotInputValue
+                    table.plan = modalInputValue
                 setIsLotCopy(false)
+                console.log(listOfLots)
                 console.log(table)
             }
             sortListOfLots(listOfLots, table)
-            changeLotTable(lotInputValue)
+            changeLotTable(modalInputValue)
 
-            setCurrentLotNum(lotInputValue)
+            setCurrentLotNum(modalInputValue)
             setCurrentLot(table)
             switchModal(false, "inputValue")
         }
@@ -354,11 +365,12 @@ function OptionsCreator() {
             phone: jobDetails.phone,
             prodReady: jobDetails.prodReady
         }
+        console.log(loaderData)
 
         const packageDetailsSQL:PackageDetailsSQL = {
-            builder: jobDetails.builder,
-            projects: [100, 600],
-            packageName: "PACKAGE NAME",
+            builder: getFormIDs(jobDetails.builder, "builder"),
+            projects: packageProjects.map((project:string) => getFormIDs(project, "project")),
+            packageName: requestedJobDetails?.packageName ?? loaderData?.state.packageDetails.packageName ?? "",
             plans: listOfSQLLots
         }
 
@@ -396,7 +408,7 @@ function OptionsCreator() {
 
     const handleInputChange = (event: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
         event.preventDefault()
-        setLotInputValue(event.target.value)
+        setModalInputValue(event.target.value)
     }
 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -405,6 +417,7 @@ function OptionsCreator() {
     }
 
     const turnOffModal = () => {
+        setModalInputValue("")
         switchModal(false, "inputValue")
     }
 
@@ -417,13 +430,12 @@ function OptionsCreator() {
     useEffect(() => {
         const availableLots = findAvailableLots()
         if(availableLots.length > 0)
-            setLotInputValue(availableLots[0]);
+            setModalInputValue(availableLots[0]);
         else 
-            setLotInputValue("")
-      }, [jobDetails, listOfLots]);
+            setModalInputValue("")
+    }, [jobDetails, listOfLots]);
 
     useEffect(() => {
-        //console.log("Checking Error: " + isCheckingError)
         if(isCheckingError)
             validate()
     }, [currentLotNum])
@@ -431,24 +443,57 @@ function OptionsCreator() {
 
     useEffect(() => {
         setIsCheckingError(false)
-        if (requestedJobDetails == null)
+        if (requestedJobDetails != null) {
+            if(Object.prototype.hasOwnProperty.call(requestedJobDetails, 'jobDetails')) {
+                setJobDetails(requestedJobDetails.jobDetails)
+                setListOfLots(requestedJobDetails.listOfLots)
+                setCurrentLot(requestedJobDetails.listOfLots[0])
+                setCurrentLotNum(requestedJobDetails.listOfLots[0].lot)
+            } else if (Object.prototype.hasOwnProperty.call(requestedJobDetails, 'packageName')) {
+                switchModal(true, "inputValue")
+                setJobDetails(requestedJobDetails.packageDetails)
+                setIsOptionsMode(false)
+                setListOfLots([])
+            } else if (listOfLots.length == 0 && requestedJobDetails != null) {
+                console.log(requestedJobDetails)
+                switchModal(true, "inputValue")
+                setJobDetails(requestedJobDetails)
+            } 
+        } else if(loaderData != null) {
+            const loadedData = loaderData.state
+            if(Object.prototype.hasOwnProperty.call(loadedData, 'jobDetails')) {
+                setJobDetails(loadedData.jobDetails)
+                setListOfLots(loadedData.listOfLots)
+                setCurrentLot(loadedData.listOfLots[0])
+                setCurrentLotNum(loadedData.listOfLots[0].lot)
+            } else {
+                setIsOptionsMode(false)
+                setJobDetails({
+                    builder: loadedData.packageDetails.builderName,
+                    project: "",
+                    superintendent: "",
+                    optionCoordinator: "",
+                    jobNotes: "",
+                    phone: "",
+                    lotNums: [],
+                    foreman: "",
+                    phase: "",
+                    jobID: 0,
+                    date: "",
+                    prodReady: false
+                })
+                setListOfLots(loadedData.listOfLots)
+                setCurrentLot(loadedData.listOfLots[0])
+                setCurrentLotNum(loadedData.listOfLots[0].plan)
+                setPackageProjects(loadedData.packageDetails.projects)
+            }
+            
+        } else {
             navigate("/")
+        }
+            
 
-        if(Object.prototype.hasOwnProperty.call(requestedJobDetails, 'jobDetails')) {
-            setJobDetails(requestedJobDetails.jobDetails)
-            setListOfLots(requestedJobDetails.listOfLots)
-            setCurrentLot(requestedJobDetails.listOfLots[0])
-            setCurrentLotNum(requestedJobDetails.listOfLots[0].lot)
-        } else if (Object.prototype.hasOwnProperty.call(requestedJobDetails, 'packageName')) {
-            switchModal(true, "inputValue")
-            setJobDetails(requestedJobDetails.packageDetails)
-            setIsOptionsMode(false)
-            setListOfLots([])
-        } else if (listOfLots.length == 0 && requestedJobDetails != null) {
-            console.log(requestedJobDetails)
-            switchModal(true, "inputValue")
-            setJobDetails(requestedJobDetails)
-        } 
+        
     }, [])
 
     return (
@@ -460,19 +505,35 @@ function OptionsCreator() {
                         <h2>Enter {isOptionsMode ? "Lot Number" : "Plan Name"}:</h2>
                         <div className="modalRow">
                             {isOptionsMode ? (
-                            <select value={lotInputValue} onChange={handleInputChange}>
+                            <select value={modalInputValue} onChange={handleInputChange}>
                                 {jobDetails.lotNums.map((lotNum, index) => {
                                     if(!listOfLots.find((lot) => lot.lot === lotNum)) {
                                         return <option key={index} value={lotNum}>{lotNum}</option>
                                     }
                                 })}
                             </select> ) : (
-                                <input onChange={handleInputChange}></input>
+                                <input value={modalInputValue} onChange={handleInputChange}></input>
                             )}
                             <button onClick={addLotTable}>Submit</button>
                         </div>
+                        {hasPackage && <>
+                            <div className="modalPlanRow">
+                                <label>Package:</label>
+                                <select>
+                                    <option>None</option>
+                                    <option>Westview/Aguila</option>
+                                </select>
+                            </div>
+                            <div className="modalPlanRow">
+                                <label>Plan Type:</label>
+                                <select>
+                                    <option>FRONT DOORS</option>
+                                    <option>BACK PORCH</option>
+                                </select>
+                            </div>
+                        </>}
                     </>) : modalType === "prod" 
-                    ? (
+                    ? (isOptionsMode ?
                         <>
                             <h2>Is This Production Schedule Final?</h2>
                             <div className="modalCheckboxRow">
@@ -481,6 +542,19 @@ function OptionsCreator() {
                                 <label>No:</label>
                                 <input type="checkbox" checked={!jobDetails.prodReady} onChange={() => onJobDetailsChange(false, "prodReady")}></input>
                                 <button onClick={() => saveLotTablesSQL()}>Submit</button>
+                            </div>
+                        </>
+                        : <>
+                            <h2>Select Projects</h2>
+                            <div className="modalProjectDiv">
+                                {packageProjects.map((_, index:number) => {
+                                    return  <div className="modalInputRow" key={index}>
+                                                <InputSearch inputName={"project"} formState={packageProjects} onFormChange={onProjectsChange} isDropDown={true} optionSectionNum={index} filterValue={jobDetails.builder}></InputSearch>
+                                                <button onClick={() => setPackageProjects(prevState => prevState.filter((_, idx) => idx !== index))}>Delete</button>
+                                            </div>
+                                })}
+                                <button className="addProject" onClick={() => setPackageProjects([...packageProjects, ""])}>Add Project</button>
+                                <button className="modalSubmit" onClick={() => saveLotTablesSQL()}>Submit</button>
                             </div>
                         </>
                     ) : (

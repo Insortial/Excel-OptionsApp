@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import '../App.css'
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InputSearch from '../modules/InputSearch.tsx';
 import { ErrorObject, JobDetails } from "../../../types/LotTableInterface";
 import InputError from './InputError.tsx';
-import { FormOptionsContext } from './OptionsTemplateContext.tsx';
+import { FormOptionsContext } from '../context/OptionsTemplateContext.tsx';
 import { FormOptionsContextType } from '../../../types/FormOptions.ts';
 import useFetch from '../hooks/useFetch.ts';
 
@@ -117,11 +117,6 @@ function JobPackageCreator() {
       <section id="formSection">
         <form onSubmit={goToPackageCreator}>
             <h2>View Builder Packages</h2>
-            <div className="formRow">
-                <label htmlFor={"jobID"}>Builder Name</label>
-                <InputSearch inputName={"builder"} formState={jobDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
-                <InputError errorKey={"jobID"} errorState={errors}></InputError>
-            </div>
             <div id="packageDisplay" className="creatorDisplay" style={{display: packages?.length > 0 ? "block" : "none"}}>
               <div>
                 <h5>Packages</h5>
@@ -132,10 +127,15 @@ function JobPackageCreator() {
                             <h5>{item.packageName}</h5>
                             <section>
                               <h5>{item.projectName.join(", ")}</h5> 
-                              <button onClick={e => e.preventDefault()}>Edit</button>
+                              <Link className="editPackage"to={"/creatingOptions/package/" + item.packageID}>Edit</Link>
                             </section>
                         </div>
                 })}
+            </div>
+            <div className="formRow">
+                <label htmlFor={"jobID"}>Builder Name</label>
+                <InputSearch inputName={"builder"} formState={jobDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                <InputError errorKey={"jobID"} errorState={errors}></InputError>
             </div>
             <div className="formRow">
                 <label htmlFor={"packageName"}>Package Name</label>

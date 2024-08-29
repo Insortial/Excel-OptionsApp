@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import JobDocument from './JobDocument.tsx';
 import { Link } from 'react-router-dom';
 import { JobDocumentInterface } from '../../../types/LotTableInterface.ts';
-import { FormOptionsContext } from './OptionsTemplateContext.tsx';
+import { FormOptionsContext } from '../context/OptionsTemplateContext.tsx';
 import { FormOptionsContextType } from '../../../types/FormOptions.ts';
 import useFetch from '../hooks/useFetch.ts';
 

@@ -1,26 +1,27 @@
 import { useState, useEffect, useCallback, useContext, useRef } from "react"
 import React from 'react'
 import { LotTableInterface, PartOfLot, JobDetails, ErrorObject } from "../../../types/LotTableInterface";
-import { FormOptionsContext } from "./OptionsTemplateContext";
+import { FormOptionsContext } from "../context/OptionsTemplateContext";
 import { FormOptionsContextType } from "../../../types/FormOptions"
 import { useClickOutside } from "../hooks/useClickOutside";
 
 type inputOptions = {
     isDropDown: boolean;
-    formState: LotTableInterface | JobDetails;
+    formState: LotTableInterface | JobDetails | string[];
     optionSectionNum?: number;
     onFormChange?: (value: string, key: string, optSectionNum?: number) => void;
     inputName: string;
+    filterValue?: string | number
 }
 
-const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChange, inputName, optionSectionNum}) => {
+const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChange, inputName, optionSectionNum, filterValue}) => {
     const [suggestion, setSuggestion] = useState<string[]>([]);
     const [dropDownOptions, setDropDownOptions] = useState<string[]>([]);
     const [inFocus, setInFocus] = useState<boolean | boolean>(false);
     const [focusedIndex, setFocusedIndex] = useState(0);
     const [value, setValue] = useState<string>("");
     const [hasError, setError] = useState(false)
-    const { loaded, errors, retrieveDropDown, isCheckingError, filterColors } = useContext(FormOptionsContext) as FormOptionsContextType
+    const { loaded, errors, retrieveDropDown, isCheckingError, filterColors, filterProjects } = useContext(FormOptionsContext) as FormOptionsContextType
     const inputRef = useRef<HTMLInputElement>(null)
     const dropDownRef = useRef<HTMLDivElement>(null)
 
@@ -36,6 +37,8 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
         if((optionSectionNum !== undefined) && ("partsOfLot" in formState)) {
             //Represents a PartOfLot Value
             return formState.partsOfLot[optionSectionNum][inputName as keyof (LotTableInterface | JobDetails | PartOfLot)] ?? ""
+        } else if ((optionSectionNum !== undefined) && Array.isArray(formState)) {
+            return formState[optionSectionNum] ?? ""
         } else {
             //Represents all other interfaces values
             return formState[inputName as keyof (LotTableInterface | JobDetails | PartOfLot)] ?? ""
@@ -97,6 +100,11 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
             console.log(filteredColors)
             setDropDownOptions(filteredColors)
             setSuggestion(filteredColors)
+        } else if (Array.isArray(formState) && typeof filterValue === "string" && inputName === "project") {
+            const filteredProjects = filterProjects(filterValue)
+            console.log(filteredProjects)
+            setDropDownOptions(filteredProjects)
+            setSuggestion(filteredProjects)
         } else {
             setSuggestion(dropDownOptions.slice(0, 50));
             

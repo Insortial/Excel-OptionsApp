@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { AuthUpdate, LoggedInUpdate } from './AuthContext';
+import { AuthUpdate, LoggedInUpdate } from '../context/AuthContext';
 import Header from './Header';
 
 
