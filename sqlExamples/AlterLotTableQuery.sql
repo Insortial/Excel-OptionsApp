@@ -2,7 +2,7 @@
 --ALTER TABLE [EXCELP&D].[dbo].[Lot Order Details]
 --ADD
 --details varchar(MAX),
---appliances varchar(MAX)
+--handleType varchar(30)
 
 --Drop nonclustered indices for columns
 --DROP INDEX [Lot Order Details].[Lot Order Details$Room ID];

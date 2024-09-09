@@ -44,15 +44,25 @@ function JobPackageCreator() {
 
   useEffect(() => {
     setIsCheckingError(false)
-  }, [])
-  
 
-  useEffect(() => {
-    fetchHook(`/getPackageByProject/${jobDetails.builder}`, "GET")
+    fetchHook(`/getPackages/`, "GET")
     .then((response) => response.status === 200 ? response.json() : undefined)
     .then((result) => {
       console.log(result)
       setPackages(result)
+    }).catch((error) => {
+      console.error(error)
+    });
+  }, [])
+  
+
+  useEffect(() => {
+    fetchHook(`/getPackages/?project=${jobDetails.builder}`, "GET")
+    .then((response) => response.status === 200 ? response.json() : undefined)
+    .then((result) => {
+      console.log(result)
+      if(result.length !== 0)
+        setPackages(result)
     }).catch((error) => {
       console.error(error)
     });
@@ -106,7 +116,7 @@ function JobPackageCreator() {
   const goToPackageCreator = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     //if(await validate())
-    navigate("/creatingOptions/", {state: {packageName: packageNameRef.current?.value, packageDetails: jobDetails}})
+    navigate("/optionCreator/", {state: {packageName: packageNameRef.current?.value, packageDetails: jobDetails}})
   }
 
   return (
@@ -127,7 +137,7 @@ function JobPackageCreator() {
                             <h5>{item.packageName}</h5>
                             <section>
                               <h5>{item.projectName.join(", ")}</h5> 
-                              <Link className="editPackage"to={"/creatingOptions/package/" + item.packageID}>Edit</Link>
+                              <Link className="editPackage"to={"/optionCreator/package/" + item.packageID}>Edit</Link>
                             </section>
                         </div>
                 })}

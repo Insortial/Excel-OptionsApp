@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import '../App.css'
 import { useNavigate } from "react-router-dom";
 import InputSearch from '../modules/InputSearch.tsx';
-import { ErrorObject, JobDetails, JobDocumentInterface } from "../../../types/LotTableInterface";
+import { ErrorObject, JobDetails, JobDocumentInterface, PackageDetails } from "../../../types/LotTableInterface";
 import InputError from './InputError.tsx';
 import { FormOptionsContext } from '../context/OptionsTemplateContext.tsx';
 import { FormOptionsContextType } from '../../../types/FormOptions.ts';
@@ -104,6 +104,17 @@ function JobCreator() {
     return jobHasBeenMade
   }
 
+  const getPackageDetails = async () => {
+    const response = await fetchHook(`/getPackageForJobID/${jobDetails.jobID}`, "GET")
+    if (!response.ok) {
+      return null
+    }
+
+    const data = await response.text()
+    const packages = JSON.parse(data)
+    return packages
+  }
+
 
   const validate = async () => {
     const requiredFields = ["builder", "project", "optionCoordinator", "phase", "date", "jobID"];
@@ -128,9 +139,16 @@ function JobCreator() {
 
   const goToOptionsCreator = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    let state = {}
     const validateValues = await validate()
+    const packageDetails:PackageDetails = await getPackageDetails()
+    if(packageDetails !== null)
+      state = {jobDetails: jobDetails, packageDetails: packageDetails}
+    else 
+      state = {jobDetails: jobDetails}
+    console.log(state)
     if(Object.keys(validateValues).length === 0) {
-      navigate("/creatingOptions/", {state: jobDetails})
+      navigate("/optionCreator/", {state: state})
       navigate(0)
     } else {
       setErrors(validateValues)

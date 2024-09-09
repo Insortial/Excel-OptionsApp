@@ -45,7 +45,6 @@ const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
     const [accessToken, setAccessToken] = useState<string>("token")
 
     const saveAccessToken = (token: string) => {
-        console.log(token)
         const decodedToken:DecodedToken = jwtDecode(token)
         setEmail(decodedToken.email)
         setName(decodedToken.name)

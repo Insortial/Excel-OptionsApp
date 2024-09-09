@@ -35,20 +35,20 @@ const JobMenu = () => {
             </header>
             <div id="jobMenuBody">
                 <section className='jobMenuSection'>
-                    <h2>Production Ready Jobs</h2>
-                    <section className="jobList">
-                        {jobDocuments.map((jobDocument:JobDocumentInterface, index:number) => {
-                            if(jobDocument.prodReady)
-                            return <JobDocument key={index} JobDocumentDetails={jobDocument}/>
-                        })}
-                    </section>
-                </section>
-                <section className='jobMenuSection'>
                     <h2>Draft Jobs</h2>
                     <section className="jobList">
                         {jobDocuments.map((jobDocument:JobDocumentInterface, index:number) => {
                             if(!jobDocument.prodReady)
                                 return <JobDocument key={index} JobDocumentDetails={jobDocument}/>
+                        })}
+                    </section>
+                </section>
+                <section className='jobMenuSection'>
+                    <h2>Production Ready Jobs</h2>
+                    <section className="jobList">
+                        {jobDocuments.map((jobDocument:JobDocumentInterface, index:number) => {
+                            if(jobDocument.prodReady)
+                            return <JobDocument key={index} JobDocumentDetails={jobDocument}/>
                         })}
                     </section>
                 </section>

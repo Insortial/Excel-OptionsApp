@@ -1,6 +1,6 @@
 import LotTable from "./LotTable";
-import { useLocation, Link, useNavigate, useLoaderData } from "react-router-dom";
-import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL, PackageDetailsSQL } from '../../../types/LotTableInterface.ts';
+import { useLocation, Link, useNavigate, useLoaderData, useRevalidator } from "react-router-dom";
+import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL, PackageDetailsSQL, PackageDetails, ModifiedHardware } from '../../../types/LotTableInterface.ts';
 import React, { useContext, useEffect, useState } from "react";
 import docxConverter from "../hooks/docxConverter.tsx";
 import { FormOptionsContext } from "../context/OptionsTemplateContext.tsx";
@@ -8,15 +8,15 @@ import { AuthInfo } from "../context/AuthContext.tsx"
 import { FormOptionsContextType } from '../../../types/FormOptions.ts'
 import InputError from "./InputError.tsx";
 import useFetch from "../hooks/useFetch.ts";
-import InputSearch from "./InputSearch.tsx";
 import { PackageLoaderResponse } from "../loader/PackageLoader.ts";
 import { JobOptionLoaderResponse } from "../loader/JobOptionLoader.ts";
+import OptionsCreatorModal from "./OptionsCreatorModal.tsx";
 
 type lotJobResponse = {
     isJobIDValid: boolean,
     invalidLots: string[],
     validLots: string[]
-  }
+}
   
 function OptionsCreator() {
     const initialJobDetails:JobDetails = {
@@ -34,6 +34,15 @@ function OptionsCreator() {
         prodReady: false
     }
 
+    const initialPackageDetails:PackageDetails = {
+        builder: "",
+        packages: [],
+        projects: [],
+        plans: [],
+        packageName: "",
+        planName: "",
+    }
+
     const throughoutLot:PartOfLot = {
         roomID: "Throughout",
         material: "",
@@ -46,26 +55,32 @@ function OptionsCreator() {
         drawerGuides: "",
         doorHinges: "",
         pulls: "",
-        handleType: "pull",
+        handleType: "pulls",
         details: "",
         appliances: ""
     }
     
     const { getFormIDs, errors, setErrors, setIsCheckingError, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const { name, phone, email } = AuthInfo()
+    //Option States
     const [isChangingDate, setIsChangingDate] = useState<boolean>(false)
     const [listOfLots, setListOfLots] = useState<LotTableInterface[]>([])
     const [jobDetails, setJobDetails] = useState<JobDetails>(initialJobDetails)
-    const [hasPackage, setHasPackage] = useState<boolean>(true)
+    const [hasPackage, setHasPackage] = useState<boolean>(false)
+    const [packageDetails, setPackageDetails] = useState<PackageDetails>(initialPackageDetails)
     const [currentLotNum, setCurrentLotNum] = useState<string>("")
     const [currentLot, setCurrentLot] = useState<LotTableInterface>()
     const [modal, setModal] = useState<boolean>(false)
-    const [modalType, setModalType] = useState<string>("inputValue")
+    const [modalType, setModalType] = useState<string>("none")
     const [isLotCopy, setIsLotCopy] = useState<boolean>(false)
+    const [modalInputValue, setModalInputValue] = useState<string>("")
+
+    //Package States
     const [packageProjects, setPackageProjects] = useState<string[]>([""])
     const [isOptionsMode, setIsOptionsMode] = useState<boolean>(true)
-    const [modalInputValue, setModalInputValue] = useState<string>("")
+
     const loaderData = useLoaderData() as PackageLoaderResponse | JobOptionLoaderResponse;
+    const revalidator = useRevalidator();
     const location = useLocation();
     const navigate = useNavigate();
     const requestedJobDetails = location.state;
@@ -94,6 +109,20 @@ function OptionsCreator() {
         }
         const data = await response.json()
         return data
+    }
+
+    const isHandleValid = (handleType:string, key:string, value:string):boolean => {
+        switch(handleType) {
+            case "both":
+                return ["pulls", "knobs"].includes(key) && value !== ""
+            case "pulls":
+                return key === "pulls" && value !== ""
+            case "knobs":
+                return key === "knobs" && value !== ""
+            case "none":
+            default:
+                return true
+        }
     }
 
     const validate = async () => {
@@ -142,15 +171,22 @@ function OptionsCreator() {
     
                 lot.partsOfLot.map((partOfLot:PartOfLot, index:number) => {
                     //Iterates through each Part of Lot
-                    Object.keys(partOfLot).forEach((key) => {
+                    for(const key of Object.keys(partOfLot)) {
                         //Checks if key has value, also checks if it is part of requiredFields list
-                        if(requiredFieldsLotPart.includes(key) && !lot.partsOfLot[index][key as keyof PartOfLot]) {
+                        const selectedPartOfLot = lot.partsOfLot[index]
+                        const selectedField = selectedPartOfLot[key as keyof PartOfLot]
+                        if(requiredFieldsLotPart.includes(key) && !selectedField) {
+                            if((selectedPartOfLot.roomID === 'Throughout' && !lot.hasThroughoutLot && ["material", "color", "doors", "fingerpull"].includes(key)) || 
+                                (isHandleValid(selectedPartOfLot.handleType, key, selectedField))) {
+                                continue
+                            }
+
                             listOfLotsHasError = true
                             lot.hasError = true
                             if(lot.lot === currentLotNum)
                                 newErrors[`${key}${(index === 0) ? "" : index}`] = `Field is required, please fill out`
                         }
-                    })
+                    }
                 })
                 
     
@@ -187,18 +223,21 @@ function OptionsCreator() {
             jobID: jobDetails.jobID,
             lot: isOptionsMode ? lotInputValue : "",
             boxStyle: "",
+            packageName: "",
             interiors: "",
             upperHeight: "",
             islands: "",
+            supports: "",
             crown: "",
             lightRail: "",
             baseShoe: "",
-            throughoutIsLot: false,
+            hasThroughoutLot: true,
             lotOptionsValue: 0.00,
             recyclingBins: "",
             hasError: false,
             plan: !isOptionsMode ? lotInputValue : "",
             partsOfLot: [throughoutLot],
+            appliances: "",
             kitchen: "",
             master: "",
             bath2: "",
@@ -206,13 +245,14 @@ function OptionsCreator() {
             bath4: "",
             powder: "",
             laundry: "",
+            lotNotes: "",
             footerNotes: ""
         }
 
         return lotDetails;
     }
 
-    const onJobDetailsChange = (value: string | boolean, key: string,) => {
+    const onJobDetailsChange = (value: string | boolean, key: string) => {
         const updatedTable = {
             ...jobDetails,
             [key]: value
@@ -229,6 +269,7 @@ function OptionsCreator() {
     const saveLotTable = (lotTableData: LotTableInterface, lotInputValue: string) => {
         const filteredTableList = listOfLots.filter((lotDetails:LotTableInterface) => (isOptionsMode && lotDetails.lot !== lotInputValue) ||
                                                                                          (!isOptionsMode && lotDetails.plan !== lotInputValue))
+        setCurrentLot(lotTableData)
         sortListOfLots(filteredTableList, lotTableData)
     }
     
@@ -256,7 +297,16 @@ function OptionsCreator() {
         let table:LotTableInterface;
         if(modalInputValue !== "") {
             if(!isLotCopy) 
-                table = createLotTable(modalInputValue)
+                if(["", "None"].includes(packageDetails.packageName))
+                    table = createLotTable(modalInputValue)
+                else {
+                    console.log("IN HERE")
+                    table = Object.assign({}, packageDetails.plans.find((lotDetails:LotTableInterface) => {return lotDetails.plan === packageDetails.planName}))
+                    table.lot = modalInputValue
+                    table.partsOfLot = Object.assign([], table.partsOfLot)
+                    console.log(listOfLots)
+                    console.log(table)
+                }
             else {
                 table = Object.assign({}, listOfLots.find((lotDetails:LotTableInterface) => {return (isOptionsMode ? lotDetails.lot : lotDetails.plan) === currentLotNum}))
                 table.partsOfLot = Object.assign([], table.partsOfLot)
@@ -273,23 +323,52 @@ function OptionsCreator() {
 
             setCurrentLotNum(modalInputValue)
             setCurrentLot(table)
-            switchModal(false, "inputValue")
+            setModalType("none")
         }
     }
 
-    const createNewLot = () => {
-        switchModal(true, "inputValue")
+    const modifyHardwareModal = (hardwareName:string) => {
+        setModalType(hardwareName)
     }
 
+    /* const addModifiedHardware = (partOfLot:PartOfLot, lotID:string, hardware:string) => {
+        const updatedTable = {
+            ...formState,
+            [key]: value
+        }
+        saveLotTable(updatedTable, lotID)
+    } */
+
     const createLotCopy = () => {
-        switchModal(true, "inputValue")
+        setModalType("inputValue")
         setIsLotCopy(true)
+    }
+
+    const handlePullsAndKnobs = (returnType: string, currentLot:PartOfLot, throughOutLot:PartOfLot|undefined) => {
+        let partName = ""
+        
+        if(returnType === "pulls") {
+            partName = ["pulls", "both"].includes(currentLot.handleType) ? currentLot.pulls : ""
+        } else if (returnType === "knobs") {
+            partName = ["knobs", "both"].includes(currentLot.handleType) ? currentLot.knobs : ""
+        }
+
+        if (currentLot.roomID !== "Throughout" && throughOutLot !== undefined && currentLot.handleType === "none") {
+            partName = returnType === "pulls" ? throughOutLot.pulls : returnType === "knobs" ? throughOutLot.knobs : ""
+
+            if(throughOutLot.handleType === "none")
+                partName = ""
+        }
+
+        return partName
     }
 
     const postJobDetailsSql = async () => {
         const listOfSQLLots:LotTableSQL[] = []
         for(const lotTable of listOfLots) {
             const listOfSQLPartsOfLot:PartOfLotSQL[] = []
+            console.log(lotTable.partsOfLot.find((partOfLot:PartOfLot) => partOfLot.roomID === "Throughout"))
+            const throughOutLot = lotTable.partsOfLot.find((partOfLot:PartOfLot) => partOfLot.roomID === "Throughout")
             for(const [index, lotSection] of lotTable.partsOfLot.entries()) {
                 const partOfLot:PartOfLotSQL = {
                     roomID: lotSection.roomID,
@@ -307,22 +386,21 @@ function OptionsCreator() {
                     doors: lotSection.doors ?? "",
                     fingerpull: lotSection.fingerpull,
                     drawerFronts: getFormIDs(lotSection.drawerFronts, "drawerFronts"), 
-                    knobs: ["knobs", "both"].includes(lotSection.handleType) ? getFormIDs(lotSection.knobs, "knobs") : 1 , 
+                    knobs: handlePullsAndKnobs("knobs", lotSection, throughOutLot), 
                     drawerBoxes: getFormIDs(lotSection.drawerBoxes, "drawerBoxes"), 
                     drawerGuides: getFormIDs(lotSection.drawerGuides, "drawerGuides"), 
                     doorHinges: getFormIDs(lotSection.doorHinges, "doorHinges"), 
-                    pulls: ["pull", "both"].includes(lotSection.handleType) ? lotSection.pulls : "",
+                    pulls: handlePullsAndKnobs("pulls", lotSection, throughOutLot),
                     knobs2: "",
                     knobs2Qty: 0,
                     pulls2: "",
                     pulls2Qty: 0,
                     handleType: lotSection.handleType,
                     details: lotSection.details,
-                    appliances: lotSection.appliances,
                 }
 
-                if(index === 0 && !lotTable.throughoutIsLot) 
-                    Object.assign(partOfLot, {material: 0, color: 0, doors: ""})
+                if(index === 0 && !lotTable.hasThroughoutLot) 
+                    Object.assign(partOfLot, {material: 0, color: 0, doors: "", fingerpull: ""})
                 listOfSQLPartsOfLot.push(partOfLot)
             }
             const lotTableSQL:LotTableSQL = {
@@ -336,10 +414,13 @@ function OptionsCreator() {
                 upperHeight: lotTable.upperHeight,
                 islands: lotTable.islands,
                 crown: lotTable.crown,
-                throughoutIsLot: lotTable.throughoutIsLot,
+                supports: lotTable.supports,
+                hasThroughoutLot: lotTable.hasThroughoutLot,
                 lightRail: lotTable.lightRail,
+                lotNotes: lotTable.lotNotes,
                 baseShoe: lotTable.baseShoe,
                 recyclingBins: lotTable.recyclingBins,
+                appliances: lotTable.appliances,
                 kitchen: lotTable.kitchen,
                 masterBath: lotTable.master,
                 bath2: lotTable.bath2,
@@ -351,7 +432,6 @@ function OptionsCreator() {
             }
             listOfSQLLots.push(lotTableSQL)
         }
-        console.log(jobDetails.optionCoordinator)
         const jobDetailsSQL:JobDetailsSQL = {
             jobID: jobDetails.jobID,
             doorBuyOut: false,
@@ -365,19 +445,22 @@ function OptionsCreator() {
             phone: jobDetails.phone,
             prodReady: jobDetails.prodReady
         }
-        console.log(loaderData)
 
-        const packageDetailsSQL:PackageDetailsSQL = {
-            builder: getFormIDs(jobDetails.builder, "builder"),
-            projects: packageProjects.map((project:string) => getFormIDs(project, "project")),
-            packageName: requestedJobDetails?.packageName ?? loaderData?.state.packageDetails.packageName ?? "",
-            plans: listOfSQLLots
+        let packageDetailsSQL:PackageDetailsSQL
+        let finalPackageDetails; 
+        if(!isOptionsMode) {
+            packageDetailsSQL = {
+                builder: getFormIDs(jobDetails.builder, "builder"),
+                projects: packageProjects.map((project:string) => getFormIDs(project, "project")),
+                packageName: requestedJobDetails?.packageName ?? loaderData?.state.packageDetails.packageName ?? "",
+                plans: listOfSQLLots
+            }
+            finalPackageDetails = JSON.stringify(packageDetailsSQL)
         }
+       
+        console.log(jobDetailsSQL)
 
         const finalJobDetails = JSON.stringify(jobDetailsSQL)
-        const finalPackageDetails = JSON.stringify(packageDetailsSQL)
-        console.log(packageDetailsSQL)
-    
         const response = await fetchHook(isOptionsMode ? "/lotDetails" : "/packageDetails", "POST", isOptionsMode ? finalJobDetails : finalPackageDetails)
         if (!response.ok) {
             throw new Error(response.statusText);
@@ -398,27 +481,24 @@ function OptionsCreator() {
         console.log(jobDetails)
         console.log(listOfLots)
         const lotTablesAreValid = await validate()
+        console.log(lotTablesAreValid)
         if(lotTablesAreValid) {
             await postJobDetailsSql()
-            turnOffModal()
-        } else {
-            turnOffModal()
-        }
+            revalidator.revalidate()
+        } 
+        setModalType("none")
     }
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
-        event.preventDefault()
-        setModalInputValue(event.target.value)
+    const handlePackageDetailsChange = (value:string, propName:string) => {
+        setPackageDetails({
+            ...packageDetails,
+            [propName]: value
+        })
     }
 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         event.preventDefault()
         onJobDetailsChange(event.target.value, "date")
-    }
-
-    const turnOffModal = () => {
-        setModalInputValue("")
-        switchModal(false, "inputValue")
     }
 
     const findAvailableLots = ():string[] => {
@@ -443,24 +523,27 @@ function OptionsCreator() {
 
     useEffect(() => {
         setIsCheckingError(false)
+        console.log(requestedJobDetails)
         if (requestedJobDetails != null) {
-            if(Object.prototype.hasOwnProperty.call(requestedJobDetails, 'jobDetails')) {
-                setJobDetails(requestedJobDetails.jobDetails)
-                setListOfLots(requestedJobDetails.listOfLots)
-                setCurrentLot(requestedJobDetails.listOfLots[0])
-                setCurrentLotNum(requestedJobDetails.listOfLots[0].lot)
-            } else if (Object.prototype.hasOwnProperty.call(requestedJobDetails, 'packageName')) {
+            //Creating new package 
+            if (Object.prototype.hasOwnProperty.call(requestedJobDetails, 'packageName')) {
                 switchModal(true, "inputValue")
                 setJobDetails(requestedJobDetails.packageDetails)
                 setIsOptionsMode(false)
                 setListOfLots([])
+            //Making a new lot 
             } else if (listOfLots.length == 0 && requestedJobDetails != null) {
                 console.log(requestedJobDetails)
                 switchModal(true, "inputValue")
-                setJobDetails(requestedJobDetails)
+                setJobDetails(requestedJobDetails.jobDetails)
+                if(Object.prototype.hasOwnProperty.call(requestedJobDetails, 'packageDetails')) {
+                    setHasPackage(true)
+                    setPackageDetails(requestedJobDetails.packageDetails)
+                }
             } 
         } else if(loaderData != null) {
             const loadedData = loaderData.state
+            //Accessing existing Job Document
             if(Object.prototype.hasOwnProperty.call(loadedData, 'jobDetails')) {
                 setJobDetails(loadedData.jobDetails)
                 setListOfLots(loadedData.listOfLots)
@@ -487,84 +570,18 @@ function OptionsCreator() {
                 setCurrentLotNum(loadedData.listOfLots[0].plan)
                 setPackageProjects(loadedData.packageDetails.projects)
             }
-            
         } else {
             navigate("/")
         }
             
 
         
-    }, [])
+    }, [requestedJobDetails, loaderData])
 
     return (
         <>
-            <div className='modalScreen' style={{display: modal ? "flex": "none"}}>
-                <div className='modal'>
-                    {modalType === "inputValue" ? 
-                    (<>
-                        <h2>Enter {isOptionsMode ? "Lot Number" : "Plan Name"}:</h2>
-                        <div className="modalRow">
-                            {isOptionsMode ? (
-                            <select value={modalInputValue} onChange={handleInputChange}>
-                                {jobDetails.lotNums.map((lotNum, index) => {
-                                    if(!listOfLots.find((lot) => lot.lot === lotNum)) {
-                                        return <option key={index} value={lotNum}>{lotNum}</option>
-                                    }
-                                })}
-                            </select> ) : (
-                                <input value={modalInputValue} onChange={handleInputChange}></input>
-                            )}
-                            <button onClick={addLotTable}>Submit</button>
-                        </div>
-                        {hasPackage && <>
-                            <div className="modalPlanRow">
-                                <label>Package:</label>
-                                <select>
-                                    <option>None</option>
-                                    <option>Westview/Aguila</option>
-                                </select>
-                            </div>
-                            <div className="modalPlanRow">
-                                <label>Plan Type:</label>
-                                <select>
-                                    <option>FRONT DOORS</option>
-                                    <option>BACK PORCH</option>
-                                </select>
-                            </div>
-                        </>}
-                    </>) : modalType === "prod" 
-                    ? (isOptionsMode ?
-                        <>
-                            <h2>Is This Production Schedule Final?</h2>
-                            <div className="modalCheckboxRow">
-                                <label>Yes:</label>
-                                <input type="checkbox" checked={jobDetails.prodReady} onChange={() => onJobDetailsChange(true, "prodReady")}></input>
-                                <label>No:</label>
-                                <input type="checkbox" checked={!jobDetails.prodReady} onChange={() => onJobDetailsChange(false, "prodReady")}></input>
-                                <button onClick={() => saveLotTablesSQL()}>Submit</button>
-                            </div>
-                        </>
-                        : <>
-                            <h2>Select Projects</h2>
-                            <div className="modalProjectDiv">
-                                {packageProjects.map((_, index:number) => {
-                                    return  <div className="modalInputRow" key={index}>
-                                                <InputSearch inputName={"project"} formState={packageProjects} onFormChange={onProjectsChange} isDropDown={true} optionSectionNum={index} filterValue={jobDetails.builder}></InputSearch>
-                                                <button onClick={() => setPackageProjects(prevState => prevState.filter((_, idx) => idx !== index))}>Delete</button>
-                                            </div>
-                                })}
-                                <button className="addProject" onClick={() => setPackageProjects([...packageProjects, ""])}>Add Project</button>
-                                <button className="modalSubmit" onClick={() => saveLotTablesSQL()}>Submit</button>
-                            </div>
-                        </>
-                    ) : (
-                        <>
-                            <h1>Waiting for Result</h1>
-                        </>
-                    )}
-                    <span className="exitButton" onClick={() => turnOffModal()}></span>
-                </div>
-            </div>
+            <OptionsCreatorModal modal={modal} isOptionsMode={isOptionsMode} listOfLots={listOfLots} jobDetails={jobDetails} packageDetails={packageDetails} hasPackage={hasPackage} packageProjects={packageProjects} modalType={modalType} currentLotNum={currentLotNum}
+                addLotTable={addLotTable} handlePackageDetailsChange={handlePackageDetailsChange} onJobDetailsChange={onJobDetailsChange} setPackageProjects={setPackageProjects} saveLotTablesSQL={saveLotTablesSQL} setModalType={setModalType} onProjectsChange={onProjectsChange}/>
             <div id="optionsNav">
                 <h1>{isOptionsMode ? "Options" : "Package" } Creator</h1>
                 {isOptionsMode ? (
@@ -589,7 +606,7 @@ function OptionsCreator() {
                     })}
                 </section>
                 <section id="newTableButtons">
-                    <button onClick={() => createNewLot()}>New {isOptionsMode ? "Lot" : "Plan"} Table</button>
+                    <button onClick={() => setModalType("inputValue")}>New {isOptionsMode ? "Lot" : "Plan"} Table</button>
                     <button onClick={() => createLotCopy()}>Copy Details</button>
                     {isOptionsMode && <button onClick={() => testCreateDocument()}>Create Document</button>}
                     <button onClick={() => switchModal(true, "prod")}>Save to Database</button>
@@ -609,7 +626,7 @@ function OptionsCreator() {
             </div>
             <div id="optionsEditor">
                 {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} onJobDetailsChange={onJobDetailsChange} jobDetails={jobDetails} 
-                                                                            lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode}/>)}
+                                                                            lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode} modifyHardwareModal={modifyHardwareModal}/>)}
             </div>
         </>
     )

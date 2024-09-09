@@ -10,7 +10,7 @@ const JobDocument: React.FC<JobDocument> = ({JobDocumentDetails}) => {
     const { customerName, jobOptionID, jobID, optionCoordinator, phase, projectName} = JobDocumentDetails
 
     return (
-        <Link className='jobDocument' to={"/creatingOptions/jobOption/" + jobOptionID} >
+        <Link className='jobDocument' to={"/optionCreator/jobOption/" + jobOptionID} >
             <header>{customerName} - {projectName}<br />Job ID: {jobID}</header>
             <div className='jobDocumentBody'>
                 <h4>Phase: {phase}</h4>

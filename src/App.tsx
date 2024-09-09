@@ -35,7 +35,7 @@ const App: React.FC = () => {
           element: <JobCreator />
         },
         {
-          path: "/creatingOptions",
+          path: "/optionCreator",
           children : [
             {
               index: true,
@@ -43,14 +43,14 @@ const App: React.FC = () => {
             },
             {
               element: <OptionsCreator  key="package"/>,
-              path: "/creatingOptions/package/:packageID",
+              path: "/optionCreator/package/:packageID",
               loader: async ({params}) => {
                 return packageLoader(params.packageID, accessToken)
               }
             },
             {
               element: <OptionsCreator  key="jobOption"/>,
-              path: "/creatingOptions/jobOption/:optionID",
+              path: "/optionCreator/jobOption/:optionID",
               loader: async ({params}) => {
                 return jobOptionLoader(params.optionID, accessToken)
               }
