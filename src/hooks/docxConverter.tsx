@@ -3,8 +3,8 @@ import { LotTableInterface, PartOfLot, JobDetails } from "../../../types/LotTabl
 import { saveAs } from "file-saver";
 
 
-export default function docxConverter(prodSchedule:JobDetails, lotCollection: LotTableInterface[], name:string, phone:string, email:string) {
-    console.log(prodSchedule)
+export default function docxConverter(jobDetails:JobDetails, lotCollection: LotTableInterface[], name:string, phone:string, email:string) {
+    console.log(jobDetails)
     console.log(lotCollection)
     
     const readNewLine = (inputString:string | undefined):TextRun[] => {
@@ -58,37 +58,37 @@ export default function docxConverter(prodSchedule:JobDetails, lotCollection: Lo
                 children: [
                     new TableCell({
                         children: [new Paragraph({
-                            text: prodSchedule.builder,
+                            text: jobDetails.builder,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: prodSchedule.project,
+                            text: jobDetails.project,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: prodSchedule.phase,
+                            text: jobDetails.phase,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: prodSchedule.superintendent ?? "",
+                            text: jobDetails.superintendent ?? "",
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: prodSchedule.phone ?? "",
+                            text: jobDetails.phone ?? "",
                             alignment: AlignmentType.CENTER
                         })],
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: prodSchedule.foreman,
+                            text: jobDetails.foreman,
                             alignment: AlignmentType.CENTER
                         })],
                     }),
@@ -116,7 +116,7 @@ export default function docxConverter(prodSchedule:JobDetails, lotCollection: Lo
                         }),
                         new TableCell({
                             children: [new Paragraph({
-                                text: prodSchedule.jobID.toString(),
+                                text: jobDetails.jobID.toString(),
                                 alignment: AlignmentType.CENTER
                             })],
                         })
@@ -325,7 +325,7 @@ export default function docxConverter(prodSchedule:JobDetails, lotCollection: Lo
                         new TableCell({
                             verticalAlign: VerticalAlign.CENTER,
                             children: [new Paragraph({
-                                children: readNewLine(prodSchedule.jobNotes),
+                                children: readNewLine(jobDetails.jobNotes),
                                 alignment: AlignmentType.CENTER
                             })],
                         })
@@ -343,14 +343,14 @@ export default function docxConverter(prodSchedule:JobDetails, lotCollection: Lo
     const outputOptionCellInfo = (partOfLot:PartOfLot) => {
         let optionCellInfo = []
         const hardwareLine = [new TextRun({
-            text: `Doors: ${partOfLot.doors} ${partOfLot.fingerpull}`
+            text: partOfLot.doors !== "" ? `Doors: ${partOfLot.doors} ${partOfLot.fingerpull}` : ""
         }),
         new TextRun({
-            text: `Pulls: ${partOfLot.pulls}`,
-            break: 1
+            text: partOfLot.pulls !== "" ? `Pulls: ${partOfLot.pulls}` : "",
+            break: partOfLot.doors !== "" ? 1 : 0
         }),
         new TextRun({
-            break: 1
+            break: partOfLot.doors === "" && partOfLot.pulls === "" ? 0 : 1
         })]
 
         optionCellInfo = [...hardwareLine, ...readNewLine(partOfLot.details), 
@@ -361,43 +361,63 @@ export default function docxConverter(prodSchedule:JobDetails, lotCollection: Lo
 
     const generateOptionsSectionRows = (selectedLot:LotTableInterface) => {
         const optionSectionRows = []
-        for(const lotSection of selectedLot.partsOfLot) {
-            optionSectionRows.push(new TableRow({
-                children: [
+        const partsOfLotLength = selectedLot.partsOfLot.length
+        for(const [index, lotSection] of selectedLot.partsOfLot.entries()) {
+            let tableChildren = [new TableCell({
+                children: [new Paragraph({
+                    text: lotSection.material !== "" ? `${lotSection.material} / ${lotSection.color}` : "",
+                    alignment: AlignmentType.CENTER
+                })],
+                width: { size: 15, type: WidthType.PERCENTAGE },
+            }),
+            new TableCell({
+                children: [new Paragraph({
+                    text: lotSection.roomID ?? "",
+                    alignment: AlignmentType.CENTER
+                })],
+                width: { size: 15, type: WidthType.PERCENTAGE },
+            }),
+            new TableCell({
+                children: [new Paragraph({children: outputOptionCellInfo(lotSection)})],
+                width: { size: 40, type: WidthType.PERCENTAGE },
+            }),
+        ]
+
+            if(index == 0) {
+                tableChildren = [ 
                     new TableCell({
                         children: [new Paragraph({
                             text: selectedLot.lot ?? "",
                             alignment: AlignmentType.CENTER
                         })],
+                        width: { size: 5, type: WidthType.PERCENTAGE },
+                        rowSpan: partsOfLotLength
                     }),
                     new TableCell({
                         children: [new Paragraph({
                             text: selectedLot.plan ?? "",
                             alignment: AlignmentType.CENTER
                         })],
+                        width: { size: 5, type: WidthType.PERCENTAGE },
+                        rowSpan: partsOfLotLength
+                    }),
+                    ...tableChildren,
+                    new TableCell({
+                        children: [new Paragraph("")],
+                        width: { size: 5, type: WidthType.PERCENTAGE },
+                        rowSpan: partsOfLotLength
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: lotSection.material + "/" + lotSection.color,
+                            children: readNewLine(selectedLot.lotNotes),
                             alignment: AlignmentType.CENTER
                         })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({
-                            text: lotSection.roomID ?? "",
-                            alignment: AlignmentType.CENTER
-                        })],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph({children: outputOptionCellInfo(lotSection)})]
-                    }),
-                    new TableCell({
-                        children: [new Paragraph("")],
-                    }),
-                    new TableCell({
-                        children: [new Paragraph("")],
-                    }),
-                ],
+                        width: { size: 15, type: WidthType.PERCENTAGE },
+                        rowSpan: partsOfLotLength
+                    }),]
+            }
+            optionSectionRows.push(new TableRow({
+                children: tableChildren
             }))
         }
         return optionSectionRows
@@ -458,7 +478,7 @@ export default function docxConverter(prodSchedule:JobDetails, lotCollection: Lo
             ],
             alignment: AlignmentType.CENTER,
             width: {
-                size: 10000,
+                size: 11000,
                 type: WidthType.DXA
             },
         })
@@ -596,7 +616,7 @@ export default function docxConverter(prodSchedule:JobDetails, lotCollection: Lo
 
     const pageTitle = new Paragraph({
         children: [new TextRun({
-            text: `APPROVED PRODUCTION SCHEDULE ${prodSchedule.date}`,
+            text: `APPROVED PRODUCTION SCHEDULE ${jobDetails.date}`,
             bold: true,
             color: "000000",
         }),
@@ -671,7 +691,7 @@ export default function docxConverter(prodSchedule:JobDetails, lotCollection: Lo
     
     // Used to export the file into a .docx file
     Packer.toBlob(doc).then((blob) => {
-       saveAs(blob, "MyFile.docx")
+       saveAs(blob, `${jobDetails.builder} ${jobDetails.project} ${jobDetails.date}.docx`)
     }); 
 }
 

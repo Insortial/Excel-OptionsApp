@@ -98,9 +98,14 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
                 filterWord = "Thermofoil"
                 break;
             case "Acrylic":
+                filterWord = "Acrylic"
                 break;
             case "Melamine":
+                filterWord = "Melamine"
+                break
             case "Laminate":
+                filterWord = "Laminate"
+                break
             default:
         }
 
@@ -128,9 +133,17 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
         } else if (["kitchen", "master", "bath2", "bath3", "bath4", "powder", "laundry"].includes(propertyName)) {
             listOfOptions = ['N/A', '5/8" Rough Top', 'Build Up', 'Pedestal']
         } else if (propertyName === "islands") {
-            listOfOptions = ["Drywall Back w/ Metal Bracket Supports", "Finished Backs", "Posts", "Corbels"]
-        } else if (propertyName === "lightRail") {
+            listOfOptions = ["Drywall Backs", "Finished Backs", "Wrapped Island Panels"]
+        } else if (propertyName === "supports") {
+            listOfOptions = ["No Supports", "Metal Brackets", "Brackets w/ Others", "Posts", "Corbels"]
+        }else if (propertyName === "lightRail") {
             listOfOptions = ["None", "Behind Door"]
+        } else if (propertyName === "crown") {
+            listOfOptions = [`2" Shadow`, `3" Shadow`, "CR238", "CR375", "CR45", "CR45 w/ Build Up to Ceiling"]
+        } else if (propertyName === "baseShoe") {
+            listOfOptions = ["None Supplied Only", "Island Only"]
+        } else if (propertyName === "recyclingBins") {
+            listOfOptions = ["None", "Standard", "Optional"]
         }
 
         return listOfOptions

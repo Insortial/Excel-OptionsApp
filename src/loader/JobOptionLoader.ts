@@ -10,12 +10,11 @@ export const jobOptionLoader = async (jobOptionID:string|undefined, accessToken:
         credentials: "include"
     }
 
-    console.log(accessToken)
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/getJobOption/${jobOptionID}`, config);
     const jobDocumentDetails = await response.json();
 
     jobDocumentDetails.listOfLots.map((lot:LotTableInterface) => {
-        const throughoutLotIdx = lot.partsOfLot.findIndex((partOfLot:PartOfLot) => partOfLot.roomID === "Throughout")
+        const throughoutLotIdx = lot.partsOfLot.findIndex((partOfLot:PartOfLot) => partOfLot.roomID === "Throughout" || partOfLot.roomID === "Balance of House")
         const throughoutLot = lot.partsOfLot.splice(throughoutLotIdx, 1)
         lot.partsOfLot.unshift(throughoutLot[0])
     })

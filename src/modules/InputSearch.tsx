@@ -8,13 +8,14 @@ import { useClickOutside } from "../hooks/useClickOutside";
 type inputOptions = {
     isDropDown: boolean;
     formState: LotTableInterface | JobDetails | string[];
+    postfix?: string,
     optionSectionNum?: number;
     onFormChange?: (value: string, key: string, optSectionNum?: number) => void;
     inputName: string;
     filterValue?: string | number
 }
 
-const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChange, inputName, optionSectionNum, filterValue}) => {
+const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, onFormChange, inputName, optionSectionNum, filterValue}) => {
     const [suggestion, setSuggestion] = useState<string[]>([]);
     const [dropDownOptions, setDropDownOptions] = useState<string[]>([]);
     const [inFocus, setInFocus] = useState<boolean | boolean>(false);
@@ -142,12 +143,12 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
                     className="optionSearch" 
                     style={{border: hasError && isCheckingError ? "1px solid red" : "black"}}
                     value={!isDropDown ? getPartOfLotValue() : value}
-                    placeholder={getPartOfLotValue()} 
+                    placeholder={postfix ? getPartOfLotValue() + " - " + postfix :  getPartOfLotValue()} 
                     ref={inputRef}
                     id={inputName + `${(typeof optionSectionNum === 'undefined' || optionSectionNum === 0) ? "" : optionSectionNum}`}
                     onChange={readInput}
                     onFocus={handleOnFocus}
-                    readOnly={inputName === "roomID" && getPartOfLotValue() === "Throughout"}
+                    readOnly={inputName === "roomID" && getPartOfLotValue() === "Throughout" || getPartOfLotValue() === "Balance of House"}
                 />
             <div className="optionResults" ref={dropDownRef} style={{display: inFocus ? "block" : "none", border: suggestion.length === 0 ? "none" : "1px solid black"}}>
                 {suggestion.map((x: string, index: number) => {
