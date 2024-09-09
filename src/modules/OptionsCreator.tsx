@@ -573,7 +573,7 @@ function OptionsCreator() {
     return (
         <>
             <OptionsCreatorModal modal={modal} isOptionsMode={isOptionsMode} listOfLots={listOfLots} jobDetails={jobDetails} packageDetails={packageDetails} hasPackage={hasPackage} packageProjects={packageProjects} modalType={modalType} currentLot={currentLot}
-                addLotTable={addLotTable} handlePackageDetailsChange={handlePackageDetailsChange} onJobDetailsChange={onJobDetailsChange} setPackageProjects={setPackageProjects} saveLotTablesSQL={saveLotTablesSQL} setModalType={setModalType} onProjectsChange={onProjectsChange}/>
+                addLotTable={addLotTable} handlePackageDetailsChange={handlePackageDetailsChange} onJobDetailsChange={onJobDetailsChange} setPackageProjects={setPackageProjects} saveLotTablesSQL={saveLotTablesSQL} setModalType={setModalType} onProjectsChange={onProjectsChange} saveLotTable={saveLotTable}/>
             <div id="optionsNav">
                 <h1>{isOptionsMode ? "Options" : "Package" } Creator</h1>
                 {isOptionsMode ? (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import InputSearch from './InputSearch'
-import { JobDetails, LotTableInterface, PackageDetails } from '../../../types/LotTableInterface'
+import { JobDetails, LotTableInterface, PackageDetails, PartOfLot } from '../../../types/LotTableInterface'
 
 type OptionsCreatorModal = {
     modal: boolean, 
@@ -13,6 +13,7 @@ type OptionsCreatorModal = {
     packageProjects: string[],
     modalType: string,
     addLotTable: () => void, 
+    saveLotTable: (lotTableDetails: LotTableInterface, lotNumber: string) => void;
     handlePackageDetailsChange: (value:string, propName:string) => void,  
     onJobDetailsChange: (value: string | boolean, key: string) => void, 
     setPackageProjects: React.Dispatch<React.SetStateAction<string[]>>, 
@@ -23,7 +24,7 @@ type OptionsCreatorModal = {
 
 const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalType, isOptionsMode, listOfLots, jobDetails, packageDetails, hasPackage, packageProjects, currentLot,
                                                              addLotTable, handlePackageDetailsChange, onJobDetailsChange, setPackageProjects, saveLotTablesSQL, 
-                                                             setModalType, onProjectsChange}) => {
+                                                             setModalType, onProjectsChange, saveLotTable}) => {
 
     const [modalInputValue, setModalInputValue] = useState<string>("")
     const [hardwareIndex, setHardwareIndex] = useState<number>(-1)
@@ -49,9 +50,13 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalType, isOption
         setModalType("none")
     }
 
-    useEffect(() => {
-        console.log(hardwareIndex)
-    }, [hardwareIndex])
+    const modifyPartOfLotHardware = (value:string, key:string, optionSectionNum:number=-1) => {
+        if(currentLot !== undefined) {
+            const updatedTable = {...currentLot}
+            updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot, index:number) => (index === optionSectionNum ? { ...partOfLot, [key]: value } : partOfLot))
+            saveLotTable(updatedTable, (isOptionsMode ? currentLot.lot : currentLot.plan)) 
+        }
+    }
 
     useEffect(() => {
         const availableLots = findAvailableLots()
@@ -130,16 +135,16 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalType, isOption
                 ? (<>
                         <h2>Modify {modalType === "drawerBoxes" ? "Drawer Box" : modalType === "drawerGuides" ? "Drawer Guides" : "Door Hinges"} Hardware</h2>
                         <div className="modalProjectDiv">
-                                <select value={hardwareIndex} onChange={handleHardwareInputChange}>
-                                    <option value="None">None</option>
+                                <select style={{marginBottom: "10px"}}value={hardwareIndex} onChange={handleHardwareInputChange}>
+                                    <option value="-1">None</option>
                                     {currentLot?.partsOfLot.map((lot, index) => {
-                                            return <option key={index} value={index}>{lot.roomID}</option>
-                                        })}
+                                        return !["Throughout", "Balance of House"].includes(lot.roomID) && <option key={index} value={index}>{lot.roomID}</option>
+                                    })}
                                 </select>
                                 <div className="modalInputRow">
-                                    {(currentLot && hardwareIndex !== -1) && <InputSearch inputName={modalType} optionSectionNum={hardwareIndex} formState={currentLot} onFormChange={() => console.log()} isDropDown={true} postfix={currentLot.partsOfLot[hardwareIndex].roomID}></InputSearch>}
+                                    {(currentLot && hardwareIndex !== -1) && <InputSearch inputName={modalType} optionSectionNum={hardwareIndex} formState={currentLot} onFormChange={modifyPartOfLotHardware} isDropDown={true} postfix={currentLot.partsOfLot[hardwareIndex].roomID}></InputSearch>}
                                 </div>
-                            <button className="modalSubmit"onClick={() => console.log("HI")}>Submit</button>
+                            <button className="modalSubmit"onClick={() => turnOffModal()}>Submit</button>
                         </div>
                         
                 </>):
