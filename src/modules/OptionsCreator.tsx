@@ -59,12 +59,6 @@ function OptionsCreator() {
         details: "",
         appliances: ""
     }
-
-    const initModifiedHardware:ModifiedHardware = {
-        drawerBoxes: [],
-        drawerGuides: [],
-        doorHinges: [],
-    }
     
     const { getFormIDs, errors, setErrors, setIsCheckingError, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const { name, phone, email } = AuthInfo()
@@ -275,6 +269,7 @@ function OptionsCreator() {
     const saveLotTable = (lotTableData: LotTableInterface, lotInputValue: string) => {
         const filteredTableList = listOfLots.filter((lotDetails:LotTableInterface) => (isOptionsMode && lotDetails.lot !== lotInputValue) ||
                                                                                          (!isOptionsMode && lotDetails.plan !== lotInputValue))
+        setCurrentLot(lotTableData)
         sortListOfLots(filteredTableList, lotTableData)
     }
     
@@ -335,6 +330,14 @@ function OptionsCreator() {
     const modifyHardwareModal = (hardwareName:string) => {
         setModalType(hardwareName)
     }
+
+    /* const addModifiedHardware = (partOfLot:PartOfLot, lotID:string, hardware:string) => {
+        const updatedTable = {
+            ...formState,
+            [key]: value
+        }
+        saveLotTable(updatedTable, lotID)
+    } */
 
     const createLotCopy = () => {
         setModalType("inputValue")
