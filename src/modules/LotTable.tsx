@@ -111,11 +111,10 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
                             <th>Job ID</th>
                             <td><InputSearch inputName={"jobID"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={false}></InputSearch></td>
                         </tr>
-                    ) : <></>}
-                    <tr>
-                        <th>Builder</th>
-                        <td><InputSearch inputName={"builder"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}></InputSearch></td>
-                    </tr>
+                    ) : <tr>
+                            <th>Builder</th>
+                            <td><InputSearch inputName={"builder"} formState={jobDetails} onFormChange={onJobDetailsChange} isDropDown={true}></InputSearch></td>
+                        </tr>}
                     <tr>
                         <th>Box Style</th>
                         <td><InputSearch inputName={"boxStyle"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch></td>

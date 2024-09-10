@@ -1,6 +1,6 @@
 import LotTable from "./LotTable";
 import { useLocation, Link, useNavigate, useLoaderData, useRevalidator } from "react-router-dom";
-import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL, PackageDetailsSQL, PackageDetails, ModifiedHardware } from '../../../types/LotTableInterface.ts';
+import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL, PackageDetailsSQL, PackageDetails} from '../../../types/LotTableInterface.ts';
 import React, { useContext, useEffect, useState } from "react";
 import docxConverter from "../hooks/docxConverter.tsx";
 import { FormOptionsContext } from "../context/OptionsTemplateContext.tsx";
