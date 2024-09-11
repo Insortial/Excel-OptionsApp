@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import InputSearch from './InputSearch'
 import { JobDetails, LotTableInterface, PackageDetails, PartOfLot } from '../../../types/LotTableInterface'
 
@@ -12,6 +12,8 @@ type OptionsCreatorModal = {
     hasPackage: boolean, 
     packageProjects: string[],
     modalType: string,
+    modalInputValue: string,
+    setModalInputValue: React.Dispatch<React.SetStateAction<string>>,
     addLotTable: () => void, 
     saveLotTable: (lotTableDetails: LotTableInterface, lotNumber: string) => void;
     handlePackageDetailsChange: (value:string, propName:string) => void,  
@@ -22,49 +24,19 @@ type OptionsCreatorModal = {
     onProjectsChange: (value: string, key: string, optSectionNum?:number) => void,
 }
 
-const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalType, isOptionsMode, listOfLots, jobDetails, packageDetails, hasPackage, packageProjects, currentLot,
-                                                             addLotTable, handlePackageDetailsChange, onJobDetailsChange, setPackageProjects, saveLotTablesSQL, 
-                                                             setModalType, onProjectsChange, saveLotTable}) => {
-
-    const [modalInputValue, setModalInputValue] = useState<string>("")
-    const [hardwareIndex, setHardwareIndex] = useState<number>(-1)
+const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalType, isOptionsMode, listOfLots, jobDetails, packageDetails, hasPackage, packageProjects, currentLotNum,
+                                                             modalInputValue, addLotTable, handlePackageDetailsChange, onJobDetailsChange, setPackageProjects, saveLotTablesSQL, 
+                                                             setModalType, onProjectsChange, setModalInputValue}) => {
     
     const handleInputChange = (event: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
-        event.preventDefault()
+        console.log(event.target.value)
         setModalInputValue(event.target.value)
-    }
-
-    const handleHardwareInputChange = (event: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
-        event.preventDefault()
-        setHardwareIndex(parseInt(event.target.value))
-    }
-
-    const findAvailableLots = ():string[] => {
-        return jobDetails.lotNums.filter(
-            lotNum => !listOfLots.find(lot => lot.lot === lotNum)
-          );
     }
 
     const turnOffModal = () => {
         setModalInputValue("")
         setModalType("none")
     }
-
-    const modifyPartOfLotHardware = (value:string, key:string, optionSectionNum:number=-1) => {
-        if(currentLot !== undefined) {
-            const updatedTable = {...currentLot}
-            updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot, index:number) => (index === optionSectionNum ? { ...partOfLot, [key]: value } : partOfLot))
-            saveLotTable(updatedTable, (isOptionsMode ? currentLot.lot : currentLot.plan)) 
-        }
-    }
-
-    useEffect(() => {
-        const availableLots = findAvailableLots()
-        if(availableLots.length > 0)
-            setModalInputValue(availableLots[0]);
-        else 
-            setModalInputValue("")
-    }, [jobDetails, listOfLots]);
     
     return (
         <div className='modalScreen' style={{display: modalType !== "none" ? "flex": "none"}}>

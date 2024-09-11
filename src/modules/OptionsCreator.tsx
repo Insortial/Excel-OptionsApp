@@ -295,8 +295,9 @@ function OptionsCreator() {
 
     const addLotTable = () => {
         let table:LotTableInterface;
+        console.log(modalInputValue)
         if(modalInputValue !== "") {
-            if(!isLotCopy) 
+            if(!isLotCopy) {
                 if(["", "None"].includes(packageDetails.packageName))
                     table = createLotTable(modalInputValue)
                 else {
@@ -307,7 +308,7 @@ function OptionsCreator() {
                     console.log(listOfLots)
                     console.log(table)
                 }
-            else {
+            } else {
                 table = Object.assign({}, listOfLots.find((lotDetails:LotTableInterface) => {return (isOptionsMode ? lotDetails.lot : lotDetails.plan) === currentLotNum}))
                 table.partsOfLot = Object.assign([], table.partsOfLot)
                 if(isOptionsMode)
@@ -572,8 +573,8 @@ function OptionsCreator() {
 
     return (
         <>
-            <OptionsCreatorModal modal={modal} isOptionsMode={isOptionsMode} listOfLots={listOfLots} jobDetails={jobDetails} packageDetails={packageDetails} hasPackage={hasPackage} packageProjects={packageProjects} modalType={modalType} currentLot={currentLot}
-                addLotTable={addLotTable} handlePackageDetailsChange={handlePackageDetailsChange} onJobDetailsChange={onJobDetailsChange} setPackageProjects={setPackageProjects} saveLotTablesSQL={saveLotTablesSQL} setModalType={setModalType} onProjectsChange={onProjectsChange} saveLotTable={saveLotTable}/>
+            <OptionsCreatorModal modal={modal} isOptionsMode={isOptionsMode} listOfLots={listOfLots} jobDetails={jobDetails} packageDetails={packageDetails} hasPackage={hasPackage} packageProjects={packageProjects} modalType={modalType} currentLotNum={currentLotNum} modalInputValue={modalInputValue}
+                setModalInputValue={setModalInputValue} addLotTable={addLotTable} handlePackageDetailsChange={handlePackageDetailsChange} onJobDetailsChange={onJobDetailsChange} setPackageProjects={setPackageProjects} saveLotTablesSQL={saveLotTablesSQL} setModalType={setModalType} onProjectsChange={onProjectsChange}/>
             <div id="optionsNav">
                 <h1>{isOptionsMode ? "Options" : "Package" } Creator</h1>
                 {isOptionsMode ? (
