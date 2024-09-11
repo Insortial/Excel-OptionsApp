@@ -25,9 +25,17 @@
 --ALTER TABLE [Drawer Boxes]
 --ADD inUse BIT;
 
-ALTER TABLE [Hinges]
-ADD inUse BIT;
+--ALTER TABLE [Hinges]
+--ADD inUse BIT;
 
+UPDATE [Hinges]
+SET inUse =
+CASE WHEN [Hinge Type] IN ('Standard', 'Soft Closing', 'APA Soft Closing Salice') THEN 1
+ELSE 0 END;
+
+UPDATE [Hinges]
+SET [Hinge Type] = 'APA Soft Closing'
+WHERE [Hinge ID] = 5
 
 UPDATE Colors
 SET inUse=1; 

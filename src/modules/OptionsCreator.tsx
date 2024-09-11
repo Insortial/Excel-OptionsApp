@@ -1,6 +1,6 @@
 import LotTable from "./LotTable";
 import { useLocation, Link, useNavigate, useLoaderData, useRevalidator } from "react-router-dom";
-import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL, PackageDetailsSQL, PackageDetails} from '../../../types/LotTableInterface.ts';
+import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL, PackageDetailsSQL, PackageDetails } from '../../../types/LotTableInterface.ts';
 import React, { useContext, useEffect, useState } from "react";
 import docxConverter from "../hooks/docxConverter.tsx";
 import { FormOptionsContext } from "../context/OptionsTemplateContext.tsx";
@@ -59,7 +59,7 @@ function OptionsCreator() {
         details: "",
         appliances: ""
     }
-    
+
     const { getFormIDs, errors, setErrors, setIsCheckingError, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const { name, phone, email } = AuthInfo()
     //Option States
@@ -328,16 +328,8 @@ function OptionsCreator() {
         }
     }
 
-    const modifyHardwareModal = (hardwareName:string) => {
+/*     const modifyHardwareModal = (hardwareName:string) => {
         setModalType(hardwareName)
-    }
-
-    /* const addModifiedHardware = (partOfLot:PartOfLot, lotID:string, hardware:string) => {
-        const updatedTable = {
-            ...formState,
-            [key]: value
-        }
-        saveLotTable(updatedTable, lotID)
     } */
 
     const createLotCopy = () => {
@@ -485,7 +477,7 @@ function OptionsCreator() {
         console.log(lotTablesAreValid)
         if(lotTablesAreValid) {
             await postJobDetailsSql()
-            revalidator.revalidate()
+            //revalidator.revalidate()
         } 
         setModalType("none")
     }
@@ -627,7 +619,7 @@ function OptionsCreator() {
             </div>
             <div id="optionsEditor">
                 {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} onJobDetailsChange={onJobDetailsChange} jobDetails={jobDetails} 
-                                                                            lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode} modifyHardwareModal={modifyHardwareModal}/>)}
+                                                                            lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode} />)}
             </div>
         </>
     )
