@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import InputSearch from './InputSearch'
 import { JobDetails, LotTableInterface, PackageDetails } from '../../../types/LotTableInterface'
 
@@ -12,6 +12,8 @@ type OptionsCreatorModal = {
     hasPackage: boolean, 
     packageProjects: string[],
     modalType: string,
+    modalInputValue: string,
+    setModalInputValue: React.Dispatch<React.SetStateAction<string>>,
     addLotTable: () => void, 
     handlePackageDetailsChange: (value:string, propName:string) => void,  
     onJobDetailsChange: (value: string | boolean, key: string) => void, 
@@ -22,34 +24,19 @@ type OptionsCreatorModal = {
 }
 
 const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalType, isOptionsMode, listOfLots, jobDetails, packageDetails, hasPackage, packageProjects, currentLotNum,
-                                                             addLotTable, handlePackageDetailsChange, onJobDetailsChange, setPackageProjects, saveLotTablesSQL, 
-                                                             setModalType, onProjectsChange}) => {
+                                                             modalInputValue, addLotTable, handlePackageDetailsChange, onJobDetailsChange, setPackageProjects, saveLotTablesSQL, 
+                                                             setModalType, onProjectsChange, setModalInputValue}) => {
 
-    const [modalInputValue, setModalInputValue] = useState<string>("")
     
     const handleInputChange = (event: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
-        event.preventDefault()
+        console.log(event.target.value)
         setModalInputValue(event.target.value)
-    }
-
-    const findAvailableLots = ():string[] => {
-        return jobDetails.lotNums.filter(
-            lotNum => !listOfLots.find(lot => lot.lot === lotNum)
-          );
     }
 
     const turnOffModal = () => {
         setModalInputValue("")
         setModalType("none")
     }
-
-    useEffect(() => {
-        const availableLots = findAvailableLots()
-        if(availableLots.length > 0)
-            setModalInputValue(availableLots[0]);
-        else 
-            setModalInputValue("")
-    }, [jobDetails, listOfLots]);
     
     return (
         <div className='modalScreen' style={{display: modalType !== "none" ? "flex": "none"}}>
