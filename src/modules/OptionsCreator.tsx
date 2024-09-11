@@ -327,9 +327,9 @@ function OptionsCreator() {
         }
     }
 
-    const modifyHardwareModal = (hardwareName:string) => {
+/*     const modifyHardwareModal = (hardwareName:string) => {
         setModalType(hardwareName)
-    }
+    } */
 
     const createLotCopy = () => {
         setModalType("inputValue")
@@ -476,7 +476,7 @@ function OptionsCreator() {
         console.log(lotTablesAreValid)
         if(lotTablesAreValid) {
             await postJobDetailsSql()
-            revalidator.revalidate()
+            //revalidator.revalidate()
         } 
         setModalType("none")
     }
@@ -618,7 +618,7 @@ function OptionsCreator() {
             </div>
             <div id="optionsEditor">
                 {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} onJobDetailsChange={onJobDetailsChange} jobDetails={jobDetails} 
-                                                                            lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode} modifyHardwareModal={modifyHardwareModal}/>)}
+                                                                            lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode} />)}
             </div>
         </>
     )
