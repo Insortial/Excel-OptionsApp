@@ -1,6 +1,6 @@
 import LotTable from "./LotTable";
 import { useLocation, Link, useNavigate, useLoaderData, useRevalidator } from "react-router-dom";
-import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL, PackageDetailsSQL, PackageDetails } from '../../../types/LotTableInterface.ts';
+import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL, PackageDetailsSQL, PackageDetails} from '../../../types/LotTableInterface.ts';
 import React, { useContext, useEffect, useState } from "react";
 import docxConverter from "../hooks/docxConverter.tsx";
 import { FormOptionsContext } from "../context/OptionsTemplateContext.tsx";
@@ -295,8 +295,9 @@ function OptionsCreator() {
 
     const addLotTable = () => {
         let table:LotTableInterface;
+        console.log(modalInputValue)
         if(modalInputValue !== "") {
-            if(!isLotCopy) 
+            if(!isLotCopy) {
                 if(["", "None"].includes(packageDetails.packageName))
                     table = createLotTable(modalInputValue)
                 else {
@@ -307,7 +308,7 @@ function OptionsCreator() {
                     console.log(listOfLots)
                     console.log(table)
                 }
-            else {
+            } else {
                 table = Object.assign({}, listOfLots.find((lotDetails:LotTableInterface) => {return (isOptionsMode ? lotDetails.lot : lotDetails.plan) === currentLotNum}))
                 table.partsOfLot = Object.assign([], table.partsOfLot)
                 if(isOptionsMode)

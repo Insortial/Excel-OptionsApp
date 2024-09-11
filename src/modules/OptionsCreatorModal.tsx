@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import InputSearch from './InputSearch'
 import { JobDetails, LotTableInterface, PackageDetails, PartOfLot } from '../../../types/LotTableInterface'
 
@@ -12,6 +12,8 @@ type OptionsCreatorModal = {
     hasPackage: boolean, 
     packageProjects: string[],
     modalType: string,
+    modalInputValue: string,
+    setModalInputValue: React.Dispatch<React.SetStateAction<string>>,
     addLotTable: () => void, 
     saveLotTable: (lotTableDetails: LotTableInterface, lotNumber: string) => void;
     handlePackageDetailsChange: (value:string, propName:string) => void,  
@@ -30,7 +32,7 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalType, isOption
     const [hardwareIndex, setHardwareIndex] = useState<number>(-1)
     
     const handleInputChange = (event: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
-        event.preventDefault()
+        console.log(event.target.value)
         setModalInputValue(event.target.value)
     }
 
