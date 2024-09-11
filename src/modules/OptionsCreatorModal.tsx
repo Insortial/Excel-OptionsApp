@@ -1,11 +1,11 @@
 import React from 'react'
 import InputSearch from './InputSearch'
-import { JobDetails, LotTableInterface, PackageDetails, PartOfLot } from '../../../types/LotTableInterface'
+import { JobDetails, LotTableInterface, PackageDetails } from '../../../types/LotTableInterface'
 
 type OptionsCreatorModal = {
     modal: boolean, 
     isOptionsMode: boolean, 
-    currentLot: LotTableInterface | undefined,
+    currentLotNum: string,
     listOfLots: LotTableInterface[], 
     jobDetails: JobDetails, 
     packageDetails: PackageDetails, 
@@ -15,7 +15,6 @@ type OptionsCreatorModal = {
     modalInputValue: string,
     setModalInputValue: React.Dispatch<React.SetStateAction<string>>,
     addLotTable: () => void, 
-    saveLotTable: (lotTableDetails: LotTableInterface, lotNumber: string) => void;
     handlePackageDetailsChange: (value:string, propName:string) => void,  
     onJobDetailsChange: (value: string | boolean, key: string) => void, 
     setPackageProjects: React.Dispatch<React.SetStateAction<string[]>>, 
@@ -24,49 +23,20 @@ type OptionsCreatorModal = {
     onProjectsChange: (value: string, key: string, optSectionNum?:number) => void,
 }
 
-const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalType, isOptionsMode, listOfLots, jobDetails, packageDetails, hasPackage, packageProjects, currentLot,
-                                                             addLotTable, handlePackageDetailsChange, onJobDetailsChange, setPackageProjects, saveLotTablesSQL, 
-                                                             setModalType, onProjectsChange, saveLotTable}) => {
+const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalType, isOptionsMode, listOfLots, jobDetails, packageDetails, hasPackage, packageProjects, currentLotNum,
+                                                             modalInputValue, addLotTable, handlePackageDetailsChange, onJobDetailsChange, setPackageProjects, saveLotTablesSQL, 
+                                                             setModalType, onProjectsChange, setModalInputValue}) => {
 
-    const [modalInputValue, setModalInputValue] = useState<string>("")
-    const [hardwareIndex, setHardwareIndex] = useState<number>(-1)
     
     const handleInputChange = (event: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
         console.log(event.target.value)
         setModalInputValue(event.target.value)
     }
 
-    const handleHardwareInputChange = (event: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
-        event.preventDefault()
-        setHardwareIndex(parseInt(event.target.value))
-    }
-
-    const findAvailableLots = ():string[] => {
-        return jobDetails.lotNums.filter(
-            lotNum => !listOfLots.find(lot => lot.lot === lotNum)
-          );
-    }
-
     const turnOffModal = () => {
         setModalInputValue("")
         setModalType("none")
     }
-
-    const modifyPartOfLotHardware = (value:string, key:string, optionSectionNum:number=-1) => {
-        if(currentLot !== undefined) {
-            const updatedTable = {...currentLot}
-            updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot, index:number) => (index === optionSectionNum ? { ...partOfLot, [key]: value } : partOfLot))
-            saveLotTable(updatedTable, (isOptionsMode ? currentLot.lot : currentLot.plan)) 
-        }
-    }
-
-    useEffect(() => {
-        const availableLots = findAvailableLots()
-        if(availableLots.length > 0)
-            setModalInputValue(availableLots[0]);
-        else 
-            setModalInputValue("")
-    }, [jobDetails, listOfLots]);
     
     return (
         <div className='modalScreen' style={{display: modalType !== "none" ? "flex": "none"}}>
@@ -136,19 +106,16 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalType, isOption
                 ) : ["drawerBoxes", "drawerGuides", "doorHinges"].includes(modalType) 
                 ? (<>
                         <h2>Modify {modalType === "drawerBoxes" ? "Drawer Box" : modalType === "drawerGuides" ? "Drawer Guides" : "Door Hinges"} Hardware</h2>
-                        <div className="modalProjectDiv">
-                                <select style={{marginBottom: "10px"}}value={hardwareIndex} onChange={handleHardwareInputChange}>
-                                    <option value="-1">None</option>
-                                    {currentLot?.partsOfLot.map((lot, index) => {
-                                        return !["Throughout", "Balance of House"].includes(lot.roomID) && <option key={index} value={index}>{lot.roomID}</option>
+                        <div className="modalRow">
+                            <select value={packageDetails.packageName} onChange={e => handlePackageDetailsChange(e.target.value, "packageName")}>
+                                <option value="None">None</option>
+                                {listOfLots.find((lotDetails:LotTableInterface) => (isOptionsMode && lotDetails.lot === currentLotNum) ||
+                                                                                        (!isOptionsMode && lotDetails.plan === currentLotNum))?.partsOfLot.map((lot, index) => {
+                                        return <option key={index} value={lot.roomID}>{lot.roomID}</option>
                                     })}
-                                </select>
-                                <div className="modalInputRow">
-                                    {(currentLot && hardwareIndex !== -1) && <InputSearch inputName={modalType} optionSectionNum={hardwareIndex} formState={currentLot} onFormChange={modifyPartOfLotHardware} isDropDown={true} postfix={currentLot.partsOfLot[hardwareIndex].roomID}></InputSearch>}
-                                </div>
-                            <button className="modalSubmit"onClick={() => turnOffModal()}>Submit</button>
+                            </select>
+                            <button onClick={() => saveLotTablesSQL()}>Submit</button>
                         </div>
-                        
                 </>):
                 (
                     <>

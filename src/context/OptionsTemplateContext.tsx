@@ -136,18 +136,14 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
             listOfOptions = ["Drywall Backs", "Finished Backs", "Wrapped Island Panels"]
         } else if (propertyName === "supports") {
             listOfOptions = ["No Supports", "Metal Brackets", "Brackets w/ Others", "Posts", "Corbels"]
-        } else if (propertyName === "lightRail") {
+        }else if (propertyName === "lightRail") {
             listOfOptions = ["None", "Behind Door"]
         } else if (propertyName === "crown") {
-            listOfOptions = [`2" Shadow`, `3" Shadow`, "CR238", "CR375", "CR45", "CR45 w/ Build Up to Ceiling", "CR45 w/ build up to ceiling kitchen only", "CR238 STD Sub Crown Balance of House", `3.5" Shadow Crown on Back Burner`]
+            listOfOptions = [`2" Shadow`, `3" Shadow`, "CR238", "CR375", "CR45", "CR45 w/ Build Up to Ceiling"]
         } else if (propertyName === "baseShoe") {
             listOfOptions = ["None Supplied Only", "Island Only"]
         } else if (propertyName === "recyclingBins") {
             listOfOptions = ["None", "Standard", "Optional"]
-        }
-
-        if(propertyName === "drawerBoxes") {
-            listOfOptions.push("Dovetail - Kitchen Only, STD - Balance of House", "APA Dovetail - Kitchen Only, STD - Balance of House")
         }
 
         return listOfOptions
