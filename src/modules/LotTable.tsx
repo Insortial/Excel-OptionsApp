@@ -131,10 +131,10 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
                         {/* Look at changing this Input Search */}
                         <td>
                         <InputSearch inputName={"drawerBoxes"} optionSectionNum={0} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
-                            {lotTableDetails.modifiedHardware?.drawerBoxes.map((lot, index) => {
+                            {/* {lotTableDetails.modifiedHardware?.drawerBoxes.map((lot, index) => {
                                 const overallItem = lotTableDetails.partsOfLot[0].drawerBoxes
                                 return index === 0 || overallItem !== lotTableDetails.partsOfLot[index].drawerBoxes ? <InputSearch inputName={"drawerBoxes"} key={index} optionSectionNum={index} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true} postfix={lot.roomID}></InputSearch> : <></>
-                            })}
+                            })} */}
                             {lotTableDetails.partsOfLot.length > 1 && <button className='lotDetailButton' onClick={() => modifyHardwareModal("drawerBoxes")}>Add Lot Change</button>}
                         </td>
                     </tr>
@@ -143,10 +143,10 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
                         {/* Look at changing this Input Search */}
                         <td>
                         <InputSearch inputName={"drawerGuides"} optionSectionNum={0} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
-                            {lotTableDetails.modifiedHardware?.drawerGuides.map((lot, index) => {
+                            {/* {lotTableDetails.modifiedHardware?.drawerGuides.map((lot, index) => {
                                 const overallItem = lotTableDetails.partsOfLot[0].drawerGuides
                                 return index === 0 || overallItem !== lotTableDetails.partsOfLot[index].drawerGuides ? <InputSearch inputName={"drawerGuides"} key={index} optionSectionNum={index} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true} postfix={lot.roomID}></InputSearch> : <></>
-                            })}
+                            })} */}
                             {lotTableDetails.partsOfLot.length > 1 && <button className='lotDetailButton' onClick={() => modifyHardwareModal("drawerGuides")}>Add Lot Change</button>}
                         </td>
                     </tr>
@@ -155,10 +155,10 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
                         {/* Look at changing this Input Search */}
                         <td>
                         <InputSearch inputName={"doorHinges"} optionSectionNum={0} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
-                            {lotTableDetails.modifiedHardware?.doorHinges.map((lot, index) => {
+                            {/* {lotTableDetails.modifiedHardware?.doorHinges.map((lot, index) => {
                                 const overallItem = lotTableDetails.partsOfLot[0].doorHinges
                                 return index === 0 || overallItem !== lotTableDetails.partsOfLot[index].doorHinges ? <InputSearch inputName={"doorHinges"} key={index} optionSectionNum={index} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true} postfix={lot.roomID}></InputSearch> : <></>
-                            })}
+                            })} */}
                             {lotTableDetails.partsOfLot.length > 1 && <button className='lotDetailButton' onClick={() => modifyHardwareModal("doorHinges")}>Add Lot Change</button>}
                         </td>
                     </tr>
