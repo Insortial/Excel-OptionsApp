@@ -59,7 +59,7 @@ function OptionsCreator() {
         details: "",
         appliances: ""
     }
-    
+
     const { getFormIDs, errors, setErrors, setIsCheckingError, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const { name, phone, email } = AuthInfo()
     //Option States
@@ -328,16 +328,8 @@ function OptionsCreator() {
         }
     }
 
-    const modifyHardwareModal = (hardwareName:string) => {
+/*     const modifyHardwareModal = (hardwareName:string) => {
         setModalType(hardwareName)
-    }
-
-    /* const addModifiedHardware = (partOfLot:PartOfLot, lotID:string, hardware:string) => {
-        const updatedTable = {
-            ...formState,
-            [key]: value
-        }
-        saveLotTable(updatedTable, lotID)
     } */
 
     const createLotCopy = () => {
@@ -485,7 +477,7 @@ function OptionsCreator() {
         console.log(lotTablesAreValid)
         if(lotTablesAreValid) {
             await postJobDetailsSql()
-            revalidator.revalidate()
+            //revalidator.revalidate()
         } 
         setModalType("none")
     }
@@ -581,8 +573,8 @@ function OptionsCreator() {
 
     return (
         <>
-            <OptionsCreatorModal modal={modal} isOptionsMode={isOptionsMode} listOfLots={listOfLots} jobDetails={jobDetails} packageDetails={packageDetails} hasPackage={hasPackage} packageProjects={packageProjects} modalType={modalType} currentLotNum={currentLotNum} modalInputValue={modalInputValue}
-                setModalInputValue={setModalInputValue} addLotTable={addLotTable} handlePackageDetailsChange={handlePackageDetailsChange} onJobDetailsChange={onJobDetailsChange} setPackageProjects={setPackageProjects} saveLotTablesSQL={saveLotTablesSQL} setModalType={setModalType} onProjectsChange={onProjectsChange}/>
+            <OptionsCreatorModal modal={modal} isOptionsMode={isOptionsMode} listOfLots={listOfLots} jobDetails={jobDetails} packageDetails={packageDetails} hasPackage={hasPackage} packageProjects={packageProjects} modalType={modalType} currentLot={currentLot}
+                addLotTable={addLotTable} handlePackageDetailsChange={handlePackageDetailsChange} onJobDetailsChange={onJobDetailsChange} setPackageProjects={setPackageProjects} saveLotTablesSQL={saveLotTablesSQL} setModalType={setModalType} onProjectsChange={onProjectsChange} saveLotTable={saveLotTable}/>
             <div id="optionsNav">
                 <h1>{isOptionsMode ? "Options" : "Package" } Creator</h1>
                 {isOptionsMode ? (
@@ -627,7 +619,7 @@ function OptionsCreator() {
             </div>
             <div id="optionsEditor">
                 {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} onJobDetailsChange={onJobDetailsChange} jobDetails={jobDetails} 
-                                                                            lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode} modifyHardwareModal={modifyHardwareModal}/>)}
+                                                                            lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode} />)}
             </div>
         </>
     )
