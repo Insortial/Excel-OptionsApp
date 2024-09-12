@@ -20,6 +20,9 @@
 --ALTER TABLE [Lot Order Details]
 --ALTER COLUMN [Pull ID] nvarchar(100) NOT NULL
 
+--ALTER TABLE [Lot Order Details]
+--ALTER COLUMN [Hardware Comments] nvarchar(MAX) NOT NULL
+
 --Alter RoomID NULL values to be N/A
 --UPDATE [Lot Order Details]
 --SET [Room ID] = 'N/A'
