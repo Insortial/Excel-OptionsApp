@@ -1,5 +1,5 @@
 CREATE TABLE [EXCELP&D].[dbo].[LotOptions] (
-	lotOptionID int IDENTITY(1,1) NOT NULL UNIQUE PRIMARY KEY,
+	lotOptionID int IDENTITY(1,1) NOT NULL PRIMARY KEY,
 	jobOptionIDFK int NOT NULL,
 	lotIDFK int,
 	upperHeight varchar(50),
@@ -8,7 +8,6 @@ CREATE TABLE [EXCELP&D].[dbo].[LotOptions] (
 	lightRail varchar(50),
 	baseShoe varchar(50),
 	recyclingBins varchar(50),
-	appliances varchar(200),
 	supports varchar(50),
 	lotNotes varchar(MAX),
 	lotOptionsValue float,
