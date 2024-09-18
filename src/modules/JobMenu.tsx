@@ -10,6 +10,7 @@ import useFetch from '../hooks/useFetch.ts';
 
 const JobMenu = () => {
     const [jobDocuments, setJobDocuments] = useState<JobDocumentInterface[]>([])
+    const [isDeleteMode, setDeleteMode] = useState<boolean>(false)
     const { setIsCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const fetchHook = useFetch()
     
@@ -35,11 +36,14 @@ const JobMenu = () => {
             </header>
             <div id="jobMenuBody">
                 <section className='jobMenuSection'>
+                    <nav id="menuSettings">
+                        <button onClick={() => setDeleteMode(!isDeleteMode)}>Delete Jobs</button>
+                    </nav>
                     <h2>Draft Jobs</h2>
                     <section className="jobList">
                         {jobDocuments.map((jobDocument:JobDocumentInterface, index:number) => {
                             if(!jobDocument.prodReady)
-                                return <JobDocument key={index} JobDocumentDetails={jobDocument}/>
+                                return <JobDocument key={index} JobDocumentDetails={jobDocument} isDeleteMode={isDeleteMode}/>
                         })}
                     </section>
                 </section>
@@ -48,7 +52,7 @@ const JobMenu = () => {
                     <section className="jobList">
                         {jobDocuments.map((jobDocument:JobDocumentInterface, index:number) => {
                             if(jobDocument.prodReady)
-                            return <JobDocument key={index} JobDocumentDetails={jobDocument}/>
+                            return <JobDocument key={index} JobDocumentDetails={jobDocument} isDeleteMode={isDeleteMode}/>
                         })}
                     </section>
                 </section>

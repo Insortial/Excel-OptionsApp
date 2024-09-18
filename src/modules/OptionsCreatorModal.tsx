@@ -1,32 +1,16 @@
 import React from 'react'
 import InputSearch from './InputSearch'
-import { JobDetails, LotTableInterface, PackageDetails, PartOfLot } from '../../../types/LotTableInterface'
+import { OptionsCreatorObject } from '../../../types/ModalTypes'
 
 type OptionsCreatorModal = {
     modal: boolean, 
-    isOptionsMode: boolean, 
-    currentLot: LotTableInterface | undefined,
-    listOfLots: LotTableInterface[], 
-    jobDetails: JobDetails, 
-    packageDetails: PackageDetails, 
-    hasPackage: boolean, 
-    packageProjects: string[],
-    modalType: string,
     modalInputValue: string,
     setModalInputValue: React.Dispatch<React.SetStateAction<string>>,
-    addLotTable: () => void, 
-    saveLotTable: (lotTableDetails: LotTableInterface, lotNumber: string) => void;
-    handlePackageDetailsChange: (value:string, propName:string) => void,  
-    onJobDetailsChange: (value: string | boolean, key: string) => void, 
-    setPackageProjects: React.Dispatch<React.SetStateAction<string[]>>, 
-    saveLotTablesSQL: () => void,
-    setModalType: React.Dispatch<React.SetStateAction<string>>,
-    onProjectsChange: (value: string, key: string, optSectionNum?:number) => void,
+    optionsCreatorObject?: OptionsCreatorObject,
 }
 
-const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalType, isOptionsMode, listOfLots, jobDetails, packageDetails, hasPackage, packageProjects, currentLotNum,
-                                                             modalInputValue, addLotTable, handlePackageDetailsChange, onJobDetailsChange, setPackageProjects, saveLotTablesSQL, 
-                                                             setModalType, onProjectsChange, setModalInputValue}) => {
+
+const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modal, modalInputValue, setModalInputValue, optionsCreatorObject}) => {
     
     const handleInputChange = (event: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
         console.log(event.target.value)
@@ -35,75 +19,75 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalType, isOption
 
     const turnOffModal = () => {
         setModalInputValue("")
-        setModalType("none")
+        optionsCreatorObject?.setModalType("none")
     }
     
     return (
-        <div className='modalScreen' style={{display: modalType !== "none" ? "flex": "none"}}>
+        <div className='modalScreen' style={{display: modal ? "flex": "none"}}>
             <div className='modal'>
-                {modalType === "inputValue" ? 
+                {optionsCreatorObject?.modalType === "inputValue" ? 
                 (<>
-                    <h2>Enter {isOptionsMode ? "Lot Number" : "Plan Name"}:</h2>
+                    <h2>Enter {optionsCreatorObject.isOptionsMode ? "Lot Number" : "Plan Name"}:</h2>
                     <div className="modalRow">
-                        {isOptionsMode ? (
+                        {optionsCreatorObject.isOptionsMode ? (
                         <select value={modalInputValue} onChange={handleInputChange}>
-                            {jobDetails.lotNums.map((lotNum, index) => {
-                                if(!listOfLots.find((lot) => lot.lot === lotNum)) {
+                            {optionsCreatorObject.jobDetails.lotNums.map((lotNum, index) => {
+                                if(!optionsCreatorObject.listOfLots?.find((lot) => lot.lot === lotNum)) {
                                     return <option key={index} value={lotNum}>{lotNum}</option>
                                 }
                             })}
                         </select> ) : (
                             <input value={modalInputValue} onChange={handleInputChange}></input>
                         )}
-                        <button onClick={addLotTable}>Submit</button>
+                        <button onClick={optionsCreatorObject.addLotTable}>Submit</button>
                     </div>
-                    {hasPackage && <>
+                    {optionsCreatorObject.hasPackage && <>
                         <div className="modalPlanRow">
                             <label>Package:</label>
-                            <select value={packageDetails.packageName} onChange={e => handlePackageDetailsChange(e.target.value, "packageName")}>
+                            <select value={optionsCreatorObject.packageDetails.packageName} onChange={e => optionsCreatorObject.handlePackageDetailsChange(e.target.value, "packageName")}>
                                 <option value="None">None</option>
-                                {packageDetails.packages.map((packageName, index) => {
+                                {optionsCreatorObject.packageDetails.packages.map((packageName, index) => {
                                     return <option key={index} value={packageName}>{packageName}</option>
                                 })}
                             </select>
                         </div>
-                        {!["", "None"].includes(packageDetails.packageName) &&
+                        {!["", "None"].includes(optionsCreatorObject.packageDetails.packageName) &&
                         <div className="modalPlanRow">
                             <label>Plan Type:</label>
-                            <select value={packageDetails.planName} onChange={e => handlePackageDetailsChange(e.target.value, "planName")}>
+                            <select value={optionsCreatorObject.packageDetails.planName} onChange={e => optionsCreatorObject.handlePackageDetailsChange(e.target.value, "planName")}>
                                 <option value="None">None</option>
-                                {packageDetails.plans.filter(plan => plan.packageName === packageDetails.packageName).map((lotTable, index) => {
+                                {optionsCreatorObject.packageDetails.plans.filter(plan => plan.packageName === optionsCreatorObject.packageDetails.packageName).map((lotTable, index) => {
                                     return <option key={index} value={lotTable.plan}>{lotTable.plan}</option>
                                 })}
                             </select>
                         </div>}
                     </>}
                 </>) : modalType === "prod" 
-                ? (isOptionsMode ?
+                ? (optionsCreatorObject?.isOptionsMode ?
                     <>
                         <h2>Is This Production Schedule Final?</h2>
                         <div className="modalCheckboxRow">
                             <label>Yes:</label>
-                            <input type="checkbox" checked={jobDetails.prodReady} onChange={() => onJobDetailsChange(true, "prodReady")}></input>
+                            <input type="checkbox" checked={optionsCreatorObject.jobDetails.prodReady} onChange={() => optionsCreatorObject.onJobDetailsChange(true, "prodReady")}></input>
                             <label>No:</label>
-                            <input type="checkbox" checked={!jobDetails.prodReady} onChange={() => onJobDetailsChange(false, "prodReady")}></input>
-                            <button onClick={() => saveLotTablesSQL()}>Submit</button>
+                            <input type="checkbox" checked={!optionsCreatorObject.jobDetails.prodReady} onChange={() => optionsCreatorObject.onJobDetailsChange(false, "prodReady")}></input>
+                            <button onClick={() => optionsCreatorObject.saveLotTablesSQL()}>Submit</button>
                         </div>
                     </>
                     : <>
                         <h2>Select Projects</h2>
                         <div className="modalProjectDiv">
-                            {packageProjects.map((_, index:number) => {
+                            {optionsCreatorObject?.packageProjects.map((_, index:number) => {
                                 return  <div className="modalInputRow" key={index}>
-                                            <InputSearch inputName={"project"} formState={packageProjects} onFormChange={onProjectsChange} isDropDown={true} optionSectionNum={index} filterValue={jobDetails.builder}></InputSearch>
-                                            <button onClick={() => setPackageProjects((prevState: string[]) => prevState.filter((_, idx) => idx !== index))}>Delete</button>
+                                            <InputSearch inputName={"project"} formState={optionsCreatorObject.packageProjects} onFormChange={optionsCreatorObject.onProjectsChange} isDropDown={true} optionSectionNum={index} filterValue={optionsCreatorObject.jobDetails.builder}></InputSearch>
+                                            <button onClick={() => optionsCreatorObject.setPackageProjects((prevState: string[]) => prevState.filter((_, idx) => idx !== index))}>Delete</button>
                                         </div>
                             })}
-                            <button className="addProject" onClick={() => setPackageProjects([...packageProjects, ""])}>Add Project</button>
-                            <button className="modalSubmit" onClick={() => saveLotTablesSQL()}>Submit</button>
+                            <button className="addProject" onClick={() => optionsCreatorObject?.setPackageProjects([...optionsCreatorObject.packageProjects, ""])}>Add Project</button>
+                            <button className="modalSubmit" onClick={() => optionsCreatorObject?.saveLotTablesSQL()}>Submit</button>
                         </div>
                     </>
-                ) : ["drawerBoxes", "drawerGuides", "doorHinges"].includes(modalType) 
+                ) : /* ["drawerBoxes", "drawerGuides", "doorHinges"].includes(modalType) 
                 ? (<>
                         <h2>Modify {modalType === "drawerBoxes" ? "Drawer Box" : modalType === "drawerGuides" ? "Drawer Guides" : "Door Hinges"} Hardware</h2>
                         <div className="modalProjectDiv">
@@ -119,7 +103,7 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalType, isOption
                             <button className="modalSubmit"onClick={() => turnOffModal()}>Submit</button>
                         </div>
                         
-                </>):
+                </>): */
                 (
                     <>
                         <h1>Waiting for Result</h1>
