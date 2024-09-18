@@ -1,6 +1,6 @@
 CREATE TABLE [EXCELP&D].[dbo].[LotOptions] (
 	lotOptionID int IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	jobOptionIDFK int NOT NULL,
+	jobOptionIDFK int,
 	lotIDFK int,
 	upperHeight varchar(50),
 	islands varchar(50),

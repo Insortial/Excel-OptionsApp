@@ -1,11 +1,11 @@
-ALTER TABLE [EXCELP&D].[dbo].[Colors]
-DROP COLUMN inUse;
+--ALTER TABLE [EXCELP&D].[dbo].[Colors]
+--DROP COLUMN inUse;
 
-ALTER TABLE [EXCELP&D].[dbo].[Interiors] 
-DROP COLUMN inUse;
+--ALTER TABLE [EXCELP&D].[dbo].[Interiors] 
+--DROP COLUMN inUse;
 
-ALTER TABLE [EXCELP&D].[dbo].[Materials] 
-DROP COLUMN inUse;
+--ALTER TABLE [EXCELP&D].[dbo].[Materials] 
+--DROP COLUMN inUse;
 
 ALTER TABLE [EXCELP&D].[dbo].[Colors]
 ADD inUse BIT;

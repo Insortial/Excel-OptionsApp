@@ -1,6 +1,6 @@
-DROP TABLE [EXCELP&D].[dbo].[LotOptionToPackage];
-DROP TABLE [EXCELP&D].[dbo].[PackageToProject];
-DROP TABLE [EXCELP&D].[dbo].[Packages];
+--DROP TABLE [EXCELP&D].[dbo].[LotOptionToPackage];
+--DROP TABLE [EXCELP&D].[dbo].[PackageToProject];
+--DROP TABLE [EXCELP&D].[dbo].[Packages];
 
 CREATE TABLE [EXCELP&D].[dbo].[Packages] (
 	packageID int IDENTITY(1,1) NOT NULL UNIQUE,
