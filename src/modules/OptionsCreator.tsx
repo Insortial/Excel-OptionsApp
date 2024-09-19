@@ -529,7 +529,7 @@ function OptionsCreator() {
             //Accessing existing Job Document
             if(Object.prototype.hasOwnProperty.call(loadedData, 'jobDetails')) {
                 setJobDetails(loadedData.jobDetails)
-                setListOfLots(loadedData.listOfLots)
+                sortListOfLots(loadedData.listOfLots)
                 setCurrentLot(loadedData.listOfLots[0])
                 setCurrentLotNum(loadedData.listOfLots[0].lot)
             } else {
@@ -548,7 +548,7 @@ function OptionsCreator() {
                     date: "",
                     prodReady: false
                 })
-                setListOfLots(loadedData.listOfLots)
+                sortListOfLots(loadedData.listOfLots)
                 setCurrentLot(loadedData.listOfLots[0])
                 setCurrentLotNum(loadedData.listOfLots[0].plan)
                 setPackageProjects(loadedData.packageDetails.projects)
