@@ -1,33 +1,22 @@
 import React from 'react'
 import InputSearch from './InputSearch'
-import { JobDetails, LotTableInterface, PackageDetails, PartOfLot } from '../../../types/LotTableInterface'
+import { JobMenuObject, OptionsCreatorObject, PackageObject } from '../../../types/ModalTypes'
+import useFetch from '../hooks/useFetch'
 
 type OptionsCreatorModal = {
-    modal: boolean, 
-    isOptionsMode: boolean, 
-    currentLot: LotTableInterface | undefined,
-    listOfLots: LotTableInterface[], 
-    jobDetails: JobDetails, 
-    packageDetails: PackageDetails, 
-    hasPackage: boolean, 
-    packageProjects: string[],
-    modalType: string,
+    modalType: string, 
     modalInputValue: string,
-    setModalInputValue: React.Dispatch<React.SetStateAction<string>>,
-    addLotTable: () => void, 
-    saveLotTable: (lotTableDetails: LotTableInterface, lotNumber: string) => void;
-    handlePackageDetailsChange: (value:string, propName:string) => void,  
-    onJobDetailsChange: (value: string | boolean, key: string) => void, 
-    setPackageProjects: React.Dispatch<React.SetStateAction<string[]>>, 
-    saveLotTablesSQL: () => void,
     setModalType: React.Dispatch<React.SetStateAction<string>>,
-    onProjectsChange: (value: string, key: string, optSectionNum?:number) => void,
+    setModalInputValue: React.Dispatch<React.SetStateAction<string>>,
+    optionsCreatorObject?: OptionsCreatorObject,
+    jobMenuObject?: JobMenuObject,
+    packageObject?: PackageObject,
 }
 
-const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalType, isOptionsMode, listOfLots, jobDetails, packageDetails, hasPackage, packageProjects, currentLotNum,
-                                                             modalInputValue, addLotTable, handlePackageDetailsChange, onJobDetailsChange, setPackageProjects, saveLotTablesSQL, 
-                                                             setModalType, onProjectsChange, setModalInputValue}) => {
-    
+
+const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, setModalType, setModalInputValue, modalType, optionsCreatorObject, jobMenuObject, packageObject}) => {
+    const fetchHook = useFetch()
+
     const handleInputChange = (event: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
         console.log(event.target.value)
         setModalInputValue(event.target.value)
@@ -37,73 +26,126 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalType, isOption
         setModalInputValue("")
         setModalType("none")
     }
+
+    const deleteJobOption = () => {
+        if(jobMenuObject?.jobDocument) {
+            fetchHook(`/deleteJobOption/${jobMenuObject.jobDocument.jobOptionID}`, "DELETE")
+            .then((response) =>{
+                if(response.status === 200) {
+                    jobMenuObject.refreshJobMenu()
+                    jobMenuObject.setDeleteMode(false)
+                    turnOffModal()
+                } else {
+                    turnOffModal()
+                }
+                
+            })
+            .catch((error) => console.error(error));
+        } else {
+            turnOffModal()
+        }
+    }
+
+    const deletePackage = () => {
+        if(packageObject?.packageDetails) {
+            fetchHook(`/deletePackage/${packageObject?.packageDetails.packageID}`, "DELETE")
+            .then((response) =>{
+                if(response.status === 200) {
+                    packageObject.refreshPackages()
+                    turnOffModal()
+                } else {
+                    turnOffModal()
+                }  
+            })
+            .catch((error) => console.error(error));
+        } else {
+            turnOffModal()
+        }
+    }
     
     return (
         <div className='modalScreen' style={{display: modalType !== "none" ? "flex": "none"}}>
             <div className='modal'>
-                {modalType === "inputValue" ? 
-                (<>
-                    <h2>Enter {isOptionsMode ? "Lot Number" : "Plan Name"}:</h2>
+                {optionsCreatorObject && modalType === "inputValue" ? 
+                <>
+                    <h2>Enter {optionsCreatorObject.isOptionsMode ? "Lot Number" : "Plan Name"}:</h2>
                     <div className="modalRow">
-                        {isOptionsMode ? (
+                        {optionsCreatorObject.isOptionsMode ? (
                         <select value={modalInputValue} onChange={handleInputChange}>
-                            {jobDetails.lotNums.map((lotNum, index) => {
-                                if(!listOfLots.find((lot) => lot.lot === lotNum)) {
+                            {optionsCreatorObject.jobDetails.lotNums.map((lotNum, index) => {
+                                if(!optionsCreatorObject.listOfLots?.find((lot) => lot.lot === lotNum)) {
                                     return <option key={index} value={lotNum}>{lotNum}</option>
                                 }
                             })}
                         </select> ) : (
                             <input value={modalInputValue} onChange={handleInputChange}></input>
                         )}
-                        <button onClick={addLotTable}>Submit</button>
+                        <button onClick={optionsCreatorObject.addLotTable}>Submit</button>
                     </div>
-                    {hasPackage && <>
+                    {optionsCreatorObject.hasPackage && <>
                         <div className="modalPlanRow">
                             <label>Package:</label>
-                            <select value={packageDetails.packageName} onChange={e => handlePackageDetailsChange(e.target.value, "packageName")}>
+                            <select value={optionsCreatorObject.packageDetails.packageName} onChange={e => optionsCreatorObject.handlePackageDetailsChange(e.target.value, "packageName")}>
                                 <option value="None">None</option>
-                                {packageDetails.packages.map((packageName, index) => {
+                                {optionsCreatorObject.packageDetails.packages.map((packageName, index) => {
                                     return <option key={index} value={packageName}>{packageName}</option>
                                 })}
                             </select>
                         </div>
-                        {!["", "None"].includes(packageDetails.packageName) &&
+                        {!["", "None"].includes(optionsCreatorObject.packageDetails.packageName) &&
                         <div className="modalPlanRow">
                             <label>Plan Type:</label>
-                            <select value={packageDetails.planName} onChange={e => handlePackageDetailsChange(e.target.value, "planName")}>
+                            <select value={optionsCreatorObject.packageDetails.planName} onChange={e => optionsCreatorObject.handlePackageDetailsChange(e.target.value, "planName")}>
                                 <option value="None">None</option>
-                                {packageDetails.plans.filter(plan => plan.packageName === packageDetails.packageName).map((lotTable, index) => {
+                                {optionsCreatorObject.packageDetails.plans.filter(plan => plan.packageName === optionsCreatorObject.packageDetails.packageName).map((lotTable, index) => {
                                     return <option key={index} value={lotTable.plan}>{lotTable.plan}</option>
                                 })}
                             </select>
                         </div>}
                     </>}
-                </>) : modalType === "prod" 
-                ? (isOptionsMode ?
+                </> : modalType === "prod" 
+                ? optionsCreatorObject?.isOptionsMode ?
                     <>
                         <h2>Is This Production Schedule Final?</h2>
                         <div className="modalCheckboxRow">
                             <label>Yes:</label>
-                            <input type="checkbox" checked={jobDetails.prodReady} onChange={() => onJobDetailsChange(true, "prodReady")}></input>
+                            <input type="checkbox" checked={optionsCreatorObject.jobDetails.prodReady} onChange={() => optionsCreatorObject.onJobDetailsChange(true, "prodReady")}></input>
                             <label>No:</label>
-                            <input type="checkbox" checked={!jobDetails.prodReady} onChange={() => onJobDetailsChange(false, "prodReady")}></input>
-                            <button onClick={() => saveLotTablesSQL()}>Submit</button>
+                            <input type="checkbox" checked={!optionsCreatorObject.jobDetails.prodReady} onChange={() => optionsCreatorObject.onJobDetailsChange(false, "prodReady")}></input>
+                            <button onClick={() => optionsCreatorObject.saveLotTablesSQL()}>Submit</button>
                         </div>
                     </>
                     : <>
                         <h2>Select Projects</h2>
                         <div className="modalProjectDiv">
-                            {packageProjects.map((_, index:number) => {
+                            {optionsCreatorObject?.packageProjects.map((_, index:number) => {
                                 return  <div className="modalInputRow" key={index}>
-                                            <InputSearch inputName={"project"} formState={packageProjects} onFormChange={onProjectsChange} isDropDown={true} optionSectionNum={index} filterValue={jobDetails.builder}></InputSearch>
-                                            <button onClick={() => setPackageProjects((prevState: string[]) => prevState.filter((_, idx) => idx !== index))}>Delete</button>
+                                            <InputSearch inputName={"project"} formState={optionsCreatorObject.packageProjects} onFormChange={optionsCreatorObject.onProjectsChange} isDropDown={true} optionSectionNum={index} filterValue={optionsCreatorObject.jobDetails.builder}></InputSearch>
+                                            <button onClick={() => optionsCreatorObject.setPackageProjects((prevState: string[]) => prevState.filter((_, idx) => idx !== index))}>Delete</button>
                                         </div>
                             })}
-                            <button className="addProject" onClick={() => setPackageProjects([...packageProjects, ""])}>Add Project</button>
-                            <button className="modalSubmit" onClick={() => saveLotTablesSQL()}>Submit</button>
+                            <button className="addProject" onClick={() => optionsCreatorObject?.setPackageProjects([...optionsCreatorObject.packageProjects, ""])}>Add Project</button>
+                            <button className="modalSubmit" onClick={() => optionsCreatorObject?.saveLotTablesSQL()}>Submit</button>
                         </div>
                     </>
-                ) : ["drawerBoxes", "drawerGuides", "doorHinges"].includes(modalType) 
+                 : modalType === "delete" ? 
+                 <>
+                    <h2>{jobMenuObject?.jobDocument ? "Are You Sure You Want To Delete Options?" : "Are You Sure You Want To Delete Package?"}</h2>
+                    {jobMenuObject?.jobDocument ? <>
+                        <h3>{jobMenuObject.jobDocument.customerName} - {jobMenuObject.jobDocument.projectName} Job ID: {jobMenuObject.jobDocument.jobID}</h3>
+                        <div className="modalButtonRow">
+                            <button onClick={() => deleteJobOption()}>YES</button>
+                            <button onClick={() => turnOffModal()}>NO</button>
+                        </div>
+                    </> : packageObject ? <>
+                        <h3>{packageObject.packageDetails?.packageName} - {packageObject.packageDetails?.projectName}</h3>
+                        <div className="modalButtonRow">
+                            <button onClick={() => deletePackage()}>YES</button>
+                            <button onClick={() => turnOffModal()}>NO</button>
+                        </div>
+                    </> : <></>}
+                 </>
+                /* ["drawerBoxes", "drawerGuides", "doorHinges"].includes(modalType) 
                 ? (<>
                         <h2>Modify {modalType === "drawerBoxes" ? "Drawer Box" : modalType === "drawerGuides" ? "Drawer Guides" : "Door Hinges"} Hardware</h2>
                         <div className="modalProjectDiv">
@@ -119,12 +161,11 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalType, isOption
                             <button className="modalSubmit"onClick={() => turnOffModal()}>Submit</button>
                         </div>
                         
-                </>):
-                (
-                    <>
-                        <h1>Waiting for Result</h1>
-                    </>
-                )}
+                </>): */
+                : <>
+                    <h1>Waiting for Result</h1>
+                </>
+                }
                 <span className="exitButton" onClick={() => turnOffModal()}></span>
             </div>
         </div>
