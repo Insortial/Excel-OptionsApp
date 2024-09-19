@@ -536,10 +536,30 @@ td > input {
     flex-direction: column;
 }
 
+.packageButtons {
+    display: flex;
+    flex-direction: row;
+}
+
 .editPackage {
+    display: flex;
     background-color: #945766;
     color: white;
+    text-align: center;
+    justify-content: center;
+    margin-right: 5px;
     width: 50px;
+}
+
+.deletePackage {
+    display: flex;
+    background-color: #ce4343;
+    color: white;
+    text-align: center;
+    justify-content: center;
+    margin-right: 5px;
+    width: 50px;
+    align-items: center;
 }
 
 button {

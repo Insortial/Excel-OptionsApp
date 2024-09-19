@@ -1,6 +1,6 @@
 import React from 'react'
 import InputSearch from './InputSearch'
-import { JobMenuObject, OptionsCreatorObject } from '../../../types/ModalTypes'
+import { JobMenuObject, OptionsCreatorObject, PackageObject } from '../../../types/ModalTypes'
 import useFetch from '../hooks/useFetch'
 
 type OptionsCreatorModal = {
@@ -9,11 +9,12 @@ type OptionsCreatorModal = {
     setModalType: React.Dispatch<React.SetStateAction<string>>,
     setModalInputValue: React.Dispatch<React.SetStateAction<string>>,
     optionsCreatorObject?: OptionsCreatorObject,
-    jobMenuObject?: JobMenuObject
+    jobMenuObject?: JobMenuObject,
+    packageObject?: PackageObject,
 }
 
 
-const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, setModalType, setModalInputValue, modalType, optionsCreatorObject, jobMenuObject}) => {
+const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, setModalType, setModalInputValue, modalType, optionsCreatorObject, jobMenuObject, packageObject}) => {
     const fetchHook = useFetch()
 
     const handleInputChange = (event: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
@@ -43,7 +44,23 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
         } else {
             turnOffModal()
         }
-        
+    }
+
+    const deletePackage = () => {
+        if(packageObject?.packageDetails) {
+            fetchHook(`/deletePackage/${packageObject?.packageDetails.packageID}`, "DELETE")
+            .then((response) =>{
+                if(response.status === 200) {
+                    packageObject.refreshPackages()
+                    turnOffModal()
+                } else {
+                    turnOffModal()
+                }  
+            })
+            .catch((error) => console.error(error));
+        } else {
+            turnOffModal()
+        }
     }
     
     return (
@@ -111,14 +128,22 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
                             <button className="modalSubmit" onClick={() => optionsCreatorObject?.saveLotTablesSQL()}>Submit</button>
                         </div>
                     </>
-                 : modalType === "delete" && jobMenuObject?.jobDocument ? 
+                 : modalType === "delete" ? 
                  <>
-                    <h2>Are You Sure You Want To Delete Options?</h2>
-                    <h3>{jobMenuObject.jobDocument.customerName} - {jobMenuObject.jobDocument.projectName} Job ID: {jobMenuObject.jobDocument.jobID}</h3>
-                    <div className="modalButtonRow">
-                        <button onClick={() => deleteJobOption()}>YES</button>
-                        <button onClick={() => turnOffModal()}>NO</button>
-                    </div>
+                    <h2>{jobMenuObject?.jobDocument ? "Are You Sure You Want To Delete Options?" : "Are You Sure You Want To Delete Package?"}</h2>
+                    {jobMenuObject?.jobDocument ? <>
+                        <h3>{jobMenuObject.jobDocument.customerName} - {jobMenuObject.jobDocument.projectName} Job ID: {jobMenuObject.jobDocument.jobID}</h3>
+                        <div className="modalButtonRow">
+                            <button onClick={() => deleteJobOption()}>YES</button>
+                            <button onClick={() => turnOffModal()}>NO</button>
+                        </div>
+                    </> : packageObject ? <>
+                        <h3>{packageObject.packageDetails?.packageName} - {packageObject.packageDetails?.projectName}</h3>
+                        <div className="modalButtonRow">
+                            <button onClick={() => deletePackage()}>YES</button>
+                            <button onClick={() => turnOffModal()}>NO</button>
+                        </div>
+                    </> : <></>}
                  </>
                 /* ["drawerBoxes", "drawerGuides", "doorHinges"].includes(modalType) 
                 ? (<>
