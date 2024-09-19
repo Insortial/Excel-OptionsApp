@@ -1,17 +1,21 @@
 import React from 'react'
 import InputSearch from './InputSearch'
-import { OptionsCreatorObject } from '../../../types/ModalTypes'
+import { JobMenuObject, OptionsCreatorObject } from '../../../types/ModalTypes'
+import useFetch from '../hooks/useFetch'
 
 type OptionsCreatorModal = {
-    modal: boolean, 
+    modalType: string, 
     modalInputValue: string,
+    setModalType: React.Dispatch<React.SetStateAction<string>>,
     setModalInputValue: React.Dispatch<React.SetStateAction<string>>,
     optionsCreatorObject?: OptionsCreatorObject,
+    jobMenuObject?: JobMenuObject
 }
 
 
-const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modal, modalInputValue, setModalInputValue, optionsCreatorObject}) => {
-    
+const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, setModalType, setModalInputValue, modalType, optionsCreatorObject, jobMenuObject}) => {
+    const fetchHook = useFetch()
+
     const handleInputChange = (event: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
         console.log(event.target.value)
         setModalInputValue(event.target.value)
@@ -19,14 +23,34 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modal, modalInputVa
 
     const turnOffModal = () => {
         setModalInputValue("")
-        optionsCreatorObject?.setModalType("none")
+        setModalType("none")
+    }
+
+    const deleteJobOption = () => {
+        if(jobMenuObject?.jobDocument) {
+            fetchHook(`/deleteJobOption/${jobMenuObject.jobDocument.jobOptionID}`, "DELETE")
+            .then((response) =>{
+                if(response.status === 200) {
+                    jobMenuObject.refreshJobMenu()
+                    jobMenuObject.setDeleteMode(false)
+                    turnOffModal()
+                } else {
+                    turnOffModal()
+                }
+                
+            })
+            .catch((error) => console.error(error));
+        } else {
+            turnOffModal()
+        }
+        
     }
     
     return (
-        <div className='modalScreen' style={{display: modal ? "flex": "none"}}>
+        <div className='modalScreen' style={{display: modalType !== "none" ? "flex": "none"}}>
             <div className='modal'>
-                {optionsCreatorObject?.modalType === "inputValue" ? 
-                (<>
+                {optionsCreatorObject && modalType === "inputValue" ? 
+                <>
                     <h2>Enter {optionsCreatorObject.isOptionsMode ? "Lot Number" : "Plan Name"}:</h2>
                     <div className="modalRow">
                         {optionsCreatorObject.isOptionsMode ? (
@@ -62,8 +86,8 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modal, modalInputVa
                             </select>
                         </div>}
                     </>}
-                </>) : modalType === "prod" 
-                ? (optionsCreatorObject?.isOptionsMode ?
+                </> : modalType === "prod" 
+                ? optionsCreatorObject?.isOptionsMode ?
                     <>
                         <h2>Is This Production Schedule Final?</h2>
                         <div className="modalCheckboxRow">
@@ -87,7 +111,16 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modal, modalInputVa
                             <button className="modalSubmit" onClick={() => optionsCreatorObject?.saveLotTablesSQL()}>Submit</button>
                         </div>
                     </>
-                ) : /* ["drawerBoxes", "drawerGuides", "doorHinges"].includes(modalType) 
+                 : modalType === "delete" && jobMenuObject?.jobDocument ? 
+                 <>
+                    <h2>Are You Sure You Want To Delete Options?</h2>
+                    <h3>{jobMenuObject.jobDocument.customerName} - {jobMenuObject.jobDocument.projectName} Job ID: {jobMenuObject.jobDocument.jobID}</h3>
+                    <div className="modalButtonRow">
+                        <button onClick={() => deleteJobOption()}>YES</button>
+                        <button onClick={() => turnOffModal()}>NO</button>
+                    </div>
+                 </>
+                /* ["drawerBoxes", "drawerGuides", "doorHinges"].includes(modalType) 
                 ? (<>
                         <h2>Modify {modalType === "drawerBoxes" ? "Drawer Box" : modalType === "drawerGuides" ? "Drawer Guides" : "Door Hinges"} Hardware</h2>
                         <div className="modalProjectDiv">
@@ -104,11 +137,10 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modal, modalInputVa
                         </div>
                         
                 </>): */
-                (
-                    <>
-                        <h1>Waiting for Result</h1>
-                    </>
-                )}
+                : <>
+                    <h1>Waiting for Result</h1>
+                </>
+                }
                 <span className="exitButton" onClick={() => turnOffModal()}></span>
             </div>
         </div>

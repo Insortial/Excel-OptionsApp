@@ -48,7 +48,6 @@ function JobPackageCreator() {
     fetchHook(`/getPackages/`, "GET")
     .then((response) => response.status === 200 ? response.json() : undefined)
     .then((result) => {
-      console.log(result)
       setPackages(result)
     }).catch((error) => {
       console.error(error)

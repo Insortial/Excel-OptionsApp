@@ -1,5 +1,5 @@
 import LotTable from "./LotTable";
-import { useLocation, Link, useNavigate, useLoaderData, useRevalidator } from "react-router-dom";
+import { useLocation, Link, useNavigate, useLoaderData } from "react-router-dom";
 import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL, PackageDetailsSQL, PackageDetails } from '../../../types/LotTableInterface.ts';
 import React, { useContext, useEffect, useState } from "react";
 import docxConverter from "../hooks/docxConverter.tsx";
@@ -11,6 +11,7 @@ import useFetch from "../hooks/useFetch.ts";
 import { PackageLoaderResponse } from "../loader/PackageLoader.ts";
 import { JobOptionLoaderResponse } from "../loader/JobOptionLoader.ts";
 import OptionsCreatorModal from "./OptionsCreatorModal.tsx";
+import { OptionsCreatorObject } from "../../../types/ModalTypes.ts";
 
 type lotJobResponse = {
     isJobIDValid: boolean,
@@ -70,7 +71,6 @@ function OptionsCreator() {
     const [packageDetails, setPackageDetails] = useState<PackageDetails>(initialPackageDetails)
     const [currentLotNum, setCurrentLotNum] = useState<string>("")
     const [currentLot, setCurrentLot] = useState<LotTableInterface>()
-    const [modal, setModal] = useState<boolean>(false)
     const [modalType, setModalType] = useState<string>("none")
     const [isLotCopy, setIsLotCopy] = useState<boolean>(false)
     const [modalInputValue, setModalInputValue] = useState<string>("")
@@ -80,7 +80,7 @@ function OptionsCreator() {
     const [isOptionsMode, setIsOptionsMode] = useState<boolean>(true)
 
     const loaderData = useLoaderData() as PackageLoaderResponse | JobOptionLoaderResponse;
-    const revalidator = useRevalidator();
+    //const revalidator = useRevalidator();
     const location = useLocation();
     const navigate = useNavigate();
     const requestedJobDetails = location.state;
@@ -213,11 +213,6 @@ function OptionsCreator() {
         return true
     }
 
-    const switchModal = (value:boolean, type:string) => {
-        setModal(value)
-        setModalType(type)
-    }
-
     const createLotTable = (lotInputValue: string): LotTableInterface => {
         const lotDetails:LotTableInterface = {
             jobID: jobDetails.jobID,
@@ -328,10 +323,6 @@ function OptionsCreator() {
         }
     }
 
-/*     const modifyHardwareModal = (hardwareName:string) => {
-        setModalType(hardwareName)
-    } */
-
     const createLotCopy = () => {
         setModalType("inputValue")
         setIsLotCopy(true)
@@ -429,7 +420,6 @@ function OptionsCreator() {
             jobID: jobDetails.jobID,
             doorBuyOut: false,
             drawerBoxBuyOut: false,
-            hardwareComments: "",
             jobNotes: jobDetails.jobNotes,
             optionCoordinator: jobDetails.optionCoordinator,
             lots: listOfSQLLots,
@@ -520,14 +510,14 @@ function OptionsCreator() {
         if (requestedJobDetails != null) {
             //Creating new package 
             if (Object.prototype.hasOwnProperty.call(requestedJobDetails, 'packageName')) {
-                switchModal(true, "inputValue")
+                setModalType("inputValue")
                 setJobDetails(requestedJobDetails.packageDetails)
                 setIsOptionsMode(false)
                 setListOfLots([])
             //Making a new lot 
             } else if (listOfLots.length == 0 && requestedJobDetails != null) {
                 console.log(requestedJobDetails)
-                switchModal(true, "inputValue")
+                setModalType("inputValue")
                 setJobDetails(requestedJobDetails.jobDetails)
                 if(Object.prototype.hasOwnProperty.call(requestedJobDetails, 'packageDetails')) {
                     setHasPackage(true)
@@ -571,10 +561,26 @@ function OptionsCreator() {
         
     }, [requestedJobDetails, loaderData])
 
+    const optionsCreatorObject:OptionsCreatorObject = {
+        isOptionsMode: isOptionsMode, 
+        currentLot: currentLot,
+        listOfLots: listOfLots, 
+        jobDetails: jobDetails, 
+        packageDetails: packageDetails, 
+        hasPackage: hasPackage, 
+        packageProjects: packageProjects,
+        addLotTable: addLotTable, 
+        saveLotTable: saveLotTable,
+        handlePackageDetailsChange: handlePackageDetailsChange,  
+        onJobDetailsChange: onJobDetailsChange, 
+        setPackageProjects: setPackageProjects, 
+        saveLotTablesSQL: saveLotTablesSQL,
+        onProjectsChange: onProjectsChange,
+    }
+
     return (
         <>
-            <OptionsCreatorModal modal={modal} isOptionsMode={isOptionsMode} listOfLots={listOfLots} jobDetails={jobDetails} packageDetails={packageDetails} hasPackage={hasPackage} packageProjects={packageProjects} modalType={modalType} currentLotNum={currentLotNum} modalInputValue={modalInputValue}
-                setModalInputValue={setModalInputValue} addLotTable={addLotTable} handlePackageDetailsChange={handlePackageDetailsChange} onJobDetailsChange={onJobDetailsChange} setPackageProjects={setPackageProjects} saveLotTablesSQL={saveLotTablesSQL} setModalType={setModalType} onProjectsChange={onProjectsChange}/>
+            <OptionsCreatorModal modalInputValue={modalInputValue} setModalInputValue={setModalInputValue} setModalType={setModalType} modalType={modalType} optionsCreatorObject={optionsCreatorObject}/>
             <div id="optionsNav">
                 <h1>{isOptionsMode ? "Options" : "Package" } Creator</h1>
                 {isOptionsMode ? (
@@ -602,7 +608,7 @@ function OptionsCreator() {
                     <button onClick={() => setModalType("inputValue")}>New {isOptionsMode ? "Lot" : "Plan"} Table</button>
                     <button onClick={() => createLotCopy()}>Copy Details</button>
                     {isOptionsMode && <button onClick={() => testCreateDocument()}>Create Document</button>}
-                    <button onClick={() => switchModal(true, "prod")}>Save to Database</button>
+                    <button onClick={() => setModalType("prod")}>Save to Database</button>
                 </section>
                 <section className="optionsList" id="errorList" style={{display: isCheckingError ? "flex" :"none"}}>
                     <h3>Errors</h3>
