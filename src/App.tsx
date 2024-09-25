@@ -12,12 +12,11 @@ import JobMenu from './modules/JobMenu.tsx';
 import Login from './modules/Login.tsx';
 import ProtectedRoute from './modules/ProtectedRoute.tsx';
 import JobPackageCreator from './modules/JobPackageCreator.tsx';
-import { packageLoader } from './loader/PackageLoader.ts';
-import { AuthInfo } from './context/AuthContext.tsx';
 import { jobOptionLoader } from './loader/JobOptionLoader.ts';
+import useFetch from './hooks/useFetch.ts';
 
 const App: React.FC = () => {
-  const { accessToken } = AuthInfo()
+  const fetchHook = useFetch()
   const router = createBrowserRouter([
     {
       path: "/",
@@ -45,14 +44,26 @@ const App: React.FC = () => {
               element: <OptionsCreator  key="package"/>,
               path: "/optionCreator/package/:packageID",
               loader: async ({params}) => {
-                return packageLoader(params.packageID, accessToken)
+                const response = await fetchHook(`/getPackage/${params.packageID}`, "GET")
+                if (!response.ok) {
+                  throw new Error(response.statusText);
+                }
+                
+                const data = await response.json()
+                console.log(data)
+                return {state: data}
               }
             },
             {
               element: <OptionsCreator  key="jobOption"/>,
               path: "/optionCreator/jobOption/:optionID",
               loader: async ({params}) => {
-                return jobOptionLoader(params.optionID, accessToken)
+                const response = await fetchHook(`/getJobOption/${params.optionID}`, "GET")
+                if (!response.ok) {
+                  throw new Error(response.statusText);
+                }
+                const data = await response.json()
+                return jobOptionLoader(data.jobDetails, data.listOfLots)
               }
             },
           ]

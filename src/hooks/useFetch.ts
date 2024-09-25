@@ -1,11 +1,10 @@
-import { useNavigate } from 'react-router-dom';
+/* import { useNavigate } from 'react-router-dom'; */
 import { AuthInfo, AuthUpdate } from '../context/AuthContext';
 
 const useFetch = () => {
     const { saveAccessToken } = AuthUpdate()
     const { accessToken } = AuthInfo()
     const myHeaders = new Headers();
-    const navigate = useNavigate()
     myHeaders.append("Content-Type", "application/json");
 
     let config:RequestInit = {
@@ -49,7 +48,7 @@ const useFetch = () => {
         if(response.status == 401) {
             const newAccessToken = await refreshToken()
             if(accessToken == undefined) {
-                navigate("/login", { replace: true })
+                //navigate("/login", { replace: true })
                 return response
             }
             config.method = requestType

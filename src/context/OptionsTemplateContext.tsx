@@ -74,10 +74,10 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
     }
 
     const getFormIDs = (value:string, propertyName:string):number => {
-        if(value !== "" && propertyName in formOptions) {
+        if(propertyName in formOptions) {
             const matchingTuple = formOptions[propertyName as keyof FormOptionsInterface]
-                                 .find((tuple: string | [number, string] | [number, string, string | number]) => tuple[1] == value)
-            return (typeof matchingTuple == "string") ? 0 : matchingTuple?.[0] ?? 0
+                                 .find((tuple: string | [number, string] | [number, string, string | number]) => tuple[1] === (value === "" ? "N/A" : value))
+            return (typeof matchingTuple === "string") ? 0 : matchingTuple?.[0] ?? 0
         }
         return 0
     }
@@ -148,6 +148,8 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
 
         if(propertyName === "drawerBoxes") {
             listOfOptions.push("Dovetail - Kitchen Only, STD - Balance of House", "APA Dovetail - Kitchen Only, STD - Balance of House")
+        } else if(propertyName === "doorHinges") {
+            listOfOptions.push('Soft Closing - Kitchen Only, STD - Balance of House', 'APA Soft Closing - Kitchen Only, STD - Balance of House')
         }
 
         return listOfOptions
