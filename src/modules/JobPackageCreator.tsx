@@ -77,49 +77,25 @@ function JobPackageCreator() {
     }));
   }
 
-  /* const checkJobHasBeenMade = async(jobID:number):Promise<boolean> => {
-
-    const response = await fetchHook("/getListOfJobOptions", "GET")
-  
-    if (!response.ok) {
-        throw new Error(response.statusText);
-    }
-
-    const data = await response.text()
-    const listOfJobDocuments:JobDocumentInterface[] = JSON.parse(data)
-
-    const jobHasBeenMade = listOfJobDocuments.some(jobDoc => jobDoc.jobID === jobID)
-    return jobHasBeenMade
-  } */
-
-
-  /* const validate = async () => {
-    const requiredFields = ["builder", "project", "optionCoordinator", "phase", "date", "jobID"];
+  const validate = async () => {
     const newErrors:ErrorObject = {};
-    const jobIDIsValid = (await checkValidLotNumJobID([], Number(jobDetails["jobID"]))).isJobIDValid
-    const jobHasBeenMade = (await checkJobHasBeenMade(Number(jobDetails["jobID"])))
-    
-    if(jobHasBeenMade)
-      newErrors["jobID"] = "Job Options have already been created"
-    
-    if(!jobIDIsValid)
-      newErrors["jobID"] = "Invalid Job ID"
+    if(packageNameRef.current?.value === "")
+      newErrors["package"] = "Invalid package name"
 
-    Object.keys(jobDetails).forEach((key) => {
-      if(requiredFields.includes(key) && !jobDetails[key as keyof JobDetails]) 
-        newErrors[key] = "Field is required, please fill out"
-    })
+    if(!jobDetails.builder) 
+      newErrors["builder"] = "Field is required, please fill out"
     
     setErrors(newErrors)
 
     return Object.keys(newErrors).length === 0;
-  } */
+  }
 
   const goToPackageCreator = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    //if(await validate())
-    navigate("/optionCreator/", {state: {packageName: packageNameRef.current?.value, packageDetails: jobDetails}})
+    if(await validate())
+      navigate("/optionCreator/", {state: {packageName: packageNameRef.current?.value, packageDetails: jobDetails}})
   }
+
   const turnOnDeleteModal = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>, packageDetails:PackageInfo) => {
     e.preventDefault()
     setModalType("delete")
@@ -162,9 +138,9 @@ function JobPackageCreator() {
                   })}
               </div>
               <div className="formRow">
-                  <label htmlFor={"jobID"}>Builder Name</label>
+                  <label htmlFor={"builder"}>Builder Name</label>
                   <InputSearch inputName={"builder"} formState={jobDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
-                  <InputError errorKey={"jobID"} errorState={errors}></InputError>
+                  <InputError errorKey={"builder"} errorState={errors}></InputError>
               </div>
               <div className="formRow">
                   <label htmlFor={"packageName"}>Package Name</label>
