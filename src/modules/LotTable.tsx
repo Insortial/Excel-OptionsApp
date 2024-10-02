@@ -10,10 +10,10 @@ type LotTable = {
     onJobDetailsChange: (value: string | boolean, key: string) => void;
     saveLotTable: (lotTableDetails: LotTableInterface, lotNumber: string) => void;
     setCurrentLotNum: (lotNum: string) => void; 
-    modifyHardwareModal?: (hardwareName:string) => void;
+    setModalType: React.Dispatch<React.SetStateAction<string>>,
 }
 
-const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetails, saveLotTable, onJobDetailsChange, setCurrentLotNum}) => {
+const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetails, saveLotTable, onJobDetailsChange, setCurrentLotNum, setModalType}) => {
     const deleteLotSection = (lotSectionIndex:number) => {
         const updatedTable:LotTableInterface = {...lotTableDetails}
 
@@ -58,38 +58,6 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
         const updatedTable = {...lotTableDetails}
         updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot, index:number) => (index === optionSectionNum ? { ...partOfLot, handleType: "none", pulls: "", knobs: "" } : partOfLot))
         saveLotTable(updatedTable, (isOptionsMode ? lotTableDetails.lot : lotTableDetails.plan))
-    }
-
-    const addOptionRow = () => {
-        const lotSection:PartOfLot = {
-            roomID: "",
-            handleType: "none",
-            drawerFronts: lotTableDetails.partsOfLot[0].drawerFronts ?? "",
-            drawerBoxes: lotTableDetails.partsOfLot[0].drawerBoxes ?? "",
-            drawerGuides: lotTableDetails.partsOfLot[0].drawerGuides ?? "",
-            doorHinges: lotTableDetails.partsOfLot[0].doorHinges ?? "",
-            material: "",
-            color: "",
-            doors: "",
-            fingerpull: "",
-            knobs: "",
-            pulls: "",
-            details: "",
-            appliances: ""
-        }
-
-        const oldPartsOfLot = [...lotTableDetails.partsOfLot]
-
-        if(oldPartsOfLot.length === 1) {
-            const throughoutLot = oldPartsOfLot[0]
-            oldPartsOfLot.splice(0, 1, {...throughoutLot, roomID: "Balance of House"})
-        }
-
-        const newPartsOfLot = [...oldPartsOfLot, lotSection]
-        const updatedLot = {...lotTableDetails,
-            partsOfLot: newPartsOfLot
-        }
-        saveLotTable(updatedLot, (isOptionsMode ? updatedLot.lot : updatedLot.plan))
     }
 
     return (
@@ -326,7 +294,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
                                     </section>
                                     <label>Details: </label>
                                     <ControlledTextArea inputName={"details"} optionSectionNum={currentRow} formState={lotTableDetails} onFormChange={onFormChange}></ControlledTextArea>
-                                    <button style={{display: currentRow === (lotTableDetails.partsOfLot?.length - 1) ? "block" : "none"}} onClick={addOptionRow} className='newPartOfLotButton'>Add Part Of Lot</button>
+                                    <button style={{display: currentRow === (lotTableDetails.partsOfLot?.length - 1) ? "block" : "none"}} onClick={() => setModalType("partOfLot")} className='newPartOfLotButton'>Add Part Of Lot</button>
                                 </td>
                             </tr>
                     })}

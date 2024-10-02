@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import InputSearch from './InputSearch'
 import { JobMenuObject, OptionsCreatorObject, PackageObject } from '../../../types/ModalTypes'
 import useFetch from '../hooks/useFetch'
+import { ErrorObject, PartOfLot } from '../../../types/LotTableInterface'
+import InputError from './InputError'
 
 type OptionsCreatorModal = {
     modalType: string, 
@@ -16,14 +18,15 @@ type OptionsCreatorModal = {
 
 const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, setModalType, setModalInputValue, modalType, optionsCreatorObject, jobMenuObject, packageObject}) => {
     const fetchHook = useFetch()
+    const [errors, setErrors] = useState<ErrorObject>({})
 
     const handleInputChange = (event: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event.target.value)
         setModalInputValue(event.target.value)
     }
 
     const turnOffModal = () => {
         setModalInputValue("")
+        setErrors({})
         setModalType("none")
     }
 
@@ -61,6 +64,57 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
         } else {
             turnOffModal()
         }
+    }
+
+    const addOptionRow = (e:React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
+        if(optionsCreatorObject && optionsCreatorObject.currentLot && validate()) {
+            const lotSection:PartOfLot = {
+                roomID: modalInputValue,
+                handleType: "none",
+                drawerFronts: optionsCreatorObject.currentLot.partsOfLot[0].drawerFronts ?? "",
+                drawerBoxes: optionsCreatorObject.currentLot.partsOfLot[0].drawerBoxes ?? "",
+                drawerGuides: optionsCreatorObject.currentLot.partsOfLot[0].drawerGuides ?? "",
+                doorHinges: optionsCreatorObject.currentLot.partsOfLot[0].doorHinges ?? "",
+                material: "",
+                color: "",
+                doors: "",
+                fingerpull: "",
+                knobs: "",
+                pulls: "",
+                details: "",
+                appliances: ""
+            }
+
+            const oldPartsOfLot = [...optionsCreatorObject.currentLot.partsOfLot]
+
+            if(oldPartsOfLot.length === 1) {
+                const throughoutLot = oldPartsOfLot[0]
+                oldPartsOfLot.splice(0, 1, {...throughoutLot, roomID: "Balance of House"})
+            }
+
+            const newPartsOfLot = [...oldPartsOfLot, lotSection]
+            const updatedLot = {...optionsCreatorObject.currentLot,
+                partsOfLot: newPartsOfLot
+            }
+            optionsCreatorObject.saveLotTable(updatedLot, (optionsCreatorObject.isOptionsMode ? updatedLot.lot : updatedLot.plan))
+            setModalType("none")
+        }
+    }
+
+    const validate = () => {
+        const newErrors:ErrorObject = {}
+        if(modalType === "partOfLot" && optionsCreatorObject?.currentLot) {
+            if(optionsCreatorObject.currentLot.partsOfLot.find(lot => lot.roomID === modalInputValue))
+                newErrors["roomID"] = "Room ID already exists"
+
+            if(modalInputValue === "Balance of House" || modalInputValue === "Throughout")
+                newErrors["roomID"] = "Cannot use reserved words"
+        }
+
+        setErrors(newErrors)
+        return Object.keys(newErrors).length === 0;
     }
     
     return (
@@ -162,6 +216,15 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
                         </div>
                         
                 </>): */
+                : modalType === "partOfLot" ? 
+                <>
+                    <h2>Enter Room ID:</h2>
+                    <form className="modalRow" onSubmit={addOptionRow}>
+                        <input value={modalInputValue} onChange={handleInputChange}></input>
+                        <button>Submit</button>
+                    </form>
+                    <InputError errorKey='roomID' errorState={errors}/>
+                </>
                 : <>
                     <h1>Waiting for Result</h1>
                 </>

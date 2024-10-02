@@ -344,7 +344,7 @@ function OptionsCreator() {
         return partName
     }
 
-    const decipherMixedOptions = (value:string, currentLot:PartOfLot, propName: string):number => {
+    const decipherMixedOptions = (throughoutLot:PartOfLot|undefined, currentLot:PartOfLot, propName: string):number => {
         const {roomID} = currentLot
         const mixedOptionKey: {[key:string]:string} = {
             "Dovetail - Kitchen Only, STD - Balance of House": "Dovetail", 
@@ -352,6 +352,8 @@ function OptionsCreator() {
             "Soft Closing - Kitchen Only, STD - Balance of House": "Soft Closing", 
             "APA Soft Closing - Kitchen Only, STD - Balance of House": "APA Soft Closing"
         }
+
+        const value = throughoutLot ? throughoutLot[propName as keyof PartOfLot] : ""
         
         if(Object.prototype.hasOwnProperty.call(mixedOptionKey, value)) {
             const lowerRoomID = roomID.toLowerCase()
@@ -363,6 +365,7 @@ function OptionsCreator() {
                 return getFormIDs("Standard", propName)
             }
         } else {
+            console.log(roomID + " DO")
             return getFormIDs(value, propName)
         }
     }
@@ -371,8 +374,7 @@ function OptionsCreator() {
         const listOfSQLLots:LotTableSQL[] = []
         for(const lotTable of listOfLots) {
             const listOfSQLPartsOfLot:PartOfLotSQL[] = []
-            console.log(lotTable.partsOfLot.find((partOfLot:PartOfLot) => partOfLot.roomID === "Throughout"))
-            const throughOutLot = lotTable.partsOfLot.find((partOfLot:PartOfLot) => partOfLot.roomID === "Throughout")
+            const throughOutLot = lotTable.partsOfLot.find((partOfLot:PartOfLot) => partOfLot.roomID === "Throughout" || partOfLot.roomID === "Balance of House")
             for(const [index, lotSection] of lotTable.partsOfLot.entries()) {
                 const partOfLot:PartOfLotSQL = {
                     roomID: lotSection.roomID,
@@ -391,9 +393,9 @@ function OptionsCreator() {
                     fingerpull: lotSection.fingerpull,
                     drawerFronts: getFormIDs(lotSection.drawerFronts, "drawerFronts"), 
                     knobs: handlePullsAndKnobs("knobs", lotSection, throughOutLot), 
-                    drawerBoxes: decipherMixedOptions(lotSection.drawerBoxes, lotSection, "drawerBoxes"), 
+                    drawerBoxes: decipherMixedOptions(throughOutLot, lotSection, "drawerBoxes"), 
                     drawerGuides: getFormIDs(lotSection.drawerGuides, "drawerGuides"), 
-                    doorHinges: decipherMixedOptions(lotSection.doorHinges, lotSection, "doorHinges"), 
+                    doorHinges: decipherMixedOptions(throughOutLot, lotSection, "doorHinges"), 
                     pulls: handlePullsAndKnobs("pulls", lotSection, throughOutLot),
                     knobs2: "",
                     knobs2Qty: 0,
@@ -518,11 +520,11 @@ function OptionsCreator() {
 
     useEffect(() => {
         const availableLots = findAvailableLots()
-        if(availableLots.length > 0)
+        if(availableLots.length > 0 && modalType !== "partOfLot")
             setModalInputValue(availableLots[0]);
         else 
             setModalInputValue("")
-    }, [jobDetails, listOfLots]);
+    }, [jobDetails, listOfLots, modalType]);
 
     useEffect(() => {
         if(isCheckingError)
@@ -532,8 +534,8 @@ function OptionsCreator() {
 
     useEffect(() => {
         setIsCheckingError(false)
-        console.log(requestedJobDetails)
         if (requestedJobDetails != null) {
+            console.log(requestedJobDetails)
             //Creating new package 
             if (Object.prototype.hasOwnProperty.call(requestedJobDetails, 'packageName')) {
                 setModalType("inputValue")
@@ -551,6 +553,7 @@ function OptionsCreator() {
                 }
             } 
         } else if(loaderData != null) {
+            console.log(loaderData)
             const loadedData = loaderData.state
             //Accessing existing Job Document
             if(Object.prototype.hasOwnProperty.call(loadedData, 'jobDetails')) {
@@ -650,7 +653,7 @@ function OptionsCreator() {
                 <Link to="/jobMenu" style={{marginTop: "auto"}}>Back to Job Menu</Link>
             </div>
             <div id="optionsEditor">
-                {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} onJobDetailsChange={onJobDetailsChange} jobDetails={jobDetails} 
+                {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} onJobDetailsChange={onJobDetailsChange} jobDetails={jobDetails} setModalType={setModalType}
                                                                             lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode} />)}
             </div>
         </>

@@ -41,29 +41,29 @@ const App: React.FC = () => {
               element: <OptionsCreator key="default"/>
             },
             {
-              element: <OptionsCreator  key="package"/>,
+              element: <OptionsCreator  key="packageID"/>,
               path: "/optionCreator/package/:packageID",
               loader: async ({params}) => {
                 const response = await fetchHook(`/getPackage/${params.packageID}`, "GET")
                 if (!response.ok) {
                   throw new Error(response.statusText);
                 }
-                
                 const data = await response.json()
                 console.log(data)
                 return {state: data}
               }
             },
             {
-              element: <OptionsCreator  key="jobOption"/>,
+              element: <OptionsCreator  key="optionID"/>,
               path: "/optionCreator/jobOption/:optionID",
               loader: async ({params}) => {
                 const response = await fetchHook(`/getJobOption/${params.optionID}`, "GET")
                 if (!response.ok) {
                   throw new Error(response.statusText);
                 }
+                console.log(response)
                 const data = await response.json()
-                return jobOptionLoader(data.jobDetails, data.listOfLots)
+                return await jobOptionLoader(data.jobDetails, data.listOfLots)
               }
             },
           ]
