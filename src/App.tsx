@@ -15,6 +15,10 @@ import JobPackageCreator from './modules/JobPackageCreator.tsx';
 import { jobOptionLoader } from './loader/JobOptionLoader.ts';
 import useFetch from './hooks/useFetch.ts';
 
+function timeout(ms:number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 const App: React.FC = () => {
   const fetchHook = useFetch()
   const router = createBrowserRouter([
@@ -41,7 +45,7 @@ const App: React.FC = () => {
               element: <OptionsCreator key="default"/>
             },
             {
-              element: <OptionsCreator  key="packageID"/>,
+              element: <OptionsCreator key="packageID"/>,
               path: "/optionCreator/package/:packageID",
               loader: async ({params}) => {
                 const response = await fetchHook(`/getPackage/${params.packageID}`, "GET")
@@ -57,13 +61,8 @@ const App: React.FC = () => {
               element: <OptionsCreator  key="optionID"/>,
               path: "/optionCreator/jobOption/:optionID",
               loader: async ({params}) => {
-                const response = await fetchHook(`/getJobOption/${params.optionID}`, "GET")
-                if (!response.ok) {
-                  throw new Error(response.statusText);
-                }
-                console.log(response)
-                const data = await response.json()
-                return await jobOptionLoader(data.jobDetails, data.listOfLots)
+                //await timeout(1500)
+                return await jobOptionLoader(params.optionID, fetchHook)
               }
             },
           ]

@@ -47,7 +47,7 @@ const useFetch = () => {
         let response = await originalRequest(url, config)
         if(response.status == 401) {
             const newAccessToken = await refreshToken()
-            if(accessToken == undefined) {
+            if(newAccessToken == undefined) {
                 //navigate("/login", { replace: true })
                 return response
             }
