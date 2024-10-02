@@ -15,10 +15,6 @@ import JobPackageCreator from './modules/JobPackageCreator.tsx';
 import { jobOptionLoader } from './loader/JobOptionLoader.ts';
 import useFetch from './hooks/useFetch.ts';
 
-function timeout(ms:number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 const App: React.FC = () => {
   const fetchHook = useFetch()
   const router = createBrowserRouter([

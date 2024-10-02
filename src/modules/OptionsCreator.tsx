@@ -533,7 +533,6 @@ function OptionsCreator() {
 
 
     useEffect(() => {
-        console.log("HELLO")
         setIsCheckingError(false)
         if (requestedJobDetails != null) {
             console.log(requestedJobDetails)
