@@ -327,11 +327,10 @@ function OptionsCreator() {
 
     const handlePullsAndKnobs = (returnType: string, currentLot:PartOfLot, throughOutLot:PartOfLot|undefined) => {
         let partName = ""
-        
         if(returnType === "pulls") {
-            partName = ["pulls", "both"].includes(currentLot.handleType) ? currentLot.pulls : ""
+            partName = ["pulls", "both"].includes(currentLot.handleType) ? currentLot.pulls === "" ? "1" : currentLot.pulls : "1"
         } else if (returnType === "knobs") {
-            partName = ["knobs", "both"].includes(currentLot.handleType) ? currentLot.knobs : ""
+            partName = ["knobs", "both"].includes(currentLot.handleType) ? currentLot.knobs === "" ? "1" : currentLot.knobs : "1"
         }
 
         if (currentLot.roomID !== "Throughout" && throughOutLot !== undefined && currentLot.handleType === "none") {
@@ -389,7 +388,7 @@ function OptionsCreator() {
                     drawerGuideQty: 0,
                     pullQty: 0,
                     color: getFormIDs(lotSection.color, "color"), 
-                    doors: lotSection.doors ?? "",
+                    doors: lotSection.doors == "" ? "ECI-000" : lotSection.doors,
                     fingerpull: lotSection.fingerpull,
                     drawerFronts: getFormIDs(lotSection.drawerFronts, "drawerFronts"), 
                     knobs: handlePullsAndKnobs("knobs", lotSection, throughOutLot), 
