@@ -1,11 +1,11 @@
-import { useNavigate } from 'react-router-dom';
-import { AuthInfo, AuthUpdate } from '../context/AuthContext';
+/* import { useNavigate } from 'react-router-dom'; */
+/* import { AuthInfo, AuthUpdate } from '../context/AuthContext'; */
+import { getToken } from './refreshToken';
 
 const useFetch = () => {
-    const { saveAccessToken } = AuthUpdate()
-    const { accessToken } = AuthInfo()
+    //const { saveAccessToken } = AuthUpdate()
+    //const { accessToken } = AuthInfo()
     const myHeaders = new Headers();
-    const navigate = useNavigate()
     myHeaders.append("Content-Type", "application/json");
 
     let config:RequestInit = {
@@ -19,7 +19,7 @@ const useFetch = () => {
         return response
     }
 
-    const refreshToken = async () => {
+    /* const refreshToken = async () => {
         config.method = "POST"
         try {
             const response = await fetch(`${import.meta.env.VITE_AUTH_URL}/token`, config)
@@ -32,9 +32,10 @@ const useFetch = () => {
             reportError({ message })
             return undefined
         }
-    }
+    } */
 
     const callFetch = async (url:string, requestType:string, body?:BodyInit) => {
+        const accessToken = await getToken()
         myHeaders.set("Authorization", `Bearer ${accessToken}`)
         config = {
             headers: myHeaders,
@@ -45,18 +46,18 @@ const useFetch = () => {
         if(requestType === "POST")
             config.body = body ?? {} as BodyInit
 
-        let response = await originalRequest(url, config)
-        if(response.status == 401) {
+        const response = await originalRequest(url, config)
+        /* if(response.status == 401) {
             const newAccessToken = await refreshToken()
-            if(accessToken == undefined) {
-                navigate("/login", { replace: true })
+            if(newAccessToken == undefined) {
+                //navigate("/login", { replace: true })
                 return response
             }
             config.method = requestType
             myHeaders.set("Authorization", `Bearer ${newAccessToken}`)
             response = await originalRequest(url, config)
             return response
-        }
+        } */
         return response
     }
 

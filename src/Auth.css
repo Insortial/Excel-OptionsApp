@@ -31,6 +31,21 @@
   border-radius: 0 0px 5px 5px;
   padding: 10px;
 }
+
+#logOutButton {
+  position: absolute;
+  top: 100%;
+  left: 10px;
+  margin: 0;
+  background-color: #B90606;
+  color: white;
+  border-radius: 0 0px 5px 5px;
+  padding: 10px;
+}
+
+#logOutButton:hover {
+  cursor: pointer;
+}
   
 #appHeader > h4:hover {
   cursor: pointer;

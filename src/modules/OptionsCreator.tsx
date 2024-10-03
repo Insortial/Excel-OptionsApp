@@ -85,7 +85,7 @@ function OptionsCreator() {
     const navigate = useNavigate();
     const requestedJobDetails = location.state;
     const myHeaders = new Headers();
-    const fetchHook = useFetch()
+    const fetchHook = useFetch();
     myHeaders.append("Content-Type", "application/json");
 
     const sortListOfLots = (listOfLots: LotTableInterface[], newLot?: LotTableInterface) => {
@@ -126,91 +126,88 @@ function OptionsCreator() {
     }
 
     const validate = async () => {
-        if(jobDetails.prodReady) {
-            const requiredFieldsJob = ["jobID"];
-            const requiredFieldsLotTable = ["boxStyle", "interiors", "upperHeight", 
-                                    "islands", "crown", "lightRail", "baseShoe", 
-                                    "recyclingBins", "lotOptionsValue", "kitchen",
-                                        "master","bath2","bath3",
-                                        "bath4","powder","laundry"]
-            const requiredFieldsLotPart = ["drawerFronts", "drawerBoxes", "drawerGuides", 
-                                            "doorHinges", "doors", "fingerpull",
-                                            "material", "color", "pulls", "roomID"]
-            const newErrors:ErrorObject = {};
-            let listOfLotsHasError = false
-            
-            listOfLots.forEach(lot => lot.hasError = false)
-    
-            Object.keys(jobDetails).forEach((key) => {
-                if(requiredFieldsJob.includes(key) && !jobDetails[key as keyof JobDetails])
-                    newErrors[key] = "Field is required, please fill out"
-            })
-    
-            const lotIDArray = listOfLots.map(lotTable => lotTable.lot)
-            const lotJobValidation = await checkValidLotNumJobID(lotIDArray, jobDetails.jobID)
-            const invalidLotArray = lotJobValidation.invalidLots
-            const availableLots = findAvailableLots()
+        const requiredFieldsJob = ["jobID"];
+        const requiredFieldsLotTable = ["boxStyle", "interiors", "upperHeight", 
+                                "islands", "crown", "lightRail", "baseShoe", 
+                                "recyclingBins", "lotOptionsValue", "kitchen",
+                                    "master","bath2","bath3",
+                                    "bath4","powder","laundry"]
+        const requiredFieldsLotPart = ["drawerFronts", "drawerBoxes", "drawerGuides", 
+                                        "doorHinges", "doors", "fingerpull",
+                                        "material", "color", "pulls", "roomID"]
+        const newErrors:ErrorObject = {};
+        let listOfLotsHasError = false
         
-            if(availableLots.length !== 0) {
-                newErrors["Lots Not Created"] = `Must make lot(s): ${availableLots.join(", ")}`
-            }
-    
-            if(!lotJobValidation.isJobIDValid)
-                newErrors["jobID"] = "Job ID is not valid"
-    
-            /* Iterates through lists of lots checks if any 
-            part has input error, only records it if it is current lot */
-            listOfLots.map(async (lot: LotTableInterface) => {
-                if(invalidLotArray.includes(lot.lot)) {
-                    listOfLotsHasError = true
-                    lot.hasError = true
-                    if(lot.lot === currentLotNum) {
-                        newErrors["lot"] = "Lot ID is not valid"
-                    }
-                }
-    
-                lot.partsOfLot.map((partOfLot:PartOfLot, index:number) => {
-                    //Iterates through each Part of Lot
-                    for(const key of Object.keys(partOfLot)) {
-                        //Checks if key has value, also checks if it is part of requiredFields list
-                        const selectedPartOfLot = lot.partsOfLot[index]
-                        const selectedField = selectedPartOfLot[key as keyof PartOfLot]
-                        if(requiredFieldsLotPart.includes(key) && !selectedField) {
-                            if((selectedPartOfLot.roomID === 'Throughout' && !lot.hasThroughoutLot && ["material", "color", "doors", "fingerpull"].includes(key)) || 
-                                (isHandleValid(selectedPartOfLot.handleType, key, selectedField))) {
-                                continue
-                            }
+        listOfLots.forEach(lot => lot.hasError = false)
 
-                            listOfLotsHasError = true
-                            lot.hasError = true
-                            if(lot.lot === currentLotNum)
-                                newErrors[`${key}${(index === 0) ? "" : index}`] = `Field is required, please fill out`
-                        }
-                    }
-                })
-                
+        Object.keys(jobDetails).forEach((key) => {
+            if(requiredFieldsJob.includes(key) && !jobDetails[key as keyof JobDetails])
+                newErrors[key] = "Field is required, please fill out"
+        })
+
+        const lotIDArray = listOfLots.map(lotTable => lotTable.lot)
+        const lotJobValidation = await checkValidLotNumJobID(lotIDArray, jobDetails.jobID)
+        const invalidLotArray = lotJobValidation.invalidLots
+        const availableLots = findAvailableLots()
     
-                Object.keys(lot).forEach((key) => {
-                    if(requiredFieldsLotTable.includes(key) && !lot[key as keyof LotTableInterface]) {
+        if(availableLots.length !== 0) {
+            newErrors["Lots Not Created"] = `Must make lot(s): ${availableLots.join(", ")}`
+        }
+
+        if(!lotJobValidation.isJobIDValid)
+            newErrors["jobID"] = "Job ID is not valid"
+
+        /* Iterates through lists of lots checks if any 
+        part has input error, only records it if it is current lot */
+        listOfLots.map(async (lot: LotTableInterface) => {
+            if(invalidLotArray.includes(lot.lot)) {
+                listOfLotsHasError = true
+                lot.hasError = true
+                if(lot.lot === currentLotNum) {
+                    newErrors["lot"] = "Lot ID is not valid"
+                }
+            }
+
+            lot.partsOfLot.map((partOfLot:PartOfLot, index:number) => {
+                //Iterates through each Part of Lot
+                for(const key of Object.keys(partOfLot)) {
+                    //Checks if key has value, also checks if it is part of requiredFields list
+                    const selectedPartOfLot = lot.partsOfLot[index]
+                    const selectedField = selectedPartOfLot[key as keyof PartOfLot]
+                    if(requiredFieldsLotPart.includes(key) && !selectedField) {
+                        if((selectedPartOfLot.roomID === 'Throughout' && !lot.hasThroughoutLot && ["material", "color", "doors", "fingerpull"].includes(key)) || 
+                            (isHandleValid(selectedPartOfLot.handleType, key, selectedField))) {
+                            continue
+                        }
+
                         listOfLotsHasError = true
                         lot.hasError = true
                         if(lot.lot === currentLotNum)
-                            newErrors[key] = "Field is required, please fill out"
+                            newErrors[`${key}${(index === 0) ? "" : index}`] = `Field is required, please fill out`
                     }
-    
-                    if(key === "lotOptionsValue" && isNaN(Number(lot[key as keyof LotTableInterface])))
-                        newErrors[key] = "Incorrect format, must be a number"
-                        
-                })
+                }
             })
-    
-            console.log(newErrors)
-            console.log(listOfLotsHasError)
-            setErrors(newErrors)
-            setIsCheckingError(!(Object.keys(newErrors).length === 0 && !listOfLotsHasError))
-            return Object.keys(newErrors).length === 0 && !listOfLotsHasError;
-        }
-        return true
+            
+
+            Object.keys(lot).forEach((key) => {
+                if(requiredFieldsLotTable.includes(key) && !lot[key as keyof LotTableInterface]) {
+                    listOfLotsHasError = true
+                    lot.hasError = true
+                    if(lot.lot === currentLotNum)
+                        newErrors[key] = "Field is required, please fill out"
+                }
+
+                if(key === "lotOptionsValue" && isNaN(Number(lot[key as keyof LotTableInterface])))
+                    newErrors[key] = "Incorrect format, must be a number"
+                    
+            })
+        })
+
+        console.log(newErrors)
+        console.log(listOfLotsHasError)
+        setErrors(newErrors)
+        setIsCheckingError(!(Object.keys(newErrors).length === 0 && !listOfLotsHasError))
+        return Object.keys(newErrors).length === 0 && !listOfLotsHasError;
     }
 
     const createLotTable = (lotInputValue: string): LotTableInterface => {
@@ -330,29 +327,58 @@ function OptionsCreator() {
 
     const handlePullsAndKnobs = (returnType: string, currentLot:PartOfLot, throughOutLot:PartOfLot|undefined) => {
         let partName = ""
-        
+
         if(returnType === "pulls") {
-            partName = ["pulls", "both"].includes(currentLot.handleType) ? currentLot.pulls : ""
+            partName = ["pulls", "both"].includes(currentLot.handleType) ? currentLot.pulls === "" ? "1" : currentLot.pulls : "1"
         } else if (returnType === "knobs") {
-            partName = ["knobs", "both"].includes(currentLot.handleType) ? currentLot.knobs : ""
+            partName = ["knobs", "both"].includes(currentLot.handleType) ? currentLot.knobs === "" ? "1" : currentLot.knobs : "1"
         }
 
         if (currentLot.roomID !== "Throughout" && throughOutLot !== undefined && currentLot.handleType === "none") {
-            partName = returnType === "pulls" ? throughOutLot.pulls : returnType === "knobs" ? throughOutLot.knobs : ""
+            if(returnType === "pulls") {
+                partName = throughOutLot.pulls !== "" ? throughOutLot.pulls : "1"
+            } else if (returnType === "knobs") {
+                partName =throughOutLot.knobs !== "" ? throughOutLot.knobs : "1"
+            }
 
             if(throughOutLot.handleType === "none")
-                partName = ""
+                partName = "1"
         }
 
         return partName
+    }
+
+    const decipherMixedOptions = (throughoutLot:PartOfLot|undefined, currentLot:PartOfLot, propName: string):number => {
+        const {roomID} = currentLot
+        const mixedOptionKey: {[key:string]:string} = {
+            "Dovetail - Kitchen Only, STD - Balance of House": "Dovetail", 
+            "APA Dovetail - Kitchen Only, STD - Balance of House": "APA Dovetail",
+            "Soft Closing - Kitchen Only, STD - Balance of House": "Soft Closing", 
+            "APA Soft Closing - Kitchen Only, STD - Balance of House": "APA Soft Closing"
+        }
+
+        const value = throughoutLot ? throughoutLot[propName as keyof PartOfLot] : ""
+        
+        if(Object.prototype.hasOwnProperty.call(mixedOptionKey, value)) {
+            const lowerRoomID = roomID.toLowerCase()
+            if(lowerRoomID.includes("balance of house") || lowerRoomID.includes("throughout")) {
+                return getFormIDs("Standard", propName)
+            } else if(lowerRoomID.includes("kitchen")) {
+                return getFormIDs(mixedOptionKey[value], propName)
+            } else {
+                return getFormIDs("Standard", propName)
+            }
+        } else {
+            console.log(roomID + " DO")
+            return getFormIDs(value, propName)
+        }
     }
 
     const postJobDetailsSql = async () => {
         const listOfSQLLots:LotTableSQL[] = []
         for(const lotTable of listOfLots) {
             const listOfSQLPartsOfLot:PartOfLotSQL[] = []
-            console.log(lotTable.partsOfLot.find((partOfLot:PartOfLot) => partOfLot.roomID === "Throughout"))
-            const throughOutLot = lotTable.partsOfLot.find((partOfLot:PartOfLot) => partOfLot.roomID === "Throughout")
+            const throughOutLot = lotTable.partsOfLot.find((partOfLot:PartOfLot) => partOfLot.roomID === "Throughout" || partOfLot.roomID === "Balance of House")
             for(const [index, lotSection] of lotTable.partsOfLot.entries()) {
                 const partOfLot:PartOfLotSQL = {
                     roomID: lotSection.roomID,
@@ -367,13 +393,13 @@ function OptionsCreator() {
                     drawerGuideQty: 0,
                     pullQty: 0,
                     color: getFormIDs(lotSection.color, "color"), 
-                    doors: lotSection.doors ?? "",
+                    doors: lotSection.doors == "" ? "N/A" : lotSection.doors,
                     fingerpull: lotSection.fingerpull,
                     drawerFronts: getFormIDs(lotSection.drawerFronts, "drawerFronts"), 
                     knobs: handlePullsAndKnobs("knobs", lotSection, throughOutLot), 
-                    drawerBoxes: getFormIDs(lotSection.drawerBoxes, "drawerBoxes"), 
+                    drawerBoxes: decipherMixedOptions(throughOutLot, lotSection, "drawerBoxes"), 
                     drawerGuides: getFormIDs(lotSection.drawerGuides, "drawerGuides"), 
-                    doorHinges: getFormIDs(lotSection.doorHinges, "doorHinges"), 
+                    doorHinges: decipherMixedOptions(throughOutLot, lotSection, "doorHinges"), 
                     pulls: handlePullsAndKnobs("pulls", lotSection, throughOutLot),
                     knobs2: "",
                     knobs2Qty: 0,
@@ -453,22 +479,28 @@ function OptionsCreator() {
     }
 
     const testCreateDocument = async () => {
-        const lotTablesAreValid = await validate()
+        /* const lotTablesAreValid = await validate()
         if(lotTablesAreValid) {
             console.log(lotTablesAreValid)
             docxConverter(jobDetails, listOfLots, name, phone, email)
-        }
+        } */
+        docxConverter(jobDetails, listOfLots, name, phone, email)
     }
 
     const saveLotTablesSQL = async () => {
         console.log(jobDetails)
         console.log(listOfLots)
-        const lotTablesAreValid = await validate()
-        console.log(lotTablesAreValid)
-        if(lotTablesAreValid) {
-            await postJobDetailsSql()
-            //revalidator.revalidate()
-        } 
+
+        if(jobDetails.prodReady) {
+            const lotTablesAreValid = await validate()
+            console.log(lotTablesAreValid)
+            if(lotTablesAreValid) 
+                await postJobDetailsSql()
+                //revalidator.revalidate()
+        } else {
+            postJobDetailsSql()
+            setIsCheckingError(false)
+        }
         setModalType("none")
     }
 
@@ -492,11 +524,11 @@ function OptionsCreator() {
 
     useEffect(() => {
         const availableLots = findAvailableLots()
-        if(availableLots.length > 0)
+        if(availableLots.length > 0 && modalType !== "partOfLot")
             setModalInputValue(availableLots[0]);
         else 
             setModalInputValue("")
-    }, [jobDetails, listOfLots]);
+    }, [jobDetails, listOfLots, modalType]);
 
     useEffect(() => {
         if(isCheckingError)
@@ -506,8 +538,8 @@ function OptionsCreator() {
 
     useEffect(() => {
         setIsCheckingError(false)
-        console.log(requestedJobDetails)
         if (requestedJobDetails != null) {
+            console.log(requestedJobDetails)
             //Creating new package 
             if (Object.prototype.hasOwnProperty.call(requestedJobDetails, 'packageName')) {
                 setModalType("inputValue")
@@ -519,12 +551,13 @@ function OptionsCreator() {
                 console.log(requestedJobDetails)
                 setModalType("inputValue")
                 setJobDetails(requestedJobDetails.jobDetails)
-                if(Object.prototype.hasOwnProperty.call(requestedJobDetails, 'packageDetails')) {
+                if(requestedJobDetails.hasPackage) {
                     setHasPackage(true)
                     setPackageDetails(requestedJobDetails.packageDetails)
                 }
             } 
-        } else if(loaderData != null) {
+        } else if(loaderData != null && Object.keys(loaderData).length !== 0) {
+            console.log(loaderData)
             const loadedData = loaderData.state
             //Accessing existing Job Document
             if(Object.prototype.hasOwnProperty.call(loadedData, 'jobDetails')) {
@@ -532,6 +565,10 @@ function OptionsCreator() {
                 setListOfLots(loadedData.listOfLots)
                 setCurrentLot(loadedData.listOfLots[0])
                 setCurrentLotNum(loadedData.listOfLots[0].lot)
+                if(loadedData.hasPackage) {
+                    setHasPackage(true)
+                    setPackageDetails(loadedData.packageDetails)
+                }
             } else {
                 setIsOptionsMode(false)
                 setJobDetails({
@@ -581,50 +618,50 @@ function OptionsCreator() {
     return (
         <>
             <OptionsCreatorModal modalInputValue={modalInputValue} setModalInputValue={setModalInputValue} setModalType={setModalType} modalType={modalType} optionsCreatorObject={optionsCreatorObject}/>
-            <div id="optionsNav">
-                <h1>{isOptionsMode ? "Options" : "Package" } Creator</h1>
-                {isOptionsMode ? (
-                    <>
-                        <h2 style={{display: jobDetails.prodReady ? "block" : "none"}}>PRODUCTION APPROVED</h2>
-                        <h2>Current Lot: {currentLotNum}</h2>
-                        <section id="classRow">
-                            {isChangingDate ? <input type="date" value={jobDetails.date} onChange={handleDateChange}></input>: <h2>Date: {jobDetails.date}</h2>}
-                            {isChangingDate ? <button onClick={() => setIsChangingDate(false)}>Submit Change</button> : <button onClick={() => setIsChangingDate(true)}>Change Date</button>}
-                        </section>
-                    </>) : <></>
-                }
-                <section className="optionsList" id="lotList">
-                    <h3>List of {isOptionsMode ? "Lots" : "Plans"}</h3>
-                    {listOfLots.map((lotDetails:LotTableInterface, index:number) => {
-                        return (
-                        <section className="listOfLotsRow" key={index}>
-                            <button className="lotDelete" onClick={() => deleteLotTable((isOptionsMode ? lotDetails.lot : lotDetails.plan) ?? "")}>X</button>
-                            <button className="lotButton" style={{backgroundColor: (isOptionsMode ? lotDetails.lot : lotDetails.plan) === currentLotNum ? "#d9d9d9" : "#f0f0f0", border: lotDetails.hasError ? "2px solid red": "none"}} onClick={() => changeLotTable((isOptionsMode ? lotDetails.lot : lotDetails.plan) ?? "-1")}>{isOptionsMode ? "LOT " + lotDetails.lot : lotDetails.plan}</button>
-                        </section>
-                        )
-                    })}
-                </section>
-                <section id="newTableButtons">
-                    <button onClick={() => setModalType("inputValue")}>New {isOptionsMode ? "Lot" : "Plan"} Table</button>
-                    <button onClick={() => createLotCopy()}>Copy Details</button>
-                    {isOptionsMode && <button onClick={() => testCreateDocument()}>Create Document</button>}
-                    <button onClick={() => setModalType("prod")}>Save to Database</button>
-                </section>
-                <section className="optionsList" id="errorList" style={{display: isCheckingError ? "flex" :"none"}}>
-                    <h3>Errors</h3>
-                    {Object.keys(errors).map((errorKey, index) => {
-                        return (
-                            <div key={index} className="errorRow">
-                                <p>{errorKey}:</p>
-                                <InputError errorKey={errorKey} errorState={errors}/>
-                            </div>
-                        )
-                    })}
-                </section>
-                <Link to="/jobMenu" style={{marginTop: "auto"}}>Back to Job Menu</Link>
-            </div>
+                <div id="optionsNav">
+                    <h1>{isOptionsMode ? "Options" : "Package" } Creator</h1>
+                    {isOptionsMode ? (
+                        <>
+                            <h2 style={{display: jobDetails.prodReady ? "block" : "none"}}>PRODUCTION APPROVED</h2>
+                            <h2>Current Lot: {currentLotNum}</h2>
+                            <section id="classRow">
+                                {isChangingDate ? <input type="date" value={jobDetails.date} onChange={handleDateChange}></input>: <h2>Date: {jobDetails.date}</h2>}
+                                {isChangingDate ? <button onClick={() => setIsChangingDate(false)}>Submit Change</button> : <button onClick={() => setIsChangingDate(true)}>Change Date</button>}
+                            </section>
+                        </>) : <></>
+                    }
+                    <section className="optionsList" id="lotList">
+                        <h3>List of {isOptionsMode ? "Lots" : "Plans"}</h3>
+                        {listOfLots.map((lotDetails:LotTableInterface, index:number) => {
+                            return (
+                            <section className="listOfLotsRow" key={index}>
+                                <button className="lotDelete" onClick={() => deleteLotTable((isOptionsMode ? lotDetails.lot : lotDetails.plan) ?? "")}>X</button>
+                                <button className="lotButton" style={{backgroundColor: (isOptionsMode ? lotDetails.lot : lotDetails.plan) === currentLotNum ? "#d9d9d9" : "#f0f0f0", border: lotDetails.hasError && isCheckingError ? "2px solid red": "none"}} onClick={() => changeLotTable((isOptionsMode ? lotDetails.lot : lotDetails.plan) ?? "-1")}>{isOptionsMode ? "LOT " + lotDetails.lot : lotDetails.plan}</button>
+                            </section>
+                            )
+                        })}
+                    </section>
+                    <section id="newTableButtons">
+                        <button onClick={() => setModalType("inputValue")}>New {isOptionsMode ? "Lot" : "Plan"} Table</button>
+                        <button onClick={() => createLotCopy()}>Copy Details</button>
+                        {isOptionsMode && <button onClick={() => testCreateDocument()}>Create Document</button>}
+                        <button onClick={() => setModalType("prod")}>Save to Database</button>
+                    </section>
+                    <section className="optionsList" id="errorList" style={{display: isCheckingError ? "flex" :"none"}}>
+                        <h3>Errors</h3>
+                        {Object.keys(errors).map((errorKey, index) => {
+                            return (
+                                <div key={index} className="errorRow">
+                                    <p>{errorKey}:</p>
+                                    <InputError errorKey={errorKey} errorState={errors}/>
+                                </div>
+                            )
+                        })}
+                    </section>
+                    <Link to="/jobMenu" style={{marginTop: "auto"}}>Back to Job Menu</Link>
+                </div>
             <div id="optionsEditor">
-                {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} onJobDetailsChange={onJobDetailsChange} jobDetails={jobDetails} 
+                {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} onJobDetailsChange={onJobDetailsChange} jobDetails={jobDetails} setModalType={setModalType}
                                                                             lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode} />)}
             </div>
         </>
