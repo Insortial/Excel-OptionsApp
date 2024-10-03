@@ -15,6 +15,7 @@ BEGIN
 	DELETE FROM [Lot Order Details] WHERE [Lot ID] IN (SELECT * FROM @lotIDS);
 	DELETE FROM [LotOptionToPackage] WHERE packageIDFK = @packageID;
 	DELETE FROM [LotOptions] WHERE lotIDFK IN (SELECT * FROM @lotIDS);
+	DELETE FROM [Lots] WHERE [Lot ID] IN (SELECT * FROM @lotIDS);
 	DELETE FROM [PackageToProject] where packageIDFK = @packageID;
 	DELETE FROM [Packages] WHERE packageID = @packageID;
 END
