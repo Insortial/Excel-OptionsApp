@@ -1,5 +1,5 @@
 import LotTable from "./LotTable";
-import { useLocation, Link, useNavigate, useLoaderData, Await } from "react-router-dom";
+import { useLocation, Link, useNavigate, useLoaderData } from "react-router-dom";
 import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL, PackageDetailsSQL, PackageDetails } from '../../../types/LotTableInterface.ts';
 import React, { useContext, useEffect, useState } from "react";
 import docxConverter from "../hooks/docxConverter.tsx";
@@ -327,6 +327,7 @@ function OptionsCreator() {
 
     const handlePullsAndKnobs = (returnType: string, currentLot:PartOfLot, throughOutLot:PartOfLot|undefined) => {
         let partName = ""
+
         if(returnType === "pulls") {
             partName = ["pulls", "both"].includes(currentLot.handleType) ? currentLot.pulls === "" ? "1" : currentLot.pulls : "1"
         } else if (returnType === "knobs") {
@@ -334,10 +335,14 @@ function OptionsCreator() {
         }
 
         if (currentLot.roomID !== "Throughout" && throughOutLot !== undefined && currentLot.handleType === "none") {
-            partName = returnType === "pulls" ? throughOutLot.pulls : returnType === "knobs" ? throughOutLot.knobs : ""
+            if(returnType === "pulls") {
+                partName = throughOutLot.pulls !== "" ? throughOutLot.pulls : "1"
+            } else if (returnType === "knobs") {
+                partName =throughOutLot.knobs !== "" ? throughOutLot.knobs : "1"
+            }
 
             if(throughOutLot.handleType === "none")
-                partName = ""
+                partName = "1"
         }
 
         return partName
@@ -388,7 +393,7 @@ function OptionsCreator() {
                     drawerGuideQty: 0,
                     pullQty: 0,
                     color: getFormIDs(lotSection.color, "color"), 
-                    doors: lotSection.doors == "" ? "ECI-000" : lotSection.doors,
+                    doors: lotSection.doors == "" ? "N/A" : lotSection.doors,
                     fingerpull: lotSection.fingerpull,
                     drawerFronts: getFormIDs(lotSection.drawerFronts, "drawerFronts"), 
                     knobs: handlePullsAndKnobs("knobs", lotSection, throughOutLot), 
@@ -546,7 +551,7 @@ function OptionsCreator() {
                 console.log(requestedJobDetails)
                 setModalType("inputValue")
                 setJobDetails(requestedJobDetails.jobDetails)
-                if(Object.prototype.hasOwnProperty.call(requestedJobDetails, 'packageDetails')) {
+                if(requestedJobDetails.hasPackage) {
                     setHasPackage(true)
                     setPackageDetails(requestedJobDetails.packageDetails)
                 }
@@ -560,6 +565,10 @@ function OptionsCreator() {
                 setListOfLots(loadedData.listOfLots)
                 setCurrentLot(loadedData.listOfLots[0])
                 setCurrentLotNum(loadedData.listOfLots[0].lot)
+                if(loadedData.hasPackage) {
+                    setHasPackage(true)
+                    setPackageDetails(loadedData.packageDetails)
+                }
             } else {
                 setIsOptionsMode(false)
                 setJobDetails({

@@ -1,10 +1,10 @@
-import React, { useNavigate } from 'react-router-dom';
+import React from 'react-router-dom';
 import ExcelLogo from '../assets/excel_logo.svg'
-import useFetch from '../hooks/useFetch'
-import { AuthInfo, LoggedInUpdate } from '../context/AuthContext';
+/* import useFetch from '../hooks/useFetch'
+import { AuthInfo, LoggedInUpdate } from '../context/AuthContext'; */
 
 const Header = () => {
-  const fetchHook = useFetch();
+  /* const fetchHook = useFetch();
   const navigate = useNavigate();
   const { loggedIn } = AuthInfo()
   const { saveLogInState } = LoggedInUpdate()
@@ -13,7 +13,7 @@ const Header = () => {
     fetchHook("/logout", "DELETE")
     saveLogInState(false)
     navigate("/login", { replace: true })
-  }
+  } */
 
   return (
         <header id="appHeader">
@@ -21,7 +21,6 @@ const Header = () => {
                 <img src={ExcelLogo} id="excelLogo"/>
                 <h2>Options Creator</h2>
             </div>
-            <h4 onClick={logOut} style={{display: loggedIn ? "block" : "none"}}>Logout</h4>
         </header>
   )
 }

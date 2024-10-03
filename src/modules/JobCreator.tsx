@@ -158,10 +158,8 @@ function JobCreator() {
     let state = {}
     const validateValues = await validate()
     const packageDetails:PackageDetails = await getPackageDetails()
-    if(packageDetails !== null)
-      state = {jobDetails: jobDetails, packageDetails: packageDetails}
-    else 
-      state = {jobDetails: jobDetails}
+    state = {jobDetails: jobDetails, packageDetails: packageDetails, hasPackage: packageDetails !== null}
+
     console.log(state)
     if(Object.keys(validateValues).length === 0) {
       navigate("/optionCreator/", {state: state})

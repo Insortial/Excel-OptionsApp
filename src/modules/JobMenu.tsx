@@ -1,13 +1,14 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useContext, useEffect, useState } from 'react'
 import JobDocument from './JobDocument.tsx';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { JobDocumentInterface } from '../../../types/LotTableInterface.ts';
 import { FormOptionsContext } from '../context/OptionsTemplateContext.tsx';
 import { FormOptionsContextType } from '../../../types/FormOptions.ts';
 import useFetch from '../hooks/useFetch.ts';
 import OptionsCreatorModal from './OptionsCreatorModal.tsx';
 import { JobMenuObject } from '../../../types/ModalTypes.ts';
+import { LoggedInUpdate } from '../context/AuthContext.tsx';
 
 
 const JobMenu = () => {
@@ -17,7 +18,9 @@ const JobMenu = () => {
     const [modalInputValue, setModalInputValue] = useState<string>("")
     const [isDeleteMode, setDeleteMode] = useState<boolean>(false)
     const { setIsCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
+    const { saveLogInState } = LoggedInUpdate()
     const fetchHook = useFetch()
+    const navigate = useNavigate()
     
     useEffect(() => {
         setIsCheckingError(false)
@@ -45,12 +48,23 @@ const JobMenu = () => {
         setDeleteMode: setDeleteMode
     }
 
+    const logOut = async () => {
+        const config:RequestInit = {
+            method: 'DELETE',
+            credentials: "include"
+        }
+        await fetch(`${import.meta.env.VITE_AUTH_URL}/logout`, config)
+        saveLogInState(false)
+        navigate("/login", { replace: true })
+    }
+
     return (
         <>
             <OptionsCreatorModal modalType={modalType} setModalType={setModalType} modalInputValue={modalInputValue} setModalInputValue={setModalInputValue} jobMenuObject={jobMenuObject}/>
             <div id="jobMenuScreen">
                 <header id="jobMenuHeader">
                     <h1>Job Menu</h1>
+                    <h4 id="logOutButton" onClick={logOut}>Logout</h4>
                     <nav>
                         <Link to="/creatingJob" className='jobMenuButtons'>Create Job Document</Link>
                         <Link to="/creatingJobPackage" className='jobMenuButtons'>Edit/Create Job Package</Link>

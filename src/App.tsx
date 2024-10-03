@@ -20,7 +20,7 @@ const App: React.FC = () => {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Navigate to="/login" />
+      element: <Navigate to={"/login"} />
     },
     {
       path: "/login",
