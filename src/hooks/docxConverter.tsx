@@ -3,7 +3,7 @@ import { LotTableInterface, PartOfLot, JobDetails } from "../../../types/LotTabl
 import { saveAs } from "file-saver";
 
 
-export default function docxConverter(jobDetails:JobDetails, lotCollection: LotTableInterface[], name:string, phone:string, email:string) {
+export default function docxConverter(jobDetails:JobDetails, lotCollection: LotTableInterface[], name:string) {
     console.log(jobDetails)
     console.log(lotCollection)
     
@@ -64,7 +64,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
                     }),
                     new TableCell({
                         children: [new Paragraph({
-                            text: jobDetails.project,
+                            text: Array.isArray(jobDetails.project) ? "" : jobDetails.project,
                             alignment: AlignmentType.CENTER
                         })],
                     }),

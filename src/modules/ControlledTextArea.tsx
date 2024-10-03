@@ -1,8 +1,8 @@
 import React from 'react'
-import { LotTableInterface, PartOfLot, JobDetails } from '../../../types/LotTableInterface'
+import { JobDetails, LotTableInterface, PartOfLot } from '../../../types/LotTableInterface'
 
 type inputOptions = {
-    formState: LotTableInterface | JobDetails;
+    formState: LotTableInterface | PartOfLot | JobDetails;
     optionSectionNum?: number;
     onFormChange: (value: string, key: string, optSectionNum?: number) => void;
     inputName: string;
@@ -21,7 +21,7 @@ const ControlledTextArea: React.FC<inputOptions> = ({formState, onFormChange, in
             onChange={readInput}>
         </textarea> :
         <textarea 
-            value={(formState[inputName as keyof (LotTableInterface | PartOfLot)] as string) ?? ""}
+            value={(formState[inputName as keyof (LotTableInterface | PartOfLot | JobDetails)] as string) ?? ""}
             onChange={readInput}>
         </textarea>
     )

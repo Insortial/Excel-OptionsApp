@@ -8,7 +8,6 @@ import { AuthInfo } from "../context/AuthContext.tsx"
 import { FormOptionsContextType } from '../../../types/FormOptions.ts'
 import InputError from "./InputError.tsx";
 import useFetch from "../hooks/useFetch.ts";
-import { PackageLoaderResponse } from "../loader/PackageLoader.ts";
 import { JobOptionLoaderResponse } from "../loader/JobOptionLoader.ts";
 import OptionsCreatorModal from "./OptionsCreatorModal.tsx";
 import { OptionsCreatorObject } from "../../../types/ModalTypes.ts";
@@ -62,7 +61,7 @@ function OptionsCreator() {
     }
 
     const { getFormIDs, errors, setErrors, setIsCheckingError, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
-    const { name, phone, email } = AuthInfo()
+    const { name } = AuthInfo()
     //Option States
     const [isChangingDate, setIsChangingDate] = useState<boolean>(false)
     const [listOfLots, setListOfLots] = useState<LotTableInterface[]>([])
@@ -79,7 +78,7 @@ function OptionsCreator() {
     const [packageProjects, setPackageProjects] = useState<string[]>([""])
     const [isOptionsMode, setIsOptionsMode] = useState<boolean>(true)
 
-    const loaderData = useLoaderData() as PackageLoaderResponse | JobOptionLoaderResponse;
+    const loaderData = useLoaderData() as JobOptionLoaderResponse;
     //const revalidator = useRevalidator();
     const location = useLocation();
     const navigate = useNavigate();
@@ -252,7 +251,7 @@ function OptionsCreator() {
         setJobDetails(updatedTable)
     }
 
-    const onProjectsChange  = (value: string, key: string, optSectionNum:number=-1) => {
+    const onProjectsChange  = (value: string, _key: string, optSectionNum:number=-1) => {
         const modifiedProjects = [...packageProjects]
         modifiedProjects[optSectionNum] = value
         setPackageProjects(modifiedProjects)
@@ -484,7 +483,7 @@ function OptionsCreator() {
             console.log(lotTablesAreValid)
             docxConverter(jobDetails, listOfLots, name, phone, email)
         } */
-        docxConverter(jobDetails, listOfLots, name, phone, email)
+        docxConverter(jobDetails, listOfLots, name)
     }
 
     const saveLotTablesSQL = async () => {
