@@ -1,5 +1,7 @@
 build project: 
   image: node:20
+  tags:
+    - prod
   script:
     - npm i
     - npm run build
