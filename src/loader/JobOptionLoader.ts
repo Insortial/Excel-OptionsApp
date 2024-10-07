@@ -1,4 +1,4 @@
-import {LotTableInterface, PartOfLot } from "../../../types/LotTableInterface";
+import {LotTableInterface, PartOfLot } from "../types/LotTableInterface";
 
 const getPackageDetails = async (jobID:number, fetchHook:(url: string, requestType: string, body?: BodyInit) => Promise<Response>) => {
     const response = await fetchHook(`/getPackageForJobID/${jobID}`, "GET")

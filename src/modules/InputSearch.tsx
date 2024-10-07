@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useContext, useRef } from "react"
 import React from 'react'
-import { LotTableInterface, PartOfLot, JobDetails, ErrorObject } from "../../../types/LotTableInterface";
+import { LotTableInterface, PartOfLot, JobDetails, ErrorObject } from "../types/LotTableInterface";
 import { FormOptionsContext } from "../context/OptionsTemplateContext";
-import { FormOptionsContextType } from "../../../types/FormOptions"
+import { FormOptionsContextType } from "../types/FormOptions"
 import { useClickOutside } from "../hooks/useClickOutside";
 
 type inputOptions = {

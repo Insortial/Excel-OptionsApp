@@ -1,16 +1,16 @@
 import LotTable from "./LotTable";
 import { useLocation, Link, useNavigate, useLoaderData } from "react-router-dom";
-import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL, PackageDetailsSQL, PackageDetails } from '../../../types/LotTableInterface.ts';
+import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL, PackageDetailsSQL, PackageDetails } from '../types/LotTableInterface.ts';
 import React, { useContext, useEffect, useState } from "react";
 import docxConverter from "../hooks/docxConverter.tsx";
 import { FormOptionsContext } from "../context/OptionsTemplateContext.tsx";
 import { AuthInfo } from "../context/AuthContext.tsx"
-import { FormOptionsContextType } from '../../../types/FormOptions.ts'
+import { FormOptionsContextType } from '../types/FormOptions.ts'
 import InputError from "./InputError.tsx";
 import useFetch from "../hooks/useFetch.ts";
 import { JobOptionLoaderResponse } from "../loader/JobOptionLoader.ts";
 import OptionsCreatorModal from "./OptionsCreatorModal.tsx";
-import { OptionsCreatorObject } from "../../../types/ModalTypes.ts";
+import { OptionsCreatorObject } from "../types/ModalTypes.ts";
 
 type lotJobResponse = {
     isJobIDValid: boolean,

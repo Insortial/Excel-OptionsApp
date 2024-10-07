@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { AuthInfoContextType, AuthUpdateContextType, LoggedInUpdateContextType } from '../../../types/AuthContextTypes';
+import { AuthInfoContextType, AuthUpdateContextType, LoggedInUpdateContextType } from '../types/AuthContextTypes';
 import { jwtDecode } from 'jwt-decode';
-import { DecodedToken } from "../../../types/AuthContextTypes"
+import { DecodedToken } from "../types/AuthContextTypes"
 
 const AuthInfoContext = React.createContext<AuthInfoContextType | null>(null);
 const AuthUpdateContext = React.createContext<AuthUpdateContextType | null>(null);

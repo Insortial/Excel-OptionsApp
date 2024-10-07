@@ -1,5 +1,5 @@
 import { Document, Packer, Paragraph, TextRun, PageBreak, HeadingLevel, AlignmentType, Table, TableRow, TableCell, WidthType, VerticalAlign, Footer } from "docx";
-import { LotTableInterface, PartOfLot, JobDetails } from "../../../types/LotTableInterface";
+import { LotTableInterface, PartOfLot, JobDetails } from "../types/LotTableInterface";
 import { saveAs } from "file-saver";
 
 

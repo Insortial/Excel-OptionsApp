@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useState } from 'react'
 import '../App.css'
 import { useNavigate } from "react-router-dom";
 import InputSearch from '../modules/InputSearch.tsx';
-import { ErrorObject, JobDetails, JobDocumentInterface, PackageDetails } from "../../../types/LotTableInterface";
+import { ErrorObject, JobDetails, JobDocumentInterface, PackageDetails } from "../types/LotTableInterface";
 import InputError from './InputError.tsx';
 import { FormOptionsContext } from '../context/OptionsTemplateContext.tsx';
-import { FormOptionsContextType } from '../../../types/FormOptions.ts';
+import { FormOptionsContextType } from '../types/FormOptions.ts';
 import useFetch from '../hooks/useFetch.ts';
 
 type lotJobResponse = {

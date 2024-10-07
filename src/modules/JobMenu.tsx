@@ -2,12 +2,12 @@
 import { useContext, useEffect, useState } from 'react'
 import JobDocument from './JobDocument.tsx';
 import { Link, useNavigate } from 'react-router-dom';
-import { JobDocumentInterface } from '../../../types/LotTableInterface.ts';
+import { JobDocumentInterface } from '../types//LotTableInterface.ts';
 import { FormOptionsContext } from '../context/OptionsTemplateContext.tsx';
-import { FormOptionsContextType } from '../../../types/FormOptions.ts';
+import { FormOptionsContextType } from '../types/FormOptions.ts';
 import useFetch from '../hooks/useFetch.ts';
 import OptionsCreatorModal from './OptionsCreatorModal.tsx';
-import { JobMenuObject } from '../../../types/ModalTypes.ts';
+import { JobMenuObject } from '../types/ModalTypes.ts';
 import { LoggedInUpdate } from '../context/AuthContext.tsx';
 
 

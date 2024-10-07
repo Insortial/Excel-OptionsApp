@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import InputSearch from './InputSearch'
-import { JobMenuObject, OptionsCreatorObject, PackageObject } from '../../../types/ModalTypes'
+import { JobMenuObject, OptionsCreatorObject, PackageObject } from '../types/ModalTypes'
 import useFetch from '../hooks/useFetch'
-import { ErrorObject, PartOfLot } from '../../../types/LotTableInterface'
+import { ErrorObject, PartOfLot } from '../types/LotTableInterface'
 import InputError from './InputError'
 
 type OptionsCreatorModal = {
