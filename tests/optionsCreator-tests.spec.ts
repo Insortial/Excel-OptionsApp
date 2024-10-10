@@ -12,7 +12,7 @@ let testJobObj = {
 }
 
 test.beforeEach(async ({page}) => {
-  await page.goto('http://localhost:5173/');
+  await page.goto('http://localhost:4012/');
   // Wait for title element to render
   const titleElement = page.locator('#titleCover')
   await expect(titleElement).toBeVisible();

@@ -1,7 +1,23 @@
-build project: 
-  image: node:20
-  tags:
-    - prod
+variables:
+  IMAGE_NAME: options-react
+  IMAGE_TAG: 1.0
+
+stages:
+  - build
+  - test
+
+build_image: 
+  stage: build
+  image: $CI_REGISTRY/group/project/docker:20.10.16
+  services:
+    - name: $CI_REGISTRY/group/project/docker:20.10.16-dind
+      alias: docker
   script:
-    - npm i
-    - npm run build
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
+    - docker push $IMAGE_NAME:$IMAGE_TAG
+
+run_tests:
+  stage: test
+  script: 
+    - docker pull $IMAGE_NAME:$IMAGE_TAG
+    - docker run $IMAGE_NAME:$IMAGE_TAG
