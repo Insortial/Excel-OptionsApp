@@ -1,6 +1,6 @@
 import LotTable from "./LotTable";
 import { useLocation, Link, useNavigate, useLoaderData } from "react-router-dom";
-import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL, PackageDetailsSQL, PackageDetails } from '../types/LotTableInterface.ts';
+import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, JobDetailsSQL, LotTableSQL, PartOfLotSQL, PackageDetailsSQL, PackageDetails, LotInfo } from '../types/LotTableInterface.ts';
 import React, { useContext, useEffect, useState } from "react";
 import docxConverter from "../hooks/docxConverter.tsx";
 import { FormOptionsContext } from "../context/OptionsTemplateContext.tsx";
@@ -226,7 +226,7 @@ function OptionsCreator() {
             lotOptionsValue: 0.00,
             recyclingBins: "",
             hasError: false,
-            plan: !isOptionsMode ? lotInputValue : "",
+            plan: !isOptionsMode ? lotInputValue : jobDetails.lotNums.find(lotInfo => lotInfo.lotNum === lotInputValue)?.plan ?? "",
             partsOfLot: [throughoutLot],
             appliances: "",
             kitchen: "",
@@ -292,7 +292,7 @@ function OptionsCreator() {
                 if(["", "None"].includes(packageDetails.packageName))
                     table = createLotTable(modalInputValue)
                 else {
-                    console.log("IN HERE")
+                    //Runs if package option is selected
                     table = Object.assign({}, packageDetails.plans.find((lotDetails:LotTableInterface) => {return lotDetails.plan === packageDetails.planName}))
                     table.lot = modalInputValue
                     table.partsOfLot = Object.assign([], table.partsOfLot)
@@ -515,16 +515,16 @@ function OptionsCreator() {
         onJobDetailsChange(event.target.value, "date")
     }
 
-    const findAvailableLots = ():string[] => {
+    const findAvailableLots = ():LotInfo[] => {
         return jobDetails.lotNums.filter(
-            lotNum => !listOfLots.find(lot => lot.lot === lotNum)
+            lotNum => !listOfLots.find(lot => lot.lot === lotNum.lotNum)
           );
     }
 
     useEffect(() => {
         const availableLots = findAvailableLots()
         if(availableLots.length > 0 && modalType !== "partOfLot")
-            setModalInputValue(availableLots[0]);
+            setModalInputValue(availableLots[0].lotNum);
         else 
             setModalInputValue("")
     }, [jobDetails, listOfLots, modalType]);
@@ -592,9 +592,6 @@ function OptionsCreator() {
         } else {
             navigate("/")
         }
-            
-
-        
     }, [requestedJobDetails, loaderData])
 
     const optionsCreatorObject:OptionsCreatorObject = {

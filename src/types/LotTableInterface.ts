@@ -30,8 +30,13 @@ export interface JobDetails {
     jobID: number,
     superintendent: string,
     phone: string,
-    lotNums: string[],
+    lotNums: LotInfo[],
     prodReady: boolean
+}
+
+export interface LotInfo {
+    lotNum: string,
+    plan: string
 }
 
 export interface LotTableInterface {

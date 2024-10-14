@@ -126,9 +126,9 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
                     <div className="modalRow">
                         {optionsCreatorObject.isOptionsMode ? (
                         <select value={modalInputValue} onChange={handleInputChange}>
-                            {optionsCreatorObject.jobDetails.lotNums.map((lotNum, index) => {
-                                if(!optionsCreatorObject.listOfLots?.find((lot) => lot.lot === lotNum)) {
-                                    return <option key={index} value={lotNum}>{lotNum}</option>
+                            {optionsCreatorObject.jobDetails.lotNums.map((lotInfo, index) => {
+                                if(!optionsCreatorObject.listOfLots?.find((lot) => lot.lot === lotInfo.lotNum)) {
+                                    return <option key={index} value={lotInfo.lotNum}>{lotInfo.lotNum}</option>
                                 }
                             })}
                         </select> ) : (

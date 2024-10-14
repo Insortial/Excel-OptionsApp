@@ -616,7 +616,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
 
     const pageTitle = new Paragraph({
         children: [new TextRun({
-            text: `APPROVED PRODUCTION SCHEDULE ${jobDetails.date}`,
+            text: `${jobDetails.prodReady ? "" : "NOT"}APPROVED PRODUCTION SCHEDULE ${jobDetails.date}`,
             bold: true,
             color: "000000",
         }),
