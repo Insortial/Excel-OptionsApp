@@ -3,23 +3,10 @@ variables:
   IMAGE_TAG: 1.0
 
 stages:
-  - build
   - test
 
-build_image: 
-  stage: build
-  image: $CI_REGISTRY/group/project/docker:20.10.16
-  services:
-    - name: $CI_REGISTRY/group/project/docker:20.10.16-dind
-      alias: docker
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+show_variables:
   script:
-    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
-    - docker push $IMAGE_NAME:$IMAGE_TAG
-
-run_tests:
+    - echo "CI_REGISTRY:" $CI_REGISTRY
+    - echo "CI_REGISTRY_IMAGE:" $CI_REGISTRY_IMAGE
   stage: test
-  script: 
-    - docker pull $IMAGE_NAME:$IMAGE_TAG
-    - docker run $IMAGE_NAME:$IMAGE_TAG
