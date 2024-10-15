@@ -11,7 +11,7 @@ test.beforeEach(async ({page}) => {
     await page.getByLabel("Email").fill("renq@excelcabinetsinc.com")
     await page.getByLabel("Password").fill("password9902")
     await page.locator("#loginDiv").first().locator("button").click()
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(5000)
     await page.goto(websiteURL + "creatingJob");
     // Wait for title element to render
     const titleElement = page.locator('#titleCover')

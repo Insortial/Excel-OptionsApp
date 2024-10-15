@@ -8,10 +8,12 @@ stages:
 
 build_image: 
   stage: build
-  image: $CI_REGISTRY/group/project/docker:20.10.16
+  image: docker:20.10.16
   services:
-    - name: $CI_REGISTRY/group/project/docker:20.10.16-dind
+    - name: docker:20.10.16-dind
       alias: docker
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - docker build -t $IMAGE_NAME:$IMAGE_TAG .
     - docker push $IMAGE_NAME:$IMAGE_TAG
