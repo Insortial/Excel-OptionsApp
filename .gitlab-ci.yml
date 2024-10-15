@@ -1,6 +1,6 @@
 variables:
   IMAGE_NAME: options-react
-  IMAGE_TAG: 1.0
+  IMAGE_TAG: 2.0
 
 stages:
   - build
