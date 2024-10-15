@@ -1,6 +1,6 @@
 variables:
   IMAGE_NAME: options-react
-  IMAGE_TAG: 2.0
+  IMAGE_TAG: 1.0
 
 stages:
   - build
@@ -18,7 +18,5 @@ build_image:
     - docker push $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG
 
 run_tests:
+  image: $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG
   stage: test
-  script: 
-    - docker pull $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG
-    - docker run $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG
