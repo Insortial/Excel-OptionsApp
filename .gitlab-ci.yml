@@ -8,11 +8,12 @@ stages:
 
 image: docker:20.10.16
 
-build_image: 
-  stage: build
-  services:
+services:
     - name: docker:20.10.16-dind
       alias: docker
+
+build_image: 
+  stage: build
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
     - docker build --build-arg API_URL=$API_URL --build-arg DB_USER=$DB_USER -t $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG .
