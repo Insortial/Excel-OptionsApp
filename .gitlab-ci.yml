@@ -21,7 +21,7 @@ build_image:
 deploy_image:
   stage: test
   variables: 
-    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: ""
   tags: 
     - prod
   script:
