@@ -20,6 +20,8 @@ build_image:
 
 deploy_image:
   stage: test
+  variables: 
+    DOCKER_HOST: tcp://docker:2376
   tags: 
     - prod
   script:
