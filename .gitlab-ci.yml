@@ -19,7 +19,6 @@ build_image:
     - docker push $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG
 
 deploy_image:
-  image: $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG
   stage: test
   tags: 
     - prod
