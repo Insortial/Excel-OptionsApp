@@ -1,7 +1,7 @@
 import LotTable from "./LotTable";
 import { useLocation, useNavigate, useLoaderData } from "react-router-dom";
 import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, PackageDetails, LotInfo } from '../types/LotTableInterface.ts';
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FormOptionsContext } from "../context/OptionsTemplateContext.tsx";
 import { FormOptionsContextType } from '../types/FormOptions.ts'
 import { JobOptionLoaderResponse } from "../loader/JobOptionLoader.ts";
