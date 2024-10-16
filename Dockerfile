@@ -11,7 +11,6 @@ COPY tsconfig.json/ /react-app/
 COPY tsconfig.app.json/ /react-app/
 COPY tsconfig.node.json/ /react-app/
 COPY vite.config.ts/ /react-app/
-COPY .env /react-app/
 
 RUN npm i
 RUN npm i -g serve
