@@ -16,9 +16,6 @@ deploy_image:
     - prod
   script:
     - docker
-    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
-    - docker run -d -p 4012:4012 $IMAGE_NAME:$IMAGE_TAG
-    - docker ps -a
 
 
     
