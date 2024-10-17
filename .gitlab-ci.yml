@@ -14,6 +14,6 @@ deploy_image:
   tags: 
     - prod
   script:
-    - npm run dev
+    - serve -s dist -l 4012
     
     
