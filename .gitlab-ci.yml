@@ -8,11 +8,10 @@ stages:
 
 image: docker:20.10.16
 
-services:
+build_image: 
+  services:
     - name: docker:20.10.16-dind
       alias: docker
-
-build_image: 
   stage: build
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
@@ -26,8 +25,8 @@ deploy_image:
   tags: 
     - prod
   script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker pull $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG
-    - docker run -d --network=app-network -p 4012:4012 $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG
+    - docker run --rm -d --network=app-network -p 4012:4012 $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG
     - docker ps -a
     
