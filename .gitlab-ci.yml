@@ -15,7 +15,7 @@ deploy_image:
   tags: 
     - prod
   script:
-    - docker build --build-arg API_URL=$API_URL --build-arg DB_USER=$DB_USER -t $IMAGE_NAME:$IMAGE_TAG .
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
     - docker run -d -p 4012:4012 $IMAGE_NAME:$IMAGE_TAG
     - docker ps -a
 
