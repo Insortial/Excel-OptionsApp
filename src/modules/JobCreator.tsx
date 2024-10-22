@@ -25,7 +25,7 @@ function JobCreator() {
     lotNums: [],
     foreman: "",
     phase: "",
-    jobID: 0,
+    jobID: "",
     date: "",
     prodReady: false
   }

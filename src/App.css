@@ -215,6 +215,7 @@ input {
 .jobDocumentBody > h4 {
     margin: 0;
     margin-top: 8px;
+    text-align: center;
 }
 
 #jobMenuHeader > h1 {

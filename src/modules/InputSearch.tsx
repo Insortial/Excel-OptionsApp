@@ -107,8 +107,7 @@ const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, on
             setDropDownOptions(filteredProjects)
             setSuggestion(filteredProjects)
         } else {
-            setSuggestion(dropDownOptions.slice(0, 50));
-            
+            setSuggestion(dropDownOptions.slice(0, 50))
         }
         setInFocus(true)
     }
@@ -148,7 +147,7 @@ const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, on
                     id={inputName + `${(typeof optionSectionNum === 'undefined' || optionSectionNum === 0) ? "" : optionSectionNum}`}
                     onChange={readInput}
                     onFocus={handleOnFocus}
-                    readOnly={inputName === "roomID" && getPartOfLotValue() === "Throughout" || getPartOfLotValue() === "Balance of House"}
+                    readOnly={inputName === "roomID" && getPartOfLotValue() === "Throughout" || getPartOfLotValue() === "Balance of House" || inputName === "fingerpull"}
                 />
             <div className="optionResults" ref={dropDownRef} style={{display: inFocus ? "block" : "none", border: suggestion.length === 0 ? "none" : "1px solid black"}}>
                 {suggestion.map((x: string, index: number) => {

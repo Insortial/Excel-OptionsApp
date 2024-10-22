@@ -102,7 +102,7 @@ const useSQLJobDetailsPost = () => {
                 lot: lotTable.lot,
                 boxStyle: getFormIDs(lotTable.boxStyle, "boxStyle"),
                 interiors: getFormIDs(lotTable.interiors, "interiors"),
-                lotOptionsValue: lotTable.lotOptionsValue,
+                lotOptionsValue: parseInt(lotTable.lotOptionsValue),
                 partsOfLot: listOfSQLPartsOfLot,
                 plan: lotTable.plan,
                 //Start of LotDocument properties
@@ -128,7 +128,7 @@ const useSQLJobDetailsPost = () => {
             listOfSQLLots.push(lotTableSQL)
         }
         const jobDetailsSQL:JobDetailsSQL = {
-            jobID: jobDetails.jobID,
+            jobID: parseInt(jobDetails.jobID),
             doorBuyOut: false,
             drawerBoxBuyOut: false,
             jobNotes: jobDetails.jobNotes,

@@ -44,9 +44,10 @@ const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], current
         lot.partsOfLot.map((partOfLot:PartOfLot, index:number) => {
             //Iterates through each Part of Lot
             for(const key of Object.keys(partOfLot)) {
+
                 //Checks if key has value, also checks if it is part of requiredFields list
                 const selectedPartOfLot = lot.partsOfLot[index]
-                const selectedField = selectedPartOfLot[key as keyof PartOfLot]
+                const selectedField = selectedPartOfLot[selectedPartOfLot.handleType as keyof PartOfLot]
                 if(requiredFieldsLotPart.includes(key) && !selectedField) {
                     if((selectedPartOfLot.roomID === 'Throughout' && !lot.hasThroughoutLot && ["material", "color", "doors", "fingerpull"].includes(key)) || 
                         (isHandleValid(selectedPartOfLot.handleType, key, selectedField))) {
@@ -63,14 +64,14 @@ const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], current
         
 
         Object.keys(lot).forEach((key) => {
-            if(requiredFieldsLotTable.includes(key) && !lot[key as keyof LotTableInterface]) {
+            if(requiredFieldsLotTable.includes(key) && (lot[key as keyof LotTableInterface] === undefined || lot[key as keyof LotTableInterface] === "")) {
                 listOfLotsHasError = true
                 lot.hasError = true
                 if(lot.lot === currentLotNum)
                     newErrors[key] = "Field is required, please fill out"
             }
 
-            if(key === "lotOptionsValue" && isNaN(Number(lot[key as keyof LotTableInterface])))
+            if(key === "lotOptionsValue" && isNaN(Number(lot.lotOptionsValue)))
                 newErrors[key] = "Incorrect format, must be a number"
                 
         })

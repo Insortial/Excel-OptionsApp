@@ -23,7 +23,7 @@ function OptionsCreator() {
         foreman: "",
         date: "",
         lotNums: [],
-        jobID: -1,
+        jobID: "",
         prodReady: false
     }
 
@@ -87,7 +87,7 @@ function OptionsCreator() {
 
     const createLotTable = (lotInputValue: string): LotTableInterface => {
         const lotDetails:LotTableInterface = {
-            jobID: jobDetails.jobID,
+            jobID: parseInt(jobDetails.jobID),
             lot: isOptionsMode ? lotInputValue : "",
             boxStyle: "",
             packageName: "",
@@ -99,7 +99,7 @@ function OptionsCreator() {
             lightRail: "",
             baseShoe: "",
             hasThroughoutLot: true,
-            lotOptionsValue: 0.00,
+            lotOptionsValue: "",
             recyclingBins: "",
             hasError: false,
             plan: !isOptionsMode ? lotInputValue : jobDetails.lotNums.find(lotInfo => lotInfo.lotNum === lotInputValue)?.plan ?? "",
@@ -264,6 +264,16 @@ function OptionsCreator() {
     }
 
     useEffect(() => {
+        const throughoutLot = currentLot?.partsOfLot[0]
+        const hasSplitLot = throughoutLot?.drawerBoxes.includes(",") || throughoutLot?.drawerGuides.includes(",") || throughoutLot?.doorHinges.includes(",")
+        const hasKitchen = currentLot?.partsOfLot.find((partOfLot) => partOfLot.roomID.toLowerCase() === "kitchen only") !== undefined
+
+        if(!hasKitchen && hasSplitLot) {
+            addOptionRow("Kitchen Only")
+        } 
+    }, [currentLot?.partsOfLot[0].drawerBoxes, currentLot?.partsOfLot[0].drawerGuides, currentLot?.partsOfLot[0].doorHinges])
+
+    useEffect(() => {
         const availableLots = findAvailableLots()
         if(availableLots.length > 0 && modalType !== "partOfLot")
             setModalInputValue(availableLots[0].lotNum);
@@ -276,9 +286,7 @@ function OptionsCreator() {
             const { errors, lotsHaveError } = getErrorState()
             setErrorState(errors, lotsHaveError)
         }
-            
     }, [currentLotNum])
-
 
     useEffect(() => {
         setIsCheckingError(false)
@@ -325,7 +333,7 @@ function OptionsCreator() {
                     lotNums: [],
                     foreman: "",
                     phase: "",
-                    jobID: 0,
+                    jobID: "",
                     date: "",
                     prodReady: false
                 })

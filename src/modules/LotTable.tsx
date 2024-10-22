@@ -26,16 +26,33 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
         saveLotTable(updatedTable, isOptionsMode ? lotTableDetails.lot : lotTableDetails.plan)
     }
 
+    function findFingerpull(doorID:string):string {
+        if(["1", "2", "6"].includes(doorID.charAt(4)) && doorID !== "ECI-605") {
+            return "CF-14"
+        } else if(doorID.charAt(4) === "3") {
+            return "OD-6"
+        } else if (doorID.charAt(4) === "4") {
+            return doorID.charAt(5) === "0" ? "OD-1" : "OD-2" 
+        } else {
+            return "CF-2"
+        }
+    }
+
     const onFormChange = (value: string | boolean, key: string, optionSectionNum: number=-1) => {
         let updatedTable:LotTableInterface;
+        const example = {[key]: value}
+
+        if(key === "doors")
+            example.fingerpull = findFingerpull(value as string)
+
         if(optionSectionNum === -1) {
             updatedTable = {
                 ...lotTableDetails,
-                [key]: value
+                ...example
             }
         } else {
             updatedTable = {...lotTableDetails}
-            updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot, index:number) => (index === optionSectionNum ? { ...partOfLot, [key]: value } : partOfLot))
+            updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot, index:number) => (index === optionSectionNum ? { ...partOfLot, ...example } : partOfLot))
         }
 
         if((key === "lot" || key === "plan") && typeof value === "string") 
@@ -261,7 +278,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
                                         </div>
                                         <div className={"fingerPullList"}>
                                             <label htmlFor={`fingerpull${idNumber}`}>Fingerpull:</label>
-                                            <InputSearch inputName={`fingerpull`} optionSectionNum={currentRow} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
+                                            <InputSearch inputName={`fingerpull`} optionSectionNum={currentRow} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
                                         </div>
                                         <div className={"pullList"} style={{display: ["both", "pulls"].includes(lotSection.handleType ?? "") && lotSection.handleType !== "none" ? "block" : "none"}}>
                                             <label htmlFor={`pulls${idNumber}`}>{"Pulls:"}</label>
