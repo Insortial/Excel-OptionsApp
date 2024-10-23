@@ -6,15 +6,21 @@ export interface PartOfLot {
     roomID: string, //ex. Throughout, Balance of the House, etc.
     material: string, 
     handleType: string,
+    numOfPulls: number,
+    numOfKnobs: number,
     color: string, 
     doors: string,
     fingerpull: string,
     drawerFronts: string, 
     knobs: string,
+    knobs2: string,
+    glassDoors: boolean,
+    glassShelves: boolean,
     drawerBoxes: string, 
     drawerGuides: string, 
     doorHinges: string, 
     pulls: string, 
+    pulls2: string,
     details: string,
     appliances: string, //remove in the future
 }

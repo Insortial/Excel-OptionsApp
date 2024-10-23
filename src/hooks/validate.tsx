@@ -1,14 +1,25 @@
 import { ErrorObject, JobDetails, LotInfo, LotTableInterface, PartOfLot } from "../types/LotTableInterface";
 
 const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], currentLotNum:string, availableLots:LotInfo[]) => {
-    const isHandleValid = (handleType:string, key:string, value:string):boolean => {
+    const isHandleValid = (handleType:string, key:string, value:string, numOfKnobs:number, numOfPulls:number):boolean => {
+        let partNum = 0
+        const endChar = Number(key[key.length - 1])
+
+        if(handleType !== key.replace(/\d+$/, "") && handleType !== "both")
+            return true
+
+        if(!isNaN(endChar)) {
+            partNum = endChar
+            key = key.slice(0, -1)
+        }
+        
         switch(handleType) {
             case "both":
-                return ["pulls", "knobs"].includes(key) && value !== ""
+                return (key === "knobs" && (value !== "" || partNum > numOfKnobs)) || (key === "pulls" && (value !== "" || partNum > numOfPulls))
             case "pulls":
-                return key === "pulls" && value !== ""
+                return key === "pulls" && (value !== "" || partNum > numOfPulls)
             case "knobs":
-                return key === "knobs" && value !== ""
+                return key === "knobs" && (value !== "" || partNum > numOfKnobs)
             case "none":
             default:
                 return true
@@ -23,7 +34,7 @@ const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], current
                                 "bath4","powder","laundry"]
     const requiredFieldsLotPart = ["drawerFronts", "drawerBoxes", "drawerGuides", 
                                     "doorHinges", "doors", "fingerpull",
-                                    "material", "color", "pulls", "roomID"]
+                                    "material", "color", "pulls", "pulls2", "roomID", "knobs", "knobs2"]
     const newErrors:ErrorObject = {};
     let listOfLotsHasError = false
     
@@ -47,10 +58,11 @@ const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], current
 
                 //Checks if key has value, also checks if it is part of requiredFields list
                 const selectedPartOfLot = lot.partsOfLot[index]
-                const selectedField = selectedPartOfLot[selectedPartOfLot.handleType as keyof PartOfLot]
+                const selectedField = selectedPartOfLot[key as keyof PartOfLot]
+                //const handleField = selectedPartOfLot[selectedPartOfLot.handleType as keyof PartOfLot]
                 if(requiredFieldsLotPart.includes(key) && !selectedField) {
                     if((selectedPartOfLot.roomID === 'Throughout' && !lot.hasThroughoutLot && ["material", "color", "doors", "fingerpull"].includes(key)) || 
-                        (isHandleValid(selectedPartOfLot.handleType, key, selectedField))) {
+                        (isHandleValid(selectedPartOfLot.handleType, key, selectedField as string, selectedPartOfLot.numOfKnobs, selectedPartOfLot.numOfPulls))) {
                         continue
                     }
 

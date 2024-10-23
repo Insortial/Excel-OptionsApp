@@ -47,7 +47,10 @@ const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, on
     }
 
     const updateDropDowns = async () => {
-        const retrievedOptions = retrieveDropDown(inputName)
+        let updatedInput = inputName
+        if(inputName.includes("pulls") || inputName.includes("knobs"))
+            updatedInput = inputName.replace(/\d+$/, "")
+        const retrievedOptions = retrieveDropDown(updatedInput)
         setDropDownOptions(retrievedOptions)
         setSuggestion(retrievedOptions.slice(0, 50))
     }

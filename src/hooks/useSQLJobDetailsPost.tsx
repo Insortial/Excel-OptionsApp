@@ -20,7 +20,7 @@ const useSQLJobDetailsPost = () => {
     
         const value = throughoutLot ? throughoutLot[propName as keyof PartOfLot] : ""
         
-        if(Object.prototype.hasOwnProperty.call(mixedOptionKey, value)) {
+        if(typeof value === "string" && Object.prototype.hasOwnProperty.call(mixedOptionKey, value)) {
             const lowerRoomID = roomID.toLowerCase()
             if(lowerRoomID.includes("balance of house") || lowerRoomID.includes("throughout")) {
                 return getFormIDs("Standard", propName)
@@ -31,32 +31,28 @@ const useSQLJobDetailsPost = () => {
             }
         } else {
             console.log(roomID + " DO")
-            return getFormIDs(value, propName)
+            return getFormIDs(value as string, propName)
         }
     }
 
 
     const handlePullsAndKnobs = (returnType: string, currentLot:PartOfLot, throughOutLot:PartOfLot|undefined) => {
-        let partName = ""
-
-        if(returnType === "pulls") {
-            partName = ["pulls", "both"].includes(currentLot.handleType) ? currentLot.pulls === "" ? "1" : currentLot.pulls : "1"
-        } else if (returnType === "knobs") {
-            partName = ["knobs", "both"].includes(currentLot.handleType) ? currentLot.knobs === "" ? "1" : currentLot.knobs : "1"
-        }
-
+        let partName:string|number|boolean = ""
+        const handleType = returnType.replace(/\d+$/, "")
+        const capitalizedHandle = handleType.charAt(0).toUpperCase() + handleType.slice(1)
+        const endChar = parseInt(returnType[returnType.length - 1])
         if (currentLot.roomID !== "Throughout" && throughOutLot !== undefined && currentLot.handleType === "none") {
-            if(returnType === "pulls") {
-                partName = throughOutLot.pulls !== "" ? throughOutLot.pulls : "1"
-            } else if (returnType === "knobs") {
-                partName =throughOutLot.knobs !== "" ? throughOutLot.knobs : "1"
-            }
-
-            if(throughOutLot.handleType === "none")
-                partName = "1"
+            const throughoutLotValue = throughOutLot[returnType as keyof PartOfLot]
+            partName = throughoutLotValue === "" ? "1" : throughoutLotValue 
+        } else {
+            const currentLotValue = currentLot[returnType as keyof PartOfLot]
+            partName = currentLotValue === "" ? "1" : currentLotValue
         }
 
-        return partName
+        if(handleType !== currentLot.handleType && currentLot.handleType !== "both" || !isNaN(endChar) && endChar > Number(currentLot[`numOf${capitalizedHandle}` as keyof PartOfLot]))
+            partName = "1"
+
+        return partName as string
     }
 
     const postSQLJobDetails = async (listOfLots:LotTableInterface[], jobDetails:JobDetails, isOptionsMode:boolean, packageProjects:string[], requestedJobDetails:any, loaderData:JobOptionLoaderResponse) => {
@@ -68,8 +64,8 @@ const useSQLJobDetailsPost = () => {
                 const partOfLot:PartOfLotSQL = {
                     roomID: lotSection.roomID,
                     material: getFormIDs(lotSection.material, "material"), 
-                    glassDoors: "NO",
-                    glassShelves: "NO",
+                    glassDoors: lotSection.glassDoors ? "YES" : "NO",
+                    glassShelves: lotSection.glassShelves ? "YES" : "NO",
                     cabinetQty: 0,
                     doorQty: 0,
                     hingeQty: 0,
@@ -86,9 +82,9 @@ const useSQLJobDetailsPost = () => {
                     drawerGuides: getFormIDs(lotSection.drawerGuides, "drawerGuides"), 
                     doorHinges: decipherMixedOptions(throughOutLot, lotSection, "doorHinges"), 
                     pulls: handlePullsAndKnobs("pulls", lotSection, throughOutLot),
-                    knobs2: "",
+                    knobs2: handlePullsAndKnobs("knobs2", lotSection, throughOutLot),
                     knobs2Qty: 0,
-                    pulls2: "",
+                    pulls2: handlePullsAndKnobs("pulls2", lotSection, throughOutLot),
                     pulls2Qty: 0,
                     handleType: lotSection.handleType,
                     details: lotSection.details,

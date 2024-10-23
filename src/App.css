@@ -826,17 +826,54 @@ tr {
 .hardwareHeader {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     margin-top: 15px;
+    width: 100%;
 }
 
-.hardwareHeader > h3 {
+.hardwareEditor {
+    display: flex;
+    flex-direction: column;
+}
+
+.hardwareEditor > h3 {
     margin: 0 10px 0 0;
 }
-.hardwareHeader > input {
+
+.glassSection {
+    display: flex;
+    flex-direction: row;
+}
+
+.glassSection > div {
+    margin-left: 10px;
+}
+
+.glassSection > div > h5 {
+    margin: 0 10px 0 0;
+}
+
+.hardwareCheckboxes > input {
     margin: 5px 10px 5px 5px;
 }
-.hardwareHeader > label {
+.hardwareCheckboxes > label {
     margin: 5px 0
+}
+
+.modifierSection {
+    display: flex;
+    flex-direction: row;
+    margin: 5px 0 5px 0;
+}
+
+.hardwareModifier {
+    margin-right: 10px;
+}
+
+.hardwareModifier > label {
+    margin-right: 10px;
+    font-weight: bold;
+    color: rgb(83, 82, 82);
 }
 
 h1 {
