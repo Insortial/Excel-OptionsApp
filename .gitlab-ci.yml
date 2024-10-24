@@ -17,7 +17,7 @@ build_image:
   before_script:
     - chmod +x ./setup_env.sh
     - ./setup_env.sh
-    - cat $VITE_AUTH_URL
+    - cat .env
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
     - docker build -t $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG .
