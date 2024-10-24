@@ -4,8 +4,9 @@ const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], current
     const isHandleValid = (handleType:string, key:string, value:string, numOfKnobs:number, numOfPulls:number):boolean => {
         let partNum = 0
         const endChar = Number(key[key.length - 1])
+        const keyName = key.replace(/\d+$/, "")
 
-        if(handleType !== key.replace(/\d+$/, "") && handleType !== "both")
+        if(handleType !== keyName && handleType !== "both" && ["pulls", "knobs"].includes(keyName))
             return true
 
         if(!isNaN(endChar)) {
@@ -61,7 +62,8 @@ const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], current
                 const selectedField = selectedPartOfLot[key as keyof PartOfLot]
                 //const handleField = selectedPartOfLot[selectedPartOfLot.handleType as keyof PartOfLot]
                 if(requiredFieldsLotPart.includes(key) && !selectedField) {
-                    if((selectedPartOfLot.roomID === 'Throughout' && !lot.hasThroughoutLot && ["material", "color", "doors", "fingerpull"].includes(key)) || 
+                    //&& ["material", "color", "doors", "fingerpull"].includes(key)
+                    if((selectedPartOfLot.roomID === 'Throughout' && !lot.hasThroughoutLot) || 
                         (isHandleValid(selectedPartOfLot.handleType, key, selectedField as string, selectedPartOfLot.numOfKnobs, selectedPartOfLot.numOfPulls))) {
                         continue
                     }

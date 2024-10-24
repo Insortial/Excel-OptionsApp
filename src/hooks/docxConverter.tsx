@@ -346,14 +346,29 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
             text: partOfLot.doors !== "" ? `Doors: ${partOfLot.doors} ${partOfLot.fingerpull}` : ""
         }),
         new TextRun({
-            text: partOfLot.pulls !== "" ? `Pulls: ${partOfLot.pulls}` : "",
+            text: partOfLot.pulls !== "" && partOfLot.pulls !== "1" ? `Pulls: ${partOfLot.pulls} ${partOfLot.pulls2 !== "" && partOfLot.pulls2 !== "1" ? `& ${partOfLot.pulls2}`: ""}` : "",
             break: partOfLot.doors !== "" ? 1 : 0
         }),
         new TextRun({
-            break: partOfLot.doors === "" && partOfLot.pulls === "" ? 0 : 1
+            text: partOfLot.knobs !== "" && partOfLot.knobs !== "1" ? `Knobs: ${partOfLot.knobs} ${partOfLot.knobs2 !== "" && partOfLot.knobs2 !== "1" ? `& ${partOfLot.knobs2}`: ""}` : "",
+            break: partOfLot.pulls !== "" ? 1 : 0
+        }),
+        new TextRun({
+            break: partOfLot.doors === "" && partOfLot.pulls === "" && partOfLot.knobs === "" ? 0 : 1
         })]
 
-        optionCellInfo = [...hardwareLine, ...readNewLine(partOfLot.details), 
+        const glassSection = [new TextRun({
+            text: partOfLot.glassDoors ? "GLASS DOORS INCLUDED" : ""
+        }),
+        new TextRun({
+            text: partOfLot.glassShelves ? "GLASS SHELVES INCLUDED" : "",
+            break: partOfLot.glassDoors ? 1 : 0
+        }),
+        new TextRun({
+            break: !partOfLot.glassDoors && !partOfLot.glassShelves ? 0 : 1
+        })]
+
+        optionCellInfo = [...hardwareLine, ...glassSection, ...readNewLine(partOfLot.details), 
         ...readNewLine(partOfLot.appliances)]
 
         return optionCellInfo
