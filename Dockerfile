@@ -6,6 +6,7 @@ COPY public/ /react-app/public
 COPY src/ /react-app/src
 COPY package.json/ /react-app/
 COPY index.html /react-app/
+COPY .env /react-app/
 COPY package-lock.json/ /react-app/
 COPY tsconfig.json/ /react-app/
 COPY tsconfig.app.json/ /react-app/

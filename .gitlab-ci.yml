@@ -19,7 +19,7 @@ build_image:
     - ./setup_env.sh
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-    - docker build --env-file .env -t $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG .
+    - docker build -t $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG .
     - docker push $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG
 
 deploy_image:
