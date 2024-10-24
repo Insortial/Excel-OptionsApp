@@ -4,7 +4,6 @@ variables:
 
 stages:
   - build
-  - test
 
 image: docker:20.10.16
 
@@ -22,17 +21,6 @@ build_image:
     - docker build -t $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG .
     - docker push $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG
 
-deploy_image:
-  stage: test
-  variables: 
-    DOCKER_TLS_CERTDIR: ""
-  tags: 
-    - prod
-  script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-    - docker pull $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG
-    - docker run -d -p 4012:4012 $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG
-    - docker ps -a
 
 
     
