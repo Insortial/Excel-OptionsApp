@@ -1,0 +1,2 @@
+echo VITE_AUTH_URL=$VITE_AUTH_URL >> .env
+echo VITE_BACKEND_URL=$VITE_BACKEND_URL >> .env
