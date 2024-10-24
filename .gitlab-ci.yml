@@ -17,12 +17,9 @@ build_image:
   before_script:
     - chmod +x ./setup_env.sh
     - ./setup_env.sh
-    - ls -la
-    - cat .env
   script:
-    - ls -la
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-    - docker build -t $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG .
+    - docker build --env-file .env -t $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG .
     - docker push $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG
 
 deploy_image:
