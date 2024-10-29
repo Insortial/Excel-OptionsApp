@@ -28,5 +28,8 @@
 --ALTER TABLE [EXCELP&D].[dbo].[Hinges]
 --ADD inUse BIT;
 
-ALTER TABLE [EXCELP&D].[dbo].[Doors]
+--ALTER TABLE [EXCELP&D].[dbo].[Doors]
+--ADD inUse BIT;
+
+ALTER TABLE [EXCELP&D].[dbo].[Drawer Guides]
 ADD inUse BIT;

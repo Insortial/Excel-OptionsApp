@@ -7,16 +7,16 @@
 --SET [Hinge Type] = 'APA Soft Closing'
 --WHERE [Hinge ID] = 5
 
-UPDATE [EXCELP&D].[dbo].[Colors]
-SET inUse = 
-CASE WHEN ([Color] IN ('White Thermofoil', 'Satin White', 'Opti Grey', 'Summer Breeze', 
-'Swiss Elm Dark', 'Morning Dew', 'Lausanne PC', 'Alabaster Ash', 'Matte Black', 'Satin Coffee',
-'Fontana Night', 'Arturo Candlelight', 'Charcoal Matte 30WK', 'Oak Burlap', 'Dark Grey 5810/SF', 'Latitude North',
-'Cashmere', 'Kazablanka', 'Verdi') AND [Finish Type] = 'Thermofoil') 
-OR ([Color] IN ('N/A', 'Unfinished', 'True Maple', 'Alto', 'Luxe Blanco')) 
-OR ([Color] IN ('Driftwood', 'Charcoal', 'Smoke', 'True Maple', 'Nutmeg', 'Kona 1 Pass', 'Vintage', 'Sand') AND [Finish Type] LIKE 'Stain%') 
-OR ([Color] IN ('Anew Grey', 'Painted 001 White', 'Capricorn', 'Tax Day', 'Raccoon', 'Summer Drops') AND [Finish Type] = 'Painted Finish') THEN 1
-ELSE 0 END; 
+--UPDATE [EXCELP&D].[dbo].[Colors]
+--SET inUse = 
+--CASE WHEN ([Color] IN ('White Thermofoil', 'Satin White', 'Opti Grey', 'Summer Breeze', 
+--'Swiss Elm Dark', 'Morning Dew', 'Lausanne PC', 'Alabaster Ash', 'Matte Black', 'Satin Coffee',
+--'Fontana Night', 'Arturo Candlelight', 'Charcoal Matte 30WK', 'Oak Burlap', 'Dark Grey 5810/SF', 'Latitude North',
+--'Cashmere', 'Kazablanka', 'Verdi') AND [Finish Type] = 'Thermofoil') 
+--OR ([Color] IN ('N/A', 'Unfinished', 'True Maple', 'Alto', 'Luxe Blanco')) 
+--OR ([Color] IN ('Driftwood', 'Charcoal', 'Smoke', 'True Maple', 'Nutmeg', 'Kona 1 Pass', 'Vintage', 'Sand') AND [Finish Type] LIKE 'Stain%') 
+--OR ([Color] IN ('Anew Grey', 'Painted 001 White', 'Capricorn', 'Tax Day', 'Raccoon', 'Summer Drops') AND [Finish Type] = 'Painted Finish') THEN 1
+--ELSE 0 END; 
 
 --UPDATE [EXCELP&D].[dbo].[Materials]
 --SET inUse = 
@@ -40,6 +40,12 @@ ELSE 0 END;
 --SET inUse =
 --CASE WHEN [Drawer Front Type] IN ('Solid', 'Five Piece') THEN 1
 --ELSE 0 END;
+
+--REMEMBER!!! to rename APA Soft Closing Salice to APA Soft Closing
+UPDATE [EXCELP&D].[dbo].[Drawer Guides]
+SET inUse =
+CASE WHEN [Drawer Guide Type] IN ('18" Side Mount Soft Closing (Sage # 8358)', 'Standard', 'Soft Closing', 'Meta box', 'N/A', 'APA Soft Closing') THEN 1
+ELSE 0 END;
 
 --INSERT INTO [EXCELP&D].[dbo].[Construction Type] ([Construction Type], inUse) VALUES ('FF/Euro', 1);
 
