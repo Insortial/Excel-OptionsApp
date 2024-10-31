@@ -60,40 +60,43 @@ const useSQLJobDetailsPost = () => {
         for(const lotTable of listOfLots) {
             const listOfSQLPartsOfLot:PartOfLotSQL[] = []
             const throughOutLot = lotTable.partsOfLot.find((partOfLot:PartOfLot) => partOfLot.roomID === "Throughout" || partOfLot.roomID === "Balance of House")
-            for(const [index, lotSection] of lotTable.partsOfLot.entries()) {
-                const partOfLot:PartOfLotSQL = {
-                    roomID: lotSection.roomID,
-                    material: getFormIDs(lotSection.material, "material"), 
-                    glassDoors: lotSection.glassDoors ? "YES" : "NO",
-                    glassShelves: lotSection.glassShelves ? "YES" : "NO",
-                    cabinetQty: 0,
-                    doorQty: 0,
-                    hingeQty: 0,
-                    knobQty: 0,
-                    drawerBoxQty: 0,
-                    drawerGuideQty: 0,
-                    pullQty: 0,
-                    color: getFormIDs(lotSection.color, "color"), 
-                    doors: lotSection.doors == "" ? "N/A" : lotSection.doors,
-                    fingerpull: lotSection.fingerpull,
-                    drawerFronts: getFormIDs(lotSection.drawerFronts, "drawerFronts"), 
-                    knobs: handlePullsAndKnobs("knobs", lotSection, throughOutLot), 
-                    drawerBoxes: decipherMixedOptions(throughOutLot, lotSection, "drawerBoxes"), 
-                    drawerGuides: decipherMixedOptions(throughOutLot, lotSection, "drawerGuides"), 
-                    doorHinges: decipherMixedOptions(throughOutLot, lotSection, "doorHinges"), 
-                    pulls: handlePullsAndKnobs("pulls", lotSection, throughOutLot),
-                    knobs2: handlePullsAndKnobs("knobs2", lotSection, throughOutLot),
-                    knobs2Qty: 0,
-                    pulls2: handlePullsAndKnobs("pulls2", lotSection, throughOutLot),
-                    pulls2Qty: 0,
-                    handleType: lotSection.handleType,
-                    details: lotSection.details,
-                }
+            if(throughOutLot) {
+               for(const [index, lotSection] of lotTable.partsOfLot.entries()) {
+                    const partOfLot:PartOfLotSQL = {
+                        roomID: lotSection.roomID,
+                        material: getFormIDs(lotSection.material, "material"), 
+                        glassDoors: lotSection.glassDoors ? "YES" : "NO",
+                        glassShelves: lotSection.glassShelves ? "YES" : "NO",
+                        cabinetQty: 0,
+                        doorQty: 0,
+                        hingeQty: 0,
+                        knobQty: 0,
+                        drawerBoxQty: 0,
+                        drawerGuideQty: 0,
+                        pullQty: 0,
+                        color: getFormIDs(lotSection.color, "color"), 
+                        doors: lotSection.doors == "" ? "N/A" : lotSection.doors,
+                        fingerpull: lotSection.fingerpull,
+                        drawerFronts: getFormIDs(throughOutLot.drawerFronts, "drawerFronts"), 
+                        knobs: handlePullsAndKnobs("knobs", lotSection, throughOutLot), 
+                        drawerBoxes: decipherMixedOptions(throughOutLot, lotSection, "drawerBoxes"), 
+                        drawerGuides: decipherMixedOptions(throughOutLot, lotSection, "drawerGuides"), 
+                        doorHinges: decipherMixedOptions(throughOutLot, lotSection, "doorHinges"), 
+                        pulls: handlePullsAndKnobs("pulls", lotSection, throughOutLot),
+                        knobs2: handlePullsAndKnobs("knobs2", lotSection, throughOutLot),
+                        knobs2Qty: 0,
+                        pulls2: handlePullsAndKnobs("pulls2", lotSection, throughOutLot),
+                        pulls2Qty: 0,
+                        handleType: lotSection.handleType,
+                        details: lotSection.details,
+                    }
 
-                if(index === 0 && !lotTable.hasThroughoutLot) 
-                    Object.assign(partOfLot, {material: 0, color: 0, doors: "", fingerpull: ""})
-                listOfSQLPartsOfLot.push(partOfLot)
+                    if(index === 0 && !lotTable.hasThroughoutLot) 
+                        Object.assign(partOfLot, {material: 0, color: 0, doors: "", fingerpull: ""})
+                    listOfSQLPartsOfLot.push(partOfLot)
+                } 
             }
+            
             const lotTableSQL:LotTableSQL = {
                 lot: lotTable.lot,
                 boxStyle: getFormIDs(lotTable.boxStyle, "boxStyle"),
@@ -152,11 +155,7 @@ const useSQLJobDetailsPost = () => {
 
         const finalJobDetails = JSON.stringify(jobDetailsSQL)
         const response = await fetchHook(isOptionsMode ? "/lotDetails" : "/packageDetails", "POST", isOptionsMode ? finalJobDetails : finalPackageDetails)
-        if (!response.ok) {
-            throw new Error(response.statusText);
-        }
-        const data = await response.json()
-        return data
+        return response.ok
     }
     return postSQLJobDetails;
 }

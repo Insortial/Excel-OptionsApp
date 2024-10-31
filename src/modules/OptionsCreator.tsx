@@ -10,6 +10,7 @@ import { OptionsCreatorObject } from "../types/ModalTypes.ts";
 import OptionsCreatorNav from "./OptionsCreatorNav.tsx";
 import validate from "../hooks/validate.tsx";
 import useSQLJobDetailsPost from "../hooks/useSQLJobDetailsPost.tsx";
+import Notification from "./Notification.tsx";
   
 function OptionsCreator() {
     const initialJobDetails:JobDetails = {
@@ -70,6 +71,7 @@ function OptionsCreator() {
     const [modalType, setModalType] = useState<string>("none")
     const [isLotCopy, setIsLotCopy] = useState<boolean>(false)
     const [modalInputValue, setModalInputValue] = useState<string>("")
+    const [submissionValid, setSubmissionValid] = useState<boolean|null>(null)
 
     //Package States
     const [packageProjects, setPackageProjects] = useState<string[]>([""])
@@ -81,6 +83,21 @@ function OptionsCreator() {
     const postSQLDetails = useSQLJobDetailsPost();
     const navigate = useNavigate();
     const requestedJobDetails = location.state;
+
+
+    useEffect(() => {
+        const beforeUnloadListener = (event:BeforeUnloadEvent) => {
+            event.preventDefault();
+        };
+
+        window.addEventListener("beforeunload", (event) =>
+            beforeUnloadListener(event)
+        );
+
+        return () => {
+            window.removeEventListener("beforeunload", beforeUnloadListener)
+        }
+    }, []);
 
     const sortListOfLots = (listOfLots: LotTableInterface[], newLot?: LotTableInterface) => {
         let updatedListOfLots:LotTableInterface[] = []
@@ -191,21 +208,32 @@ function OptionsCreator() {
             setModalType("none")
         }
     }
+    const setNotification = (submissionState:boolean) => {
+        setSubmissionValid(submissionState)
+
+        setTimeout(() => {
+            setSubmissionValid(null)
+        }, 3000)
+    }
 
     const saveLotTablesSQL = async () => {
+        let hasError = false
         console.log(jobDetails)
         console.log(listOfLots)
 
         if(jobDetails.prodReady) {
             const { errors, lotsHaveError } = getErrorState()
             setErrorState(errors, lotsHaveError)
-            
-            if(!lotsHaveError) 
-                await postSQLDetails(listOfLots, jobDetails, isOptionsMode, packageProjects, requestedJobDetails, loaderData)
-                //revalidator.revalidate()
+            hasError = lotsHaveError    
         } else {
-            postSQLDetails(listOfLots, jobDetails, isOptionsMode, packageProjects, requestedJobDetails, loaderData)
             setIsCheckingError(false)
+        }
+
+        if(!hasError) {
+            //revalidator.revalidate() 
+            const validJob = await postSQLDetails(listOfLots, jobDetails, isOptionsMode, packageProjects, requestedJobDetails, loaderData)
+            console.log(validJob)
+            setNotification(validJob)
         }
         setModalType("none")
     }
@@ -379,13 +407,14 @@ function OptionsCreator() {
 
     return (
         <>
-            <OptionsCreatorModal modalInputValue={modalInputValue} setModalInputValue={setModalInputValue} setModalType={setModalType} modalType={modalType} optionsCreatorObject={optionsCreatorObject}/>
+            <OptionsCreatorModal modalInputValue={modalInputValue} setModalInputValue={setModalInputValue} setModalType={setModalType} setIsLotCopy={setIsLotCopy} modalType={modalType} optionsCreatorObject={optionsCreatorObject}/>
             <OptionsCreatorNav isOptionsMode={isOptionsMode} jobDetails={jobDetails} currentLotNum={currentLotNum} listOfLots={listOfLots} onJobDetailsChange={onJobDetailsChange} setModalType={setModalType}
                 setIsLotCopy={setIsLotCopy} setCurrentLotNum={setCurrentLotNum} setCurrentLot={setCurrentLot} sortListOfLots={sortListOfLots} changeLotTable={changeLotTable}/>
             <div id="optionsEditor">
                 {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} onJobDetailsChange={onJobDetailsChange} jobDetails={jobDetails} setModalType={setModalType}
                                                                             lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode} />)}
             </div>
+            <Notification submissionValid={submissionValid}/>
         </>
     )
 }

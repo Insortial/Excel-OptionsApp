@@ -10,13 +10,14 @@ type OptionsCreatorModal = {
     modalInputValue: string,
     setModalType: React.Dispatch<React.SetStateAction<string>>,
     setModalInputValue: React.Dispatch<React.SetStateAction<string>>,
+    setIsLotCopy: React.Dispatch<React.SetStateAction<boolean>>,
     optionsCreatorObject?: OptionsCreatorObject,
     jobMenuObject?: JobMenuObject,
     packageObject?: PackageObject,
 }
 
 
-const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, setModalType, setModalInputValue, modalType, optionsCreatorObject, jobMenuObject, packageObject}) => {
+const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, setModalType, setModalInputValue, setIsLotCopy, modalType, optionsCreatorObject, jobMenuObject, packageObject}) => {
     const fetchHook = useFetch()
     const [errors, setErrors] = useState<ErrorObject>({})
 
@@ -28,6 +29,7 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
         setModalInputValue("")
         setErrors({})
         setModalType("none")
+        setIsLotCopy(false)
     }
 
     const deleteJobOption = () => {
