@@ -10,7 +10,7 @@ type OptionsCreatorModal = {
     modalInputValue: string,
     setModalType: React.Dispatch<React.SetStateAction<string>>,
     setModalInputValue: React.Dispatch<React.SetStateAction<string>>,
-    setIsLotCopy: React.Dispatch<React.SetStateAction<boolean>>,
+    setIsLotCopy?: React.Dispatch<React.SetStateAction<boolean>>,
     optionsCreatorObject?: OptionsCreatorObject,
     jobMenuObject?: JobMenuObject,
     packageObject?: PackageObject,
@@ -29,7 +29,9 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
         setModalInputValue("")
         setErrors({})
         setModalType("none")
-        setIsLotCopy(false)
+        
+        if(setIsLotCopy)
+            setIsLotCopy(false)
     }
 
     const deleteJobOption = () => {
