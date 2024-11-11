@@ -83,34 +83,34 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
     }
 
     const filterColors = (materialName:string):string[] => {
-        let filterWord = ""
+        let filterWords:string[] = []
         switch(materialName) {
             case "Soft Maple":
-                filterWord = "Stain 1 Pass"
+                filterWords = ["Stain 1 Pass", "Stain 2 Pass"]
                 break;
             case "White Oak Rift":
                 return ["Unfinished", "Clear", "Alto", "True Maple"]
             case "MDF":
-                filterWord = "Painted Finish"
+                filterWords = ["Painted Finish"]
                 break;
             case "Thermofoil 1-sided":
             case "Thermofoil 2-sided":
-                filterWord = "Thermofoil"
+                filterWords = ["Thermofoil"]
                 break;
             case "Acrylic":
-                filterWord = "Acrylic"
+                filterWords = ["Acrylic"]
                 break;
             case "Melamine":
-                filterWord = "Melamine"
+                filterWords = ["Melamine"]
                 break
             case "Laminate":
-                filterWord = "Laminate"
+                filterWords = ["Laminate"]
                 break
             default:
         }
 
         
-        return formOptions.color.filter((colorTuple:[number, string, string]) => colorTuple[2] === filterWord).map((colorTuple:[number, string, string]) => colorTuple[1])
+        return formOptions.color.filter((colorTuple:[number, string, string]) => filterWords.includes(colorTuple[2])).map((colorTuple:[number, string, string]) => colorTuple[1])
     }
 
     const filterProjects = (builderName:string):string[] => {

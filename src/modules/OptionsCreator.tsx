@@ -86,6 +86,7 @@ function OptionsCreator() {
 
 
     useEffect(() => {
+        console.log(location.pathname)
         const beforeUnloadListener = (event:BeforeUnloadEvent) => {
             event.preventDefault();
         };
@@ -97,7 +98,7 @@ function OptionsCreator() {
         return () => {
             window.removeEventListener("beforeunload", beforeUnloadListener)
         }
-    }, []);
+    }, [location.pathname]);
 
     const sortListOfLots = (listOfLots: LotTableInterface[], newLot?: LotTableInterface) => {
         let updatedListOfLots:LotTableInterface[] = []
@@ -191,6 +192,7 @@ function OptionsCreator() {
                 }
             } else {
                 table = Object.assign({}, listOfLots.find((lotDetails:LotTableInterface) => {return (isOptionsMode ? lotDetails.lot : lotDetails.plan) === currentLotNum}))
+                table.plan = jobDetails.lotNums.find(lotInfo => lotInfo.lotNum === modalInputValue)?.plan ?? ""
                 table.partsOfLot = Object.assign([], table.partsOfLot)
                 if(isOptionsMode)
                     table.lot = modalInputValue
