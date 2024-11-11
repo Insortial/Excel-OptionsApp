@@ -216,12 +216,12 @@ function OptionsCreator() {
         }, 3000)
     }
 
-    const saveLotTablesSQL = async () => {
+    const saveLotTablesSQL = async (prodReady:boolean) => {
         let hasError = false
         console.log(jobDetails)
         console.log(listOfLots)
 
-        if(jobDetails.prodReady) {
+        if(prodReady) {
             const { errors, lotsHaveError } = getErrorState()
             setErrorState(errors, lotsHaveError)
             hasError = lotsHaveError    
@@ -231,7 +231,7 @@ function OptionsCreator() {
 
         if(!hasError) {
             //revalidator.revalidate() 
-            const validJob = await postSQLDetails(listOfLots, jobDetails, isOptionsMode, packageProjects, requestedJobDetails, loaderData)
+            const validJob = await postSQLDetails(listOfLots, jobDetails, isOptionsMode, packageProjects, requestedJobDetails, loaderData, prodReady)
             console.log(validJob)
             setNotification(validJob)
         }
@@ -293,8 +293,7 @@ function OptionsCreator() {
     }
 
     const getErrorState = ():{errors: ErrorObject, lotsHaveError: boolean} => {
-        const availableLots = findAvailableLots()
-        return validate(jobDetails, listOfLots, currentLotNum, availableLots);
+        return validate(jobDetails, listOfLots, currentLotNum);
     }
 
     const setErrorState = (errors: ErrorObject, lotsHaveError: boolean) => {

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import InputSearch from './InputSearch'
 import { JobMenuObject, OptionsCreatorObject, PackageObject } from '../types/ModalTypes'
 import useFetch from '../hooks/useFetch'
-import { ErrorObject } from '../types/LotTableInterface'
+import { ErrorObject, LotInfo } from '../types/LotTableInterface'
 import InputError from './InputError'
 
 type OptionsCreatorModal = {
@@ -20,6 +20,8 @@ type OptionsCreatorModal = {
 const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, setModalType, setModalInputValue, setIsLotCopy, modalType, optionsCreatorObject, jobMenuObject, packageObject}) => {
     const fetchHook = useFetch()
     const [errors, setErrors] = useState<ErrorObject>({})
+    const [availableLots, setAvailableLots] = useState<LotInfo[]>([])
+    const [modalProdReady, setModalProdReady] = useState<boolean>(false)
 
     const handleInputChange = (event: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
         setModalInputValue(event.target.value)
@@ -53,6 +55,23 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
         }
     }
 
+    const findAvailableLots = ():LotInfo[]|undefined => {
+        return optionsCreatorObject?.jobDetails.lotNums.filter(
+            lotNum => !optionsCreatorObject?.listOfLots.find(lot => lot.lot === lotNum.lotNum)
+          );
+    }
+
+    const handleProdChoice = () => {
+        if(modalProdReady) {
+            setModalType("date")
+            const lots = findAvailableLots()
+            if(lots)
+                setAvailableLots(lots)
+        } else {
+            optionsCreatorObject?.saveLotTablesSQL(modalProdReady)
+        }
+    }
+
     const deletePackage = () => {
         if(packageObject?.packageDetails) {
             fetchHook(`/deletePackage/${packageObject?.packageDetails.packageID}`, "DELETE")
@@ -67,6 +86,14 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
             .catch((error) => console.error(error));
         } else {
             turnOffModal()
+        }
+    }
+
+    const submitJob = (bypass:boolean) => {
+        if(availableLots.length > 0 && !bypass) {
+            setModalType("availableLots")
+        } else {
+            optionsCreatorObject?.saveLotTablesSQL(true)
         }
     }
 
@@ -137,10 +164,10 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
                         <h2>Is This Production Schedule Final?</h2>
                         <div className="modalCheckboxRow">
                             <label>Yes:</label>
-                            <input type="checkbox" checked={optionsCreatorObject.jobDetails.prodReady} onChange={() => optionsCreatorObject.onJobDetailsChange(true, "prodReady")}></input>
+                            <input type="checkbox" checked={modalProdReady} onChange={() => setModalProdReady(true)}></input>
                             <label>No:</label>
-                            <input type="checkbox" checked={!optionsCreatorObject.jobDetails.prodReady} onChange={() => optionsCreatorObject.onJobDetailsChange(false, "prodReady")}></input>
-                            <button onClick={() => optionsCreatorObject.saveLotTablesSQL()}>Submit</button>
+                            <input type="checkbox" checked={!modalProdReady} onChange={() => setModalProdReady(false)}></input>
+                            <button onClick={() => handleProdChoice()}>Submit</button>
                         </div>
                     </>
                     : <>
@@ -153,7 +180,7 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
                                         </div>
                             })}
                             <button className="addProject" onClick={() => optionsCreatorObject?.setPackageProjects([...optionsCreatorObject.packageProjects, ""])}>Add Project</button>
-                            <button className="modalSubmit" onClick={() => optionsCreatorObject?.saveLotTablesSQL()}>Submit</button>
+                            <button className="modalSubmit" onClick={() => optionsCreatorObject?.saveLotTablesSQL(true)}>Submit</button>
                         </div>
                     </>
                  : modalType === "delete" ? 
@@ -198,6 +225,23 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
                         <button>Submit</button>
                     </form>
                     <InputError errorKey='roomID' errorState={errors}/>
+                </>
+                : modalType === "date" ? 
+                <>
+                    <h2>Enter Production Date:</h2>
+                    <div className='modalRow'>
+                        <input type="date" onChange={() => console.log()}></input>
+                        <button onClick={() => submitJob(false)}>Submit</button>
+                    </div>
+                </>
+                : modalType === "availableLots" ? 
+                <>
+                    <h2>Lots remain. Proceed anyway?</h2>
+                    <h3>Lot(s): {availableLots.map(lots => lots.lotNum).join(", ")}</h3>
+                    <div className="modalButtonRow">
+                        <button onClick={() => submitJob(true)}>YES</button>
+                        <button onClick={() => turnOffModal()}>NO</button>
+                    </div>
                 </>
                 : <>
                     <h1>Waiting for Result</h1>

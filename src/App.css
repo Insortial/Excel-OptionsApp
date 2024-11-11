@@ -90,6 +90,12 @@ input {
     border: 5px solid #ce4343;
 }
 
+#dollarDiv {
+    width: 25px;
+    background-color: #dfdede;
+    text-align: center;
+}
+
 .valid {
     box-shadow: 5px 10px green;
     border: 5px solid green;

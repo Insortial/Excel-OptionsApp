@@ -130,7 +130,7 @@ function JobCreator() {
 
 
   const validate = async () => {
-    const requiredFields = ["builder", "project", "optionCoordinator", "phase", "date", "jobID"];
+    const requiredFields = ["builder", "project", "optionCoordinator", "phase", "jobID"];
     const newErrors:ErrorObject = {};
     const jobIDIsValid = (await checkValidLotNumJobID([], Number(jobDetails["jobID"]))).isJobIDValid
     const jobHasBeenMade = (await checkJobHasBeenMade(Number(jobDetails["jobID"])))
@@ -194,11 +194,11 @@ function JobCreator() {
               </>
             ): (<h3 style={{color: "red"}}>Invalid Job ID</h3>)}
           </div>
-          <div className="formRow">
+          {/* <div className="formRow">
             <label htmlFor={"date"}>Date: </label>
             <InputSearch inputName={"date"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
             <InputError errorKey={"date"} errorState={errors}></InputError>
-          </div>
+          </div> */}
           <div className="formRow">
             <label htmlFor={"optionCoordinator"}>Options Coordinator: </label>
             <InputSearch inputName={"optionCoordinator"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>

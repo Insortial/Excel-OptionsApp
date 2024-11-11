@@ -1,6 +1,6 @@
-import { ErrorObject, JobDetails, LotInfo, LotTableInterface, PartOfLot } from "../types/LotTableInterface";
+import { ErrorObject, JobDetails, LotTableInterface, PartOfLot } from "../types/LotTableInterface";
 
-const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], currentLotNum:string, availableLots:LotInfo[]) => {
+const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], currentLotNum:string) => {
     const isHandleValid = (handleType:string, key:string, value:string, numOfKnobs:number, numOfPulls:number):boolean => {
         let partNum = 0
         const endChar = Number(key[key.length - 1])
@@ -45,10 +45,6 @@ const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], current
         if(requiredFieldsJob.includes(key) && !jobDetails[key as keyof JobDetails])
             newErrors[key] = "Field is required, please fill out"
     })
-
-    if(availableLots.length !== 0) {
-        newErrors["Lots Not Created"] = `Must make lot(s): ${availableLots.map(lots => lots.lotNum).join(", ")}`
-    }
 
     /* Iterates through lists of lots checks if any 
     part has input error, only records it if it is current lot */

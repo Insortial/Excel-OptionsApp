@@ -14,7 +14,7 @@ export interface OptionsCreatorObject {
     handlePackageDetailsChange: (value:string, propName:string) => void,  
     onJobDetailsChange: (value: string | boolean, key: string) => void, 
     setPackageProjects: React.Dispatch<React.SetStateAction<string[]>>, 
-    saveLotTablesSQL: () => void,
+    saveLotTablesSQL: (prodReady:boolean) => void,
     onProjectsChange?: (value: string, key: string, optSectionNum?:number) => void,
     addOptionRow: (lotName:string) => void,
 }

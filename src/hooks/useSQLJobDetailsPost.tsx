@@ -55,7 +55,7 @@ const useSQLJobDetailsPost = () => {
         return partName as string
     }
 
-    const postSQLJobDetails = async (listOfLots:LotTableInterface[], jobDetails:JobDetails, isOptionsMode:boolean, packageProjects:string[], requestedJobDetails:any, loaderData:JobOptionLoaderResponse) => {
+    const postSQLJobDetails = async (listOfLots:LotTableInterface[], jobDetails:JobDetails, isOptionsMode:boolean, packageProjects:string[], requestedJobDetails:any, loaderData:JobOptionLoaderResponse, prodReady: boolean) => {
         const listOfSQLLots:LotTableSQL[] = []
         for(const lotTable of listOfLots) {
             const listOfSQLPartsOfLot:PartOfLotSQL[] = []
@@ -136,7 +136,7 @@ const useSQLJobDetailsPost = () => {
             date: jobDetails.date,
             superintendent: jobDetails.superintendent,
             phone: jobDetails.phone,
-            prodReady: jobDetails.prodReady
+            prodReady: prodReady
         }
 
         let packageDetailsSQL:PackageDetailsSQL

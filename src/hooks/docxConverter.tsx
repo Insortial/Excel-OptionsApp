@@ -368,8 +368,10 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
             break: !partOfLot.glassDoors && !partOfLot.glassShelves ? 0 : 1
         })]
 
+        const appliances = ["Throughout", "Balance of House"].includes(partOfLot.roomID) ? readNewLine(partOfLot.appliances) : [new TextRun({break:0})]
+
         optionCellInfo = [...hardwareLine, ...glassSection, ...readNewLine(partOfLot.details), 
-        ...readNewLine(partOfLot.appliances)]
+        ...appliances]
 
         return optionCellInfo
     }
@@ -631,7 +633,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
 
     const pageTitle = new Paragraph({
         children: [new TextRun({
-            text: `${jobDetails.prodReady ? "" : "NOT"}APPROVED PRODUCTION SCHEDULE ${jobDetails.date}`,
+            text: `${jobDetails.prodReady ? "" : "NOT "}APPROVED PRODUCTION SCHEDULE ${jobDetails.date}`,
             bold: true,
             color: "000000",
         }),
