@@ -86,19 +86,17 @@ function OptionsCreator() {
 
 
     useEffect(() => {
-        console.log(location.pathname)
         const beforeUnloadListener = (event:BeforeUnloadEvent) => {
             event.preventDefault();
+            console.log()
         };
 
-        window.addEventListener("beforeunload", (event) =>
-            beforeUnloadListener(event)
-        );
+        window.addEventListener("beforeunload", beforeUnloadListener);
 
         return () => {
             window.removeEventListener("beforeunload", beforeUnloadListener)
         }
-    }, [location.pathname]);
+    }, []);
 
     const sortListOfLots = (listOfLots: LotTableInterface[], newLot?: LotTableInterface) => {
         let updatedListOfLots:LotTableInterface[] = []

@@ -1,4 +1,4 @@
-import React, {} from 'react'
+import React from 'react'
 import {
   createBrowserRouter,
   Navigate,
@@ -17,6 +17,7 @@ import useFetch from './hooks/useFetch.ts';
 
 const App: React.FC = () => {
   const fetchHook = useFetch()
+  
   const router = createBrowserRouter([
     {
       path: "/",
