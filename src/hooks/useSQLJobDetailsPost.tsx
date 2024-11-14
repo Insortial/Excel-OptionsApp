@@ -155,7 +155,7 @@ const useSQLJobDetailsPost = () => {
 
         const finalJobDetails = JSON.stringify(jobDetailsSQL)
         const response = await fetchHook(isOptionsMode ? "/lotDetails" : "/packageDetails", "POST", isOptionsMode ? finalJobDetails : finalPackageDetails)
-        return response.ok
+        return response
     }
     return postSQLJobDetails;
 }

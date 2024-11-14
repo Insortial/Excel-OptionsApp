@@ -75,6 +75,12 @@ export interface LotTableInterface {
     partsOfLot: PartOfLot[],
 }
 
+export interface FilterObject {
+    jobID: string;
+    builder: string;
+    project: string;
+}
+
 export interface JobDetailsSQL {
     jobID: number,
     doorBuyOut: boolean,

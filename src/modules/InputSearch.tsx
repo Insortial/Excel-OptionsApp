@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback, useContext, useRef } from "react"
 import React from 'react'
-import { LotTableInterface, PartOfLot, JobDetails, ErrorObject } from "../types/LotTableInterface";
+import { LotTableInterface, PartOfLot, JobDetails, ErrorObject, FilterObject } from "../types/LotTableInterface";
 import { FormOptionsContext } from "../context/OptionsTemplateContext";
 import { FormOptionsContextType } from "../types/FormOptions"
 import { useClickOutside } from "../hooks/useClickOutside";
 
 type inputOptions = {
     isDropDown: boolean;
-    formState: LotTableInterface | JobDetails | string[];
+    formState: FilterObject | LotTableInterface | JobDetails | string[];
     postfix?: string,
     optionSectionNum?: number;
     onFormChange?: (value: string, key: string, optSectionNum?: number) => void;
@@ -134,7 +134,8 @@ const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, on
         if(suggestion != undefined) {
             const prefix = input.target.value.toLowerCase()
             const stringArray:string[] = dropDownOptions
-            setSuggestion(stringArray?.filter((x: string) => x.toLowerCase().includes(prefix)).slice(0, 50));
+            stringArray.map((x: string) => console.log(x)).slice(0, 50)
+            setSuggestion(stringArray.filter((x: string) => x?.toLowerCase().includes(prefix)).slice(0, 50));
         }
     }
 

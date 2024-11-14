@@ -86,7 +86,7 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
         let filterWords:string[] = []
         switch(materialName) {
             case "Soft Maple":
-                filterWords = ["Stain 1 Pass", "Stain 2 Pass"]
+                filterWords = ["Stain 1 Pass", "Stain 2 Pass", "Stain"]
                 break;
             case "White Oak Rift":
                 return ["Unfinished", "Clear", "Alto", "True Maple"]

@@ -2,28 +2,36 @@
 import { useContext, useEffect, useState } from 'react'
 import JobDocument from './JobDocument.tsx';
 import { Link, useNavigate } from 'react-router-dom';
-import { JobDocumentInterface } from '../types//LotTableInterface.ts';
+import { JobDocumentInterface, FilterObject } from '../types//LotTableInterface.ts';
 import { FormOptionsContext } from '../context/OptionsTemplateContext.tsx';
 import { FormOptionsContextType } from '../types/FormOptions.ts';
 import useFetch from '../hooks/useFetch.ts';
 import OptionsCreatorModal from './OptionsCreatorModal.tsx';
 import { JobMenuObject } from '../types/ModalTypes.ts';
 import { LoggedInUpdate } from '../context/AuthContext.tsx';
+import InputSearch from './InputSearch.tsx';
 
 
 const JobMenu = () => {
     const [jobDocuments, setJobDocuments] = useState<JobDocumentInterface[]>([])
     const [modalType, setModalType] = useState<string>("none")
     const [jobDocument, setJobDocument] = useState<JobDocumentInterface|null>(null)
+    const [filterObject, setFilterObject] = useState<FilterObject>({jobID: '', builder: '', project: ''})
+    const [builderOptions, setBuilderOptions] = useState<string[]>([])
+    const [projectOptions, setProjectOptions] = useState<string[]>([])
     const [modalInputValue, setModalInputValue] = useState<string>("")
     const [isDeleteMode, setDeleteMode] = useState<boolean>(false)
-    const { setIsCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
+    const { setIsCheckingError, retrieveDropDown } = useContext(FormOptionsContext) as FormOptionsContextType
     const { saveLogInState } = LoggedInUpdate()
     const fetchHook = useFetch()
     const navigate = useNavigate()
     
     useEffect(() => {
         setIsCheckingError(false)
+        const builders = retrieveDropDown("builder")
+        const projects = retrieveDropDown("project")
+        setBuilderOptions(builders)
+        setProjectOptions(projects)
         refreshJobMenu()
     }, [])
 
@@ -42,6 +50,24 @@ const JobMenu = () => {
         setJobDocument(jobDocDetails)
     }
 
+    const onFilterChange = (value: string, key: string) => {
+        /* let filterKey = ""
+        switch(key) {
+            case "jobID":
+                filterKey = "filterJobID"
+                break;
+            case "builder":
+                filterKey = "filterBuilder"
+                break;
+            case "project":
+                filterKey = "filterProject"
+                break;
+            default:
+                break;
+        } */
+        setFilterObject({...filterObject, [key]: value})
+    }
+
     const jobMenuObject:JobMenuObject = {
         jobDocument: jobDocument,
         refreshJobMenu: refreshJobMenu,
@@ -56,6 +82,13 @@ const JobMenu = () => {
         await fetch(`${import.meta.env.VITE_AUTH_URL}/logout`, config)
         saveLogInState(false)
         navigate("/login", { replace: true })
+    }
+
+    const filterJobDocuments = (jobDocument:JobDocumentInterface):boolean =>{
+        const jobID = jobDocument.jobID.toString()
+        return (jobDocument.customerName === filterObject.builder || filterObject.builder === "")
+                && (jobDocument.projectName === filterObject.project || filterObject.project === "")
+                && (jobID.includes(filterObject.jobID) || jobID === "")
     }
 
     return (
@@ -73,12 +106,22 @@ const JobMenu = () => {
                 <div id="jobMenuBody">
                     <section className='jobMenuSection'>
                         <nav id="menuSettings">
+                            <div id="filterOptions">
+                                <label>Job ID:</label>
+                                <InputSearch isDropDown={false} formState={filterObject} onFormChange={onFilterChange} inputName={'jobID'} />
+                                <label>Builder:</label>
+                                <InputSearch isDropDown={true} formState={filterObject} onFormChange={onFilterChange} inputName={'builder'} />
+                                <label>Project:</label>
+                                <InputSearch isDropDown={true} formState={filterObject} onFormChange={onFilterChange} inputName={'project'} />
+                                <button onClick={() => setFilterObject({jobID: '', builder: '', project: ''})}>Reset Filters</button>
+                            </div>
+
                             <button onClick={() => setDeleteMode(!isDeleteMode)}>Delete Jobs</button>
                         </nav>
                         <h2>Draft Jobs</h2>
                         <section className="jobList">
                             {jobDocuments.map((jobDocument:JobDocumentInterface, index:number) => {
-                                if(!jobDocument.prodReady)
+                                if(!jobDocument.prodReady && filterJobDocuments(jobDocument))
                                     return <JobDocument key={index} JobDocumentDetails={jobDocument} isDeleteMode={isDeleteMode} turnOnDeleteModal={turnOnDeleteModal}/>
                             })}
                         </section>
@@ -87,7 +130,7 @@ const JobMenu = () => {
                         <h2>Production Ready Jobs</h2>
                         <section className="jobList">
                             {jobDocuments.map((jobDocument:JobDocumentInterface, index:number) => {
-                                if(jobDocument.prodReady)
+                                if(jobDocument.prodReady && filterJobDocuments(jobDocument))
                                 return <JobDocument key={index} JobDocumentDetails={jobDocument} isDeleteMode={isDeleteMode} turnOnDeleteModal={turnOnDeleteModal}/>
                             })}
                         </section>

@@ -67,7 +67,28 @@ input {
 
 #menuSettings {
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#filterOptions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#filterOptions > select {
+    height: 100%;
+}
+
+#filterOptions > .optionSearchContainer {
+    border: 1px solid black;
+    width: auto;
+    margin-right: 10px;
+}
+
+#filterOptions > label {
+    margin-right: 10px;
 }
 
 .notification {

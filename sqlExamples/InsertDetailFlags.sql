@@ -49,6 +49,8 @@ ELSE 0 END;
 
 --INSERT INTO [EXCELP&D].[dbo].[Construction Type] ([Construction Type], inUse) VALUES ('FF/Euro', 1);
 
+--INSERT INTO [EXCELP&D].[dbo].[Doors] ([Door ID], [Door Name], [Corona Part], inUse) VALUES ('ECI-360', 'reessed modern shaker .75" rail door mitered', 'internal', 1);
+
 --UPDATE [EXCELP&D].[dbo].[Doors]
 --SET inUse =
 --CASE WHEN [Door ID] IN ('N/A', 'ECI-115', 'ECI-210', 'ECI-215', 'ECI-230', 'ECI-240', 'ECI-330', 

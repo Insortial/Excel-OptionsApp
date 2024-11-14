@@ -232,8 +232,12 @@ function OptionsCreator() {
         if(!hasError) {
             //revalidator.revalidate() 
             const validJob = await postSQLDetails(listOfLots, jobDetails, isOptionsMode, packageProjects, requestedJobDetails, loaderData, prodReady)
-            console.log(validJob)
-            setNotification(validJob)
+            const responseBody = await validJob.json()
+            console.log(responseBody)
+            console.log(location.pathname)
+            if(location.pathname === '/optionCreator/')
+                navigate(`/optionCreator/jobOption/${responseBody.jobDocumentID}`)
+            setNotification(validJob.ok)
         }
         setModalType("none")
     }
