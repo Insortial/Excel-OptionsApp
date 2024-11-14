@@ -17,21 +17,15 @@ const JobMenu = () => {
     const [modalType, setModalType] = useState<string>("none")
     const [jobDocument, setJobDocument] = useState<JobDocumentInterface|null>(null)
     const [filterObject, setFilterObject] = useState<FilterObject>({jobID: '', builder: '', project: ''})
-    const [builderOptions, setBuilderOptions] = useState<string[]>([])
-    const [projectOptions, setProjectOptions] = useState<string[]>([])
     const [modalInputValue, setModalInputValue] = useState<string>("")
     const [isDeleteMode, setDeleteMode] = useState<boolean>(false)
-    const { setIsCheckingError, retrieveDropDown } = useContext(FormOptionsContext) as FormOptionsContextType
+    const { setIsCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const { saveLogInState } = LoggedInUpdate()
     const fetchHook = useFetch()
     const navigate = useNavigate()
     
     useEffect(() => {
         setIsCheckingError(false)
-        const builders = retrieveDropDown("builder")
-        const projects = retrieveDropDown("project")
-        setBuilderOptions(builders)
-        setProjectOptions(projects)
         refreshJobMenu()
     }, [])
 
