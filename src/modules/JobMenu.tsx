@@ -25,7 +25,7 @@ const JobMenu = () => {
     const navigate = useNavigate()
     
     useEffect(() => {
-        setIsCheckingError(false)
+        setIsCheckingError(false) 
         refreshJobMenu()
     }, [])
 
@@ -45,20 +45,6 @@ const JobMenu = () => {
     }
 
     const onFilterChange = (value: string, key: string) => {
-        /* let filterKey = ""
-        switch(key) {
-            case "jobID":
-                filterKey = "filterJobID"
-                break;
-            case "builder":
-                filterKey = "filterBuilder"
-                break;
-            case "project":
-                filterKey = "filterProject"
-                break;
-            default:
-                break;
-        } */
         setFilterObject({...filterObject, [key]: value})
     }
 

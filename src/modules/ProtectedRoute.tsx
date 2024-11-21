@@ -10,7 +10,7 @@ type ProtectedRouteType = {
 const ProtectedRoute = ({allowedRoles}:ProtectedRouteType) => {
     const { accessToken } = AuthInfo()
     const decodedToken:DecodedToken|undefined = accessToken !== "token" ? jwtDecode(accessToken) : undefined
-
+    console.log(decodedToken)
     return (
         (decodedToken !== undefined && decodedToken.roles.find(role => allowedRoles.includes(role)))
             ? <Outlet />

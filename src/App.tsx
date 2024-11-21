@@ -17,7 +17,6 @@ import useFetch from './hooks/useFetch.ts';
 
 const App: React.FC = () => {
   const fetchHook = useFetch()
-  
   const router = createBrowserRouter([
     {
       path: "/",

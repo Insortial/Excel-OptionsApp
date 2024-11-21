@@ -17,9 +17,8 @@ export const jobOptionLoader = async (optionID:string|undefined, fetchHook:(url:
 
     const response = await fetchHook(`/getJobOption/${optionID}`, "GET")
     if (!response.ok) {
-        throw new Error(response.statusText);
+        return null
     }
-
     console.log(response)
 
     const data = await response.json()
