@@ -1,6 +1,8 @@
 variables:
   IMAGE_NAME: options-react
   IMAGE_TAG: 1.0
+  TEST_TAG: test
+  PROD_TAG: prod
 
 stages:
   - build
@@ -19,8 +21,8 @@ build_image_test:
     - ./setup_env.sh
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-    - docker build -t $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG .
-    - docker push $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG
+    - docker build -t $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$TEST_TAG .
+    - docker push $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$TEST_TAG
 
 build_image_prod: 
   stage: build
@@ -30,8 +32,8 @@ build_image_prod:
     - ./setup_env.sh
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-    - docker build -t $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG .
-    - docker push $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$IMAGE_TAG
+    - docker build -t $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$PROD_TAG .
+    - docker push $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$PROD_TAG
 
 
 
