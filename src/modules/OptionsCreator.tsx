@@ -386,7 +386,7 @@ function OptionsCreator() {
                 setPackageProjects(loadedData.packageDetails.projects)
             }
         } else {
-            navigate("/")
+            navigate("/jobMenu")
         }
     }, [requestedJobDetails, loaderData])
 
