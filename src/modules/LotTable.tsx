@@ -218,8 +218,9 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
                         <th colSpan={2}>Lot Option Contract Value</th>
                         <td colSpan={3}>
                             <section id="optionsValueCell">
-                                <span id="dollarDiv">$</span>
+                                <span className="valueDiv">$</span>
                                 <InputSearch inputName={"lotOptionsValue"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
+                                <span id="centsDiv" className="valueDiv">.00</span>
                             </section>
                         </td>
                     </tr>

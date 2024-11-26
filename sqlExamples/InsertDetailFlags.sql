@@ -30,7 +30,7 @@
 
 --UPDATE [EXCELP&D].[dbo].[Construction Type]
 --SET inUse = 
---CASE WHEN [Construction Type] IN ('FaceFrame', 'Euro') THEN 1
+--CASE WHEN [Construction Type] IN ('FaceFrame', 'Euro', 'FF/Euro') THEN 1
 --ELSE 0 END;
 
 --UPDATE [EXCELP&D].[dbo].[Drawer Boxes]
@@ -47,13 +47,11 @@ SET inUse =
 CASE WHEN [Drawer Guide Type] IN ('18" Side Mount Soft Closing (Sage # 8358)', 'Standard', 'Soft Closing', 'Meta box', 'N/A', 'APA Soft Closing') THEN 1
 ELSE 0 END;
 
---INSERT INTO [EXCELP&D].[dbo].[Construction Type] ([Construction Type], inUse) VALUES ('FF/Euro', 1);
-
 --INSERT INTO [EXCELP&D].[dbo].[Doors] ([Door ID], [Door Name], [Corona Part], inUse) VALUES ('ECI-360', 'reessed modern shaker .75" rail door mitered', 'internal', 1);
 
 --UPDATE [EXCELP&D].[dbo].[Doors]
 --SET inUse =
---CASE WHEN [Door ID] IN ('N/A', 'ECI-115', 'ECI-210', 'ECI-215', 'ECI-230', 'ECI-240', 'ECI-330', 
+--CASE WHEN [Door ID] IN ('N/A', 'ECI-115', 'ECI-210', 'ECI-215', 'ECI-230', 'ECI-240', 'ECI-330', 'ECI-360',
 --'ECI-370', 'ECI-371', 'ECI-375', 'ECI-376', 'ECI-380', 'ECI-390', 'ECI-400', 'ECI-405', 'ECI-420', 
 --'ECI-435', 'ECI-605', 'ECI-606', 'ECI-615', 'ECI-625', 'ECI-640') THEN 1
 --ELSE 0 END;

@@ -111,10 +111,15 @@ input {
     border: 5px solid #ce4343;
 }
 
-#dollarDiv {
+.valueDiv {
     width: 25px;
     background-color: #dfdede;
     text-align: center;
+}
+
+#centsDiv {
+    width: 30px;
+    background-color: #bbb9b9;
 }
 
 .valid {
@@ -363,7 +368,7 @@ input {
 }
 
 #lotOptionsValue {
-    text-align: left;
+    text-align: right;
 }
 
 .modalRow {
