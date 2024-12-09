@@ -92,7 +92,8 @@ const useSQLJobDetailsPost = () => {
                     }
 
                     if(index === 0 && !lotTable.hasThroughoutLot) 
-                        Object.assign(partOfLot, {material: 0, color: 0, doors: "", fingerpull: ""})
+                        Object.assign(partOfLot, {material: getFormIDs("N/A", "material"), color: getFormIDs("N/A", "color"), doors: "N/A", fingerpull: "",
+                                                  pulls: "1", pulls2: "1", knobs: "1", knobs2: "1", glassDoors: "NO", glassShelves: "NO"})
                     listOfSQLPartsOfLot.push(partOfLot)
                 } 
             }
