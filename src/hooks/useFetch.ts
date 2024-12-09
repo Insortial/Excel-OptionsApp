@@ -1,10 +1,6 @@
-/* import { useNavigate } from 'react-router-dom'; */
-/* import { AuthInfo, AuthUpdate } from '../context/AuthContext'; */
 import { getToken } from './refreshToken';
 
 const useFetch = () => {
-    //const { saveAccessToken } = AuthUpdate()
-    //const { accessToken } = AuthInfo()
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
@@ -19,21 +15,6 @@ const useFetch = () => {
         return response
     }
 
-    /* const refreshToken = async () => {
-        config.method = "POST"
-        try {
-            const response = await fetch(`${import.meta.env.VITE_AUTH_URL}/token`, config)
-            const data = await response.json()   
-            saveAccessToken(data.accessToken)
-            return data.accessToken
-        } catch (err) {
-            let message = 'Unknown Error'
-            if (err instanceof Error) message = err.message
-            reportError({ message })
-            return undefined
-        }
-    } */
-
     const callFetch = async (url:string, requestType:string, body?:BodyInit) => {
         const accessToken = await getToken()
         myHeaders.set("Authorization", `Bearer ${accessToken}`)
@@ -47,17 +28,6 @@ const useFetch = () => {
             config.body = body ?? {} as BodyInit
 
         const response = await originalRequest(url, config)
-        /* if(response.status == 401) {
-            const newAccessToken = await refreshToken()
-            if(newAccessToken == undefined) {
-                //navigate("/login", { replace: true })
-                return response
-            }
-            config.method = requestType
-            myHeaders.set("Authorization", `Bearer ${newAccessToken}`)
-            response = await originalRequest(url, config)
-            return response
-        } */
         return response
     }
 

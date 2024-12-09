@@ -27,7 +27,7 @@ const App: React.FC = () => {
       element: <Login />
     },
     {
-      element: <ProtectedRoute allowedRoles={["ADMIN", "OPTIONS"]}/>,
+      element: <ProtectedRoute allowedRoles={["ADMIN", "OPT"]}/>,
       children: [
         {
           path: "/creatingJob",

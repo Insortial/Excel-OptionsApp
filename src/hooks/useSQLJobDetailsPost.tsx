@@ -101,7 +101,7 @@ const useSQLJobDetailsPost = () => {
                 lot: lotTable.lot,
                 boxStyle: getFormIDs(lotTable.boxStyle, "boxStyle"),
                 interiors: getFormIDs(lotTable.interiors, "interiors"),
-                lotOptionsValue: parseInt(lotTable.lotOptionsValue),
+                lotOptionsValue: isNaN(parseInt(lotTable.lotOptionsValue)) ? 0 : parseInt(lotTable.lotOptionsValue),
                 partsOfLot: listOfSQLPartsOfLot,
                 plan: lotTable.plan,
                 //Start of LotDocument properties
