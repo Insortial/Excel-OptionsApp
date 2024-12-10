@@ -696,7 +696,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
                             children : [new TextRun({text: name, break: 1}), 
                                         new TextRun({text: '\nOptions Coordinator', break: 1}), 
                                         new TextRun({text: '\n225 Jason Court, Corona CA 92879', break: 1}),
-                                        new TextRun({text: '\nOffice (951) 279-4545 Ext 215', break: 1}), 
+                                        new TextRun({text: '\nOffice (951) 279-4545', break: 1}), 
                                         new TextRun({text: '\nFax (951) 279-4544', break: 1})],
                             alignment: AlignmentType.CENTER
                         })]

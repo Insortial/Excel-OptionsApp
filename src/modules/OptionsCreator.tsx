@@ -175,7 +175,6 @@ function OptionsCreator() {
 
     const addLotTable = () => {
         let table:LotTableInterface;
-        console.log(modalInputValue)
         if(modalInputValue !== "") {
             if(!isLotCopy) {
                 if(["", "None"].includes(packageDetails.packageName))
@@ -185,8 +184,6 @@ function OptionsCreator() {
                     table = Object.assign({}, packageDetails.plans.find((lotDetails:LotTableInterface) => {return lotDetails.plan === packageDetails.planName}))
                     table.lot = modalInputValue
                     table.partsOfLot = Object.assign([], table.partsOfLot)
-                    console.log(listOfLots)
-                    console.log(table)
                 }
             } else {
                 table = Object.assign({}, listOfLots.find((lotDetails:LotTableInterface) => {return (isOptionsMode ? lotDetails.lot : lotDetails.plan) === currentLotNum}))
@@ -197,8 +194,6 @@ function OptionsCreator() {
                 else
                     table.plan = modalInputValue
                 setIsLotCopy(false)
-                console.log(listOfLots)
-                console.log(table)
             }
             sortListOfLots(listOfLots, table)
             changeLotTable(modalInputValue)
@@ -218,8 +213,6 @@ function OptionsCreator() {
 
     const saveLotTablesSQL = async (prodReady:boolean) => {
         let hasError = false
-        console.log(jobDetails)
-        console.log(listOfLots)
 
         if(prodReady) {
             const { errors, lotsHaveError } = getErrorState()
@@ -233,8 +226,6 @@ function OptionsCreator() {
             //revalidator.revalidate() 
             const validJob = await postSQLDetails(listOfLots, jobDetails, isOptionsMode, packageProjects, requestedJobDetails, loaderData, prodReady)
             const responseBody = await validJob.json()
-            console.log(responseBody)
-            console.log(location.pathname)
             if(location.pathname === '/optionCreator/')
                 navigate(`/optionCreator/jobOption/${responseBody.jobDocumentID}`)
             setNotification(validJob.ok)

@@ -30,7 +30,6 @@ const useSQLJobDetailsPost = () => {
                 return getFormIDs("Standard", propName)
             }
         } else {
-            console.log(roomID + " DO")
             return getFormIDs(value as string, propName)
         }
     }
