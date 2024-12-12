@@ -132,9 +132,14 @@ function JobCreator() {
   const validate = async () => {
     const requiredFields = ["builder", "project", "optionCoordinator", "phase", "jobID"];
     const newErrors:ErrorObject = {};
-    const jobIDIsValid = (await checkValidLotNumJobID([], Number(jobDetails["jobID"]))).isJobIDValid
-    const jobHasBeenMade = (await checkJobHasBeenMade(Number(jobDetails["jobID"])))
-    const jobNotMadeInAccess = (await checkJobMadeInAccess(Number(jobDetails["jobID"])))
+    const jobIDIsValid = (await checkValidLotNumJobID([], Number(jobDetails.jobID))).isJobIDValid
+    const jobHasBeenMade = (await checkJobHasBeenMade(Number(jobDetails.jobID)))
+    const jobNotMadeInAccess = (await checkJobMadeInAccess(Number(jobDetails.jobID)))
+
+
+    if(jobDetails.lotNums.length === 0)
+      newErrors["jobID"] = "Lots have not been created at this jobID"
+
     if(jobHasBeenMade)
       newErrors["jobID"] = "Job Options have already been created"
     

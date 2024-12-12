@@ -1,21 +1,20 @@
-CREATE TABLE [EXCELP&D].[dbo].[Plans] (
-	[planID] [int] IDENTITY(1,1) PRIMARY KEY,
-	[jobIDFK] [int] NOT NULL,
-	[planNumber] [nvarchar](255) NULL,
-	[thisPhaseOnly] [bit] NULL,
-	[draft] [bit] NULL,
-);
+--CREATE TABLE [EXCELP&D].[dbo].[Plans] (
+--	[planID] [int] IDENTITY(1,1) PRIMARY KEY,
+--	[jobIDFK] [int] NOT NULL,
+--	[planNumber] [nvarchar](255) NULL,
+--	[thisPhaseOnly] [bit] NULL,
+--);
 
 CREATE TABLE [EXCELP&D].[dbo].[WorkOrders] (
-	workOrderID int IDENTITY(1,1) PRIMARY KEY,
+	workOrderID int IDENTITY(10000,1) PRIMARY KEY,
 	userIDFK int,
-	jobIDFK int,
 	dateCreated DATE,
+	dateNeeded DATE,
+	completed BIT NOT NULL,
 	FOREIGN KEY (userIDFK) REFERENCES Users(userID),
-	FOREIGN KEY (jobIDFK) REFERENCES Jobs([Job ID])
 );
 
-CREATE TABLE [EXCELP&D].[dbo].[WorkOrderEntry] (
+CREATE TABLE [EXCELP&D].[dbo].[WorkOrderEntries] (
 	workOrderEntryID int IDENTITY(1,1) PRIMARY KEY,
 	workOrderIDFK int,
 	partCompleted BIT,
