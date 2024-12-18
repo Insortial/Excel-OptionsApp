@@ -98,13 +98,21 @@ function OptionsCreator() {
         }
     }, []);
 
-    const sortListOfLots = (listOfLots: LotTableInterface[], newLot?: LotTableInterface) => {
+    const sortListOfLots = (listOfLots: LotTableInterface[], newLot?: LotTableInterface, jobLotList?:LotInfo[]) => {
         let updatedListOfLots:LotTableInterface[] = []
+        let lotNums;
+
         if(typeof newLot === "undefined")
             updatedListOfLots = listOfLots
         else
             updatedListOfLots = [...listOfLots, newLot]
-        setListOfLots(updatedListOfLots.sort((a, b) => jobDetails.lotNums.findIndex(lot => lot.lotNum === a.lot) - jobDetails.lotNums.findIndex(lot => lot.lotNum === b.lot)))
+
+        if(typeof jobLotList === "undefined")
+            lotNums = jobDetails.lotNums
+        else
+            lotNums = jobLotList
+
+        setListOfLots(updatedListOfLots.sort((a, b) => lotNums.findIndex(lot => lot.lotNum === a.lot) - lotNums.findIndex(lot => lot.lotNum === b.lot)))
     }
 
     const createLotTable = (lotInputValue: string): LotTableInterface => {
@@ -348,7 +356,7 @@ function OptionsCreator() {
             //Accessing existing Job Document
             if(Object.prototype.hasOwnProperty.call(loadedData, 'jobDetails')) {
                 setJobDetails(loadedData.jobDetails)
-                sortListOfLots(loadedData.listOfLots)
+                sortListOfLots(loadedData.listOfLots, undefined, loadedData.jobDetails.lotNums)
                 setCurrentLot(loadedData.listOfLots[0])
                 setCurrentLotNum(loadedData.listOfLots[0].lot)
                 if(loadedData.hasPackage) {
@@ -371,7 +379,7 @@ function OptionsCreator() {
                     date: "",
                     prodReady: false
                 })
-                sortListOfLots(loadedData.listOfLots)
+                setListOfLots(loadedData.listOfLots)
                 setCurrentLot(loadedData.listOfLots[0])
                 setCurrentLotNum(loadedData.listOfLots[0].plan)
                 setPackageProjects(loadedData.packageDetails.projects)
