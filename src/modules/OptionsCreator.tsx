@@ -104,7 +104,7 @@ function OptionsCreator() {
             updatedListOfLots = listOfLots
         else
             updatedListOfLots = [...listOfLots, newLot]
-        setListOfLots(updatedListOfLots.sort((a, b) => parseInt(a.lot ?? "0") - parseInt(b.lot ?? "0")))
+        setListOfLots(updatedListOfLots.sort((a, b) => jobDetails.lotNums.findIndex(lot => lot.lotNum === a.lot) - jobDetails.lotNums.findIndex(lot => lot.lotNum === b.lot)))
     }
 
     const createLotTable = (lotInputValue: string): LotTableInterface => {
