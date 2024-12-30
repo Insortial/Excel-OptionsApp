@@ -1,7 +1,9 @@
-import React, { useRef } from 'react'
+import React, { useContext, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { AuthUpdate, LoggedInUpdate } from '../context/AuthContext';
 import Header from './Header';
+import { FormOptionsContextType } from '../types/FormOptions';
+import { FormOptionsContext } from '../context/OptionsTemplateContext';
 
 
 const Login = () => {
@@ -9,6 +11,7 @@ const Login = () => {
   const passwordRef = useRef<HTMLInputElement>(null);
   const { saveAccessToken } = AuthUpdate()
   const { saveLogInState } = LoggedInUpdate()
+  const { updateDropDowns } = useContext(FormOptionsContext) as FormOptionsContextType
   const myHeaders = new Headers();
   const navigate = useNavigate();
   myHeaders.append("Content-Type", "application/json");
@@ -37,11 +40,12 @@ const Login = () => {
     saveAccessToken(data.accessToken)
 
     if(data.success) {
+      updateDropDowns(data.accessToken)
       navigate("/jobMenu", {replace: true})
       saveLogInState(true)
     }
-      
   }
+  
   return (
     <div id="loginPage">
         <Header />

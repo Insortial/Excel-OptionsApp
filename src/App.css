@@ -1049,11 +1049,11 @@ h1 {
 
 .optionResults > div {
     padding: 2px 5px;
-    background-color: white;
+    background-color: #F2F2F2;
 }
 
 .optionResults > div:hover {
-    background-color: #f2eeed;
+    background-color: #c4c4c4;
     cursor: pointer;
 }
 

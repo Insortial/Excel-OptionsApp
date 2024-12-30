@@ -30,6 +30,10 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
     const { accessToken } = AuthInfo()
     
     useEffect(() => {
+        updateDropDowns(accessToken)
+    }, [])
+
+    const updateDropDowns = async (accessToken:string)  => {
         const myHeaders = new Headers()
         myHeaders.append("Authorization", `Bearer ${accessToken}`)
         const config:RequestInit = {
@@ -38,36 +42,36 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
         }
 
         fetch(import.meta.env.VITE_BACKEND_URL + "/dropDownInfo", config)
-                .then((response) => response.text())
-                .then((result) => {
-                    console.log(JSON.parse(result))
-                    const formListObject = JSON.parse(result)
-                    const formList = formListObject.formList
-                    const formOptions:FormOptionsInterface = {
-                        builder: formList.builder,
-                        project: formList.project, 
-                        foreman: formList.foreman,
-                        jobID: formList.jobID, 
-                        boxStyle: formList.boxStyle,
-                        drawerBoxes: formList.drawerBoxes, 
-                        interiors: formList.interiors,
-                        drawerFronts: formList.drawerFronts,
-                        drawerGuides: formList.drawerGuides,
-                        doorHinges: formList.doorHinges, 
-                        material: formList.material, 
-                        knobs: formList.knobs,
-                        color: formList.color,
-                        doors: formList.doors, 
-                        pulls: formList.pulls,
-                    }
-                    setFormOptions(formOptions)
-                    setLoaded(true)
-                })
-                .catch((error) => {
-                    console.error(error)
-                    setLoaded(false)
-                });
-      }, [])
+            .then((response) => response.text())
+            .then((result) => {
+                console.log(JSON.parse(result))
+                const formListObject = JSON.parse(result)
+                const formList = formListObject.formList
+                const formOptions:FormOptionsInterface = {
+                    builder: formList.builder,
+                    project: formList.project, 
+                    foreman: formList.foreman,
+                    jobID: formList.jobID, 
+                    boxStyle: formList.boxStyle,
+                    drawerBoxes: formList.drawerBoxes, 
+                    interiors: formList.interiors,
+                    drawerFronts: formList.drawerFronts,
+                    drawerGuides: formList.drawerGuides,
+                    doorHinges: formList.doorHinges, 
+                    material: formList.material, 
+                    knobs: formList.knobs,
+                    color: formList.color,
+                    doors: formList.doors, 
+                    pulls: formList.pulls,
+                }
+                setFormOptions(formOptions)
+                setLoaded(true)
+            })
+            .catch((error) => {
+                console.error(error)
+                setLoaded(false)
+            });
+    }
 
     const saveFormOptions = (formOptions: FormOptionsInterface) => {
         setFormOptions(formOptions)
@@ -158,7 +162,7 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
     }
 
     return (
-        <FormOptionsContext.Provider value={{ filterProjects, loaded, getFormIDs, errors, setErrors, isCheckingError, setIsCheckingError, formOptions, saveFormOptions, retrieveDropDown, filterColors }}>
+        <FormOptionsContext.Provider value={{ filterProjects, loaded, getFormIDs, errors, setErrors, isCheckingError, setIsCheckingError, formOptions, saveFormOptions, retrieveDropDown, filterColors, updateDropDowns }}>
             {children}
         </FormOptionsContext.Provider>
     )

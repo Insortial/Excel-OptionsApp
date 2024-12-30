@@ -30,6 +30,7 @@ export type FormOptionsContextType = {
     getFormIDs: (value:string, propertyName:string) => number;
     filterColors: (materialName:string) => string[];
     filterProjects: (builderName:string) => string[];
+    updateDropDowns: (accessToken:string) => void;
 }
 
 export type AdminDashboardInfoContextType = {

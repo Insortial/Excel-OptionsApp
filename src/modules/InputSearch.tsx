@@ -158,7 +158,7 @@ const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, on
                     return <div key={index} onMouseDown={() => handleOptionClick(index)}
                     style={{
                         backgroundColor:
-                        index === focusedIndex ? "#f2eeed" : "",
+                        index === focusedIndex ? "#c4c4c4" : "",
                     }}
                     >{x}</div>
                 })}
