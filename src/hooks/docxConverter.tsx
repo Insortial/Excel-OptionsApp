@@ -340,7 +340,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
         })
     }
 
-    const outputOptionCellInfo = (partOfLot:PartOfLot) => {
+    const outputOptionCellInfo = (partOfLot:PartOfLot, lot:LotTableInterface) => {
         let optionCellInfo = []
         const hardwareLine = [new TextRun({
             text: partOfLot.doors !== "" ? `Doors: ${partOfLot.doors} ${partOfLot.fingerpull}` : ""
@@ -368,7 +368,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
             break: !partOfLot.glassDoors && !partOfLot.glassShelves ? 0 : 1
         })]
 
-        const appliances = ["Throughout", "Balance of House"].includes(partOfLot.roomID) ? readNewLine(partOfLot.appliances) : [new TextRun({break:0})]
+        const appliances = ["Throughout", "Balance of House"].includes(partOfLot.roomID) ? [new TextRun({break: 1}), ...readNewLine(lot.appliances)] : [new TextRun({break:0})]
 
         optionCellInfo = [...hardwareLine, ...glassSection, ...readNewLine(partOfLot.details), 
         ...appliances]
@@ -395,7 +395,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
                 width: { size: 15, type: WidthType.PERCENTAGE },
             }),
             new TableCell({
-                children: [new Paragraph({children: outputOptionCellInfo(lotSection)})],
+                children: [new Paragraph({children: outputOptionCellInfo(lotSection, selectedLot)})],
                 width: { size: 40, type: WidthType.PERCENTAGE },
             }),
         ]

@@ -39,6 +39,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
     }
 
     const onFormChange = (value: string | boolean | number, key: string, optionSectionNum: number=-1) => {
+        console.log(value)
         let updatedTable:LotTableInterface;
         const example = {[key]: value}
 

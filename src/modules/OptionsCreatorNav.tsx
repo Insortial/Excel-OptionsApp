@@ -47,11 +47,6 @@ const OptionsCreatorNav: React.FC<OptionsCreatorNav> = ({ isOptionsMode, jobDeta
     }
 
     const testCreateDocument = async () => {
-        /* const lotTablesAreValid = await validate()
-        if(lotTablesAreValid) {
-            console.log(lotTablesAreValid)
-            docxConverter(jobDetails, listOfLots, name, phone, email)
-        } */
         docxConverter(jobDetails, listOfLots, name)
     }
 
