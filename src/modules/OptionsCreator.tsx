@@ -343,12 +343,12 @@ function OptionsCreator() {
             //Making a new lot 
             } else if (listOfLots.length == 0 && requestedJobDetails != null) {
                 console.log(requestedJobDetails)
-                setModalType("inputValue")
                 setJobDetails(requestedJobDetails.jobDetails)
                 if(requestedJobDetails.hasPackage) {
                     setHasPackage(true)
                     setPackageDetails(requestedJobDetails.packageDetails)
                 }
+                setModalType("inputValue")
             } 
         } else if(loaderData != null && Object.keys(loaderData).length !== 0) {
             console.log(loaderData)

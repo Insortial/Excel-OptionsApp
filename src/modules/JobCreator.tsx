@@ -104,18 +104,18 @@ function JobCreator() {
     return jobHasBeenMade
   }
 
-  const checkJobMadeInAccess = async (jobID:number):Promise<boolean> => {
-    const response = await fetchHook(`/isJobMadeInAccess/${jobID}`, "GET")
+  const checkIfAllLotsMade = async (jobID:number):Promise<boolean> => {
+    const response = await fetchHook(`/${jobID}/allLotsMade`, "GET")
   
     if (!response.ok) {
         throw new Error(response.statusText);
     }
 
-    const data = await response.text()
-    const jobMadeInAccess:boolean = JSON.parse(data)?.isValidJobID 
+    const data = await response.json()
 
-    return jobMadeInAccess === undefined ? false : jobMadeInAccess
+    return data.allLotsMade
   }
+
 
   const getPackageDetails = async () => {
     const response = await fetchHook(`/getPackageForJobID/${jobDetails.jobID}`, "GET")
@@ -132,22 +132,22 @@ function JobCreator() {
   const validate = async () => {
     const requiredFields = ["builder", "project", "optionCoordinator", "phase", "jobID"];
     const newErrors:ErrorObject = {};
-    const jobIDIsValid = (await checkValidLotNumJobID([], Number(jobDetails.jobID))).isJobIDValid
-    const jobHasBeenMade = (await checkJobHasBeenMade(Number(jobDetails.jobID)))
-    const jobNotMadeInAccess = (await checkJobMadeInAccess(Number(jobDetails.jobID)))
-
+    const jobID = Number(jobDetails.jobID)
+    const jobIDIsValid = (await checkValidLotNumJobID([], jobID)).isJobIDValid
+    const jobHasBeenMade = (await checkJobHasBeenMade(jobID))
+    const allLotsMade = (await checkIfAllLotsMade(jobID))
 
     if(jobDetails.lotNums.length === 0)
       newErrors["jobID"] = "Lots have not been created at this jobID"
 
     if(jobHasBeenMade)
-      newErrors["jobID"] = "Job Options have already been created"
+      newErrors["jobID"] = "Job Option has already been made"
     
+    if(allLotsMade)
+      newErrors["jobID"] = "All lots have been made for this Job in Access"
+
     if(!jobIDIsValid)
       newErrors["jobID"] = "Invalid Job ID"
-
-    if(!jobNotMadeInAccess)
-      newErrors["jobID"] = "Job already made in Access"
 
     Object.keys(jobDetails).forEach((key) => {
       if(requiredFields.includes(key) && !jobDetails[key as keyof JobDetails]) 
@@ -163,6 +163,7 @@ function JobCreator() {
     let state = {}
     const validateValues = await validate()
     const packageDetails:PackageDetails = await getPackageDetails()
+
     state = {jobDetails: jobDetails, packageDetails: packageDetails, hasPackage: packageDetails !== null}
 
     console.log(state)
@@ -172,8 +173,6 @@ function JobCreator() {
     } else {
       setErrors(validateValues)
     }
-      
-
   }
 
   return (
