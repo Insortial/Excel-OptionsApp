@@ -171,27 +171,27 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
                     </tr>
                     <tr>
                         <th>Islands</th>
-                        <td><InputSearch inputName={"islands"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch></td>
+                        <td><InputSearch inputName={"islands"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Supports</th>
-                        <td><InputSearch inputName={"supports"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch></td>
+                        <td><InputSearch inputName={"supports"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Crown</th>
-                        <td><InputSearch inputName={"crown"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch></td>
+                        <td><InputSearch inputName={"crown"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Light Rail</th>
-                        <td><InputSearch inputName={"lightRail"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch></td>
+                        <td><InputSearch inputName={"lightRail"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Base Shoe</th>
-                        <td><InputSearch inputName={"baseShoe"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch></td>
+                        <td><InputSearch inputName={"baseShoe"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Recycling Bins</th>
-                        <td><InputSearch inputName={"recyclingBins"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch></td>
+                        <td><InputSearch inputName={"recyclingBins"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Job Specific Notes</th>
