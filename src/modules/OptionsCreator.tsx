@@ -103,7 +103,7 @@ function OptionsCreator() {
         updatedListOfLots.forEach((lot, index, listOfLots) => {
             listOfLots[index] = convertToMixedOptions(lot)
         })
-        
+
         setListOfLots(updatedListOfLots.sort((a, b) => lotNums.findIndex(lot => lot.lotNum === a.lot) - lotNums.findIndex(lot => lot.lotNum === b.lot)))
     }
 
@@ -267,6 +267,9 @@ function OptionsCreator() {
             if(location.pathname === '/optionCreator/')
                 navigate(`/optionCreator/jobOption/${responseBody.jobDocumentID}`)
             setNotification(validJob.ok)
+
+            if(validJob.ok)
+                onJobDetailsChange(true, "prodReady")
         }
         setModalType("none")
     }

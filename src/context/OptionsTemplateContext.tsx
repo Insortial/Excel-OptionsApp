@@ -152,12 +152,6 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
             listOfOptions = ["None", "Standard", "Optional"]
         }
 
-        if(propertyName === "drawerBoxes") {
-            listOfOptions.push("Dovetail - Kitchen Only, STD - Balance of House", "APA Dovetail - Kitchen Only, STD - Balance of House")
-        } else if(["doorHinges","drawerGuides"].includes(propertyName)) {
-            listOfOptions.push('Soft Closing - Kitchen Only, STD - Balance of House', 'APA Soft Closing - Kitchen Only, STD - Balance of House')
-        } 
-
         return listOfOptions
     }
 

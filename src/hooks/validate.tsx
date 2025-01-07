@@ -54,6 +54,9 @@ const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], current
     part has input error, only records it if it is current lot */
     listOfLots.map((lot: LotTableInterface) => {
         lot.partsOfLot.map((partOfLot:PartOfLot, index:number) => {
+            if(partOfLot.roomID == "Balance of House" && !lot.hasThroughoutLot)
+                return
+            
             //Iterates through each Part of Lot
             for(const key of Object.keys(partOfLot)) {
 

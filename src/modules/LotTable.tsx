@@ -36,6 +36,8 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
             return "OD-6"
         } else if (doorID.charAt(4) === "4") {
             return doorID.charAt(5) === "0" ? "OD-1" : "OD-2" 
+        } else if (doorID === "ECI-000") {
+            return "N/A"
         } else {
             return "CF-2"
         }
