@@ -9,7 +9,7 @@ const useSQLJobDetailsPost = () => {
     const fetchHook = useFetch()
     const { getFormIDs } = useContext(FormOptionsContext) as FormOptionsContextType
     
-    const decipherMixedOptions = (throughoutLot:PartOfLot|undefined, currentLot:PartOfLot, propName: string):number => {
+    /* const decipherMixedOptions = (throughoutLot:PartOfLot|undefined, currentLot:PartOfLot, propName: string):number => {
         const {roomID} = currentLot
         const mixedOptionKey: {[key:string]:string} = {
             "Dovetail - Kitchen Only, STD - Balance of House": "Dovetail", 
@@ -32,8 +32,13 @@ const useSQLJobDetailsPost = () => {
         } else {
             return getFormIDs(value as string, propName)
         }
-    }
+    } */
 
+    const decipherMixedOptions = (editingPartsOfLot:boolean, throughoutLot:PartOfLot|undefined, currentLot:PartOfLot, propName: string):number => {
+        const currentLotProperty = currentLot[propName as keyof PartOfLot] as string
+        const throughoutLotProperty = throughoutLot?.[propName as keyof PartOfLot] as string
+        return editingPartsOfLot ? getFormIDs(currentLotProperty, propName) : getFormIDs(throughoutLotProperty, propName)
+    }
 
     const handlePullsAndKnobs = (returnType: string, currentLot:PartOfLot, throughOutLot:PartOfLot|undefined) => {
         let partName:string|number|boolean = ""
@@ -78,9 +83,11 @@ const useSQLJobDetailsPost = () => {
                         fingerpull: lotSection.fingerpull,
                         drawerFronts: getFormIDs(throughOutLot.drawerFronts, "drawerFronts"), 
                         knobs: handlePullsAndKnobs("knobs", lotSection, throughOutLot), 
-                        drawerBoxes: decipherMixedOptions(throughOutLot, lotSection, "drawerBoxes"), 
-                        drawerGuides: decipherMixedOptions(throughOutLot, lotSection, "drawerGuides"), 
-                        doorHinges: decipherMixedOptions(throughOutLot, lotSection, "doorHinges"), 
+                        drawerBoxes: decipherMixedOptions(lotTable.editingPartsOfLot, throughOutLot, lotSection, "drawerBoxes"), 
+                        drawerGuides: decipherMixedOptions(lotTable.editingPartsOfLot, throughOutLot, lotSection, "drawerGuides"), 
+                        doorHinges: decipherMixedOptions(lotTable.editingPartsOfLot, throughOutLot, lotSection, "doorHinges"), 
+                        interiors: decipherMixedOptions(lotTable.editingPartsOfLot, throughOutLot, lotSection, "interiors"),
+                        boxStyle: decipherMixedOptions(lotTable.editingPartsOfLot, throughOutLot, lotSection, "boxStyle"),
                         pulls: handlePullsAndKnobs("pulls", lotSection, throughOutLot),
                         knobs2: handlePullsAndKnobs("knobs2", lotSection, throughOutLot),
                         knobs2Qty: 0,
@@ -99,8 +106,6 @@ const useSQLJobDetailsPost = () => {
             
             const lotTableSQL:LotTableSQL = {
                 lot: lotTable.lot,
-                boxStyle: getFormIDs(lotTable.boxStyle, "boxStyle"),
-                interiors: getFormIDs(lotTable.interiors, "interiors"),
                 lotOptionsValue: isNaN(parseInt(lotTable.lotOptionsValue)) ? 0 : parseInt(lotTable.lotOptionsValue),
                 partsOfLot: listOfSQLPartsOfLot,
                 plan: lotTable.plan,

@@ -13,9 +13,10 @@ type inputOptions = {
     onFormChange?: (value: string, key: string, optSectionNum?: number) => void;
     inputName: string;
     filterValue?: string | number
+    locked?: boolean
 }
 
-const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, onFormChange, inputName, optionSectionNum, filterValue}) => {
+const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, onFormChange, inputName, optionSectionNum, filterValue, locked}) => {
     const [suggestion, setSuggestion] = useState<string[]>([]);
     const [dropDownOptions, setDropDownOptions] = useState<string[]>([]);
     const [inFocus, setInFocus] = useState<boolean | boolean>(false);
@@ -95,6 +96,9 @@ const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, on
       };
 
     function handleOnFocus():void {
+        if(locked)
+            return
+
         if(suggestion.length === 0)
             updateDropDowns()
 
@@ -145,13 +149,13 @@ const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, on
                     type={inputName === "date" ? "date" : "text"} 
                     className="optionSearch" 
                     style={{border: hasError && isCheckingError ? "1px solid red" : "black"}}
-                    value={!isDropDown ? getPartOfLotValue() : value}
+                    value={!isDropDown && !locked ? getPartOfLotValue() : value}
                     placeholder={postfix ? getPartOfLotValue() + " - " + postfix :  getPartOfLotValue()} 
                     ref={inputRef}
                     id={inputName + `${(typeof optionSectionNum === 'undefined' || optionSectionNum === 0) ? "" : optionSectionNum}`}
                     onChange={readInput}
                     onFocus={handleOnFocus}
-                    readOnly={inputName === "roomID" && getPartOfLotValue() === "Throughout" || getPartOfLotValue() === "Balance of House" || ["fingerpull", "lot", "plan"].includes(inputName)}
+                    readOnly={inputName === "roomID" && getPartOfLotValue() === "Throughout" || getPartOfLotValue() === "Balance of House" || locked}
                 />
             <div className="optionResults" ref={dropDownRef} style={{display: inFocus ? "block" : "none", border: suggestion.length === 0 ? "none" : "1px solid black"}}>
                 {suggestion.map((x: string, index: number) => {

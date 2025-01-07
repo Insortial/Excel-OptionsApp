@@ -2,9 +2,13 @@ import { ErrorObject, JobDetails, LotTableInterface, PartOfLot } from "../types/
 
 const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], currentLotNum:string) => {
     const isHandleValid = (handleType:string, key:string, value:string, numOfKnobs:number, numOfPulls:number):boolean => {
+        //Lots can have multiple parts of lot, this function determines if any of the parts of lot have an empty hardware section. Pulls, knobs, both.
         let partNum = 0
         const endChar = Number(key[key.length - 1])
         const keyName = key.replace(/\d+$/, "")
+
+        console.log(endChar)
+        console.log(keyName)
 
         if(handleType !== keyName && handleType !== "both" && ["pulls", "knobs"].includes(keyName))
             return true
@@ -23,7 +27,7 @@ const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], current
                 return key === "knobs" && (value !== "" || partNum > numOfKnobs)
             case "none":
             default:
-                return true
+                return false
         }
     }
 
@@ -57,13 +61,13 @@ const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], current
                 const selectedPartOfLot = lot.partsOfLot[index]
                 const selectedField = selectedPartOfLot[key as keyof PartOfLot]
                 //const handleField = selectedPartOfLot[selectedPartOfLot.handleType as keyof PartOfLot]
+                
                 if(requiredFieldsLotPart.includes(key) && !selectedField) {
                     //&& ["material", "color", "doors", "fingerpull"].includes(key)
                     if((selectedPartOfLot.roomID === 'Throughout' && !lot.hasThroughoutLot) || 
                         (isHandleValid(selectedPartOfLot.handleType, key, selectedField as string, selectedPartOfLot.numOfKnobs, selectedPartOfLot.numOfPulls))) {
                         continue
                     }
-
                     listOfLotsHasError = true
                     lot.hasError = true
                     if(lot.lot === currentLotNum)

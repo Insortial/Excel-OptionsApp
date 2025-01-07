@@ -43,6 +43,8 @@ function OptionsCreator() {
         color: "",
         doors: "",
         fingerpull: "",
+        boxStyle: "",
+        interiors: "",
         drawerFronts: "",
         numOfKnobs: 1,
         numOfPulls: 1,
@@ -84,20 +86,6 @@ function OptionsCreator() {
     const navigate = useNavigate();
     const requestedJobDetails = location.state;
 
-
-    useEffect(() => {
-        const beforeUnloadListener = (event:BeforeUnloadEvent) => {
-            event.preventDefault();
-            console.log()
-        };
-
-        window.addEventListener("beforeunload", beforeUnloadListener);
-
-        return () => {
-            window.removeEventListener("beforeunload", beforeUnloadListener)
-        }
-    }, []);
-
     const sortListOfLots = (listOfLots: LotTableInterface[], newLot?: LotTableInterface, jobLotList?:LotInfo[]) => {
         let updatedListOfLots:LotTableInterface[] = []
         let lotNums;
@@ -112,7 +100,43 @@ function OptionsCreator() {
         else
             lotNums = jobLotList
 
+        updatedListOfLots.forEach((lot, index, listOfLots) => {
+            listOfLots[index] = convertToMixedOptions(lot)
+        })
+        
         setListOfLots(updatedListOfLots.sort((a, b) => lotNums.findIndex(lot => lot.lotNum === a.lot) - lotNums.findIndex(lot => lot.lotNum === b.lot)))
+    }
+
+    const convertToMixedOptions = (lot:LotTableInterface) => {
+        type mixedOptionsType = {
+            drawerFronts: Array<[string, string|number|boolean]>;
+            drawerBoxes: Array<[string, string|number|boolean]>;
+            drawerGuides: Array<[string, string|number|boolean]>;
+            doorHinges: Array<[string, string|number|boolean]>;
+            boxStyle: Array<[string, string|number|boolean]>;
+            interiors: Array<[string, string|number|boolean]>;
+        }
+
+        const mixedOptions:mixedOptionsType = {drawerFronts: [], drawerBoxes: [], drawerGuides: [], doorHinges: [], boxStyle: [], interiors: []};
+        const obj: Record<string, string> = {};
+        lot.partsOfLot.forEach((partOfLot) => {
+            Object.keys(mixedOptions).forEach((key:string) => mixedOptions[key as keyof typeof mixedOptions].push([partOfLot.roomID, partOfLot[key as keyof PartOfLot]]))
+        })
+
+        Object.keys(mixedOptions).forEach((key:string) => {
+            let optionArray = mixedOptions[key as keyof typeof mixedOptions]
+
+            if(!lot.hasThroughoutLot)
+                optionArray = optionArray.slice(1)
+
+            const filteredOptionArray = optionArray.filter((array) => array[1] !== optionArray[0][1] || optionArray[0][0] === array[0])
+            console.log(filteredOptionArray)
+            obj[key] = filteredOptionArray.length === 1 ? String(filteredOptionArray[0][1]) : filteredOptionArray.map(pair => `${pair[0]} - ${pair[1]}`).join(", ");
+        })
+
+        const newObj = {...lot, ...obj}
+        console.log(newObj)
+        return newObj
     }
 
     const createLotTable = (lotInputValue: string): LotTableInterface => {
@@ -120,6 +144,10 @@ function OptionsCreator() {
             jobID: parseInt(jobDetails.jobID),
             lot: isOptionsMode ? lotInputValue : "",
             boxStyle: "",
+            drawerFronts: "",
+            drawerBoxes: "", 
+            drawerGuides: "", 
+            doorHinges: "",
             packageName: "",
             interiors: "",
             upperHeight: "",
@@ -128,6 +156,7 @@ function OptionsCreator() {
             crown: "",
             lightRail: "",
             baseShoe: "",
+            editingPartsOfLot: false,
             hasThroughoutLot: true,
             lotOptionsValue: "",
             recyclingBins: "",
@@ -166,6 +195,7 @@ function OptionsCreator() {
     const saveLotTable = (lotTableData: LotTableInterface, lotInputValue: string) => {
         const filteredTableList = listOfLots.filter((lotDetails:LotTableInterface) => (isOptionsMode && lotDetails.lot !== lotInputValue) ||
                                                                                          (!isOptionsMode && lotDetails.plan !== lotInputValue))
+        console.log(lotTableData)
         setCurrentLot(lotTableData)
         sortListOfLots(filteredTableList, lotTableData)
     }
@@ -250,6 +280,8 @@ function OptionsCreator() {
                 drawerBoxes: currentLot.partsOfLot[0].drawerBoxes ?? "",
                 drawerGuides: currentLot.partsOfLot[0].drawerGuides ?? "",
                 doorHinges: currentLot.partsOfLot[0].doorHinges ?? "",
+                boxStyle: currentLot.partsOfLot[0].boxStyle ?? "",
+                interiors: currentLot.partsOfLot[0].interiors ?? "",
                 numOfKnobs: 1,
                 numOfPulls: 1,
                 material: "",
@@ -304,6 +336,19 @@ function OptionsCreator() {
         setErrors(errors)
         setIsCheckingError(lotsHaveError)
     }
+
+    useEffect(() => {
+        const beforeUnloadListener = (event:BeforeUnloadEvent) => {
+            event.preventDefault();
+            console.log()
+        };
+
+        window.addEventListener("beforeunload", beforeUnloadListener);
+
+        return () => {
+            window.removeEventListener("beforeunload", beforeUnloadListener)
+        }
+    }, []);
 
     useEffect(() => {
         const throughoutLot = currentLot?.partsOfLot[0]
@@ -363,6 +408,7 @@ function OptionsCreator() {
                     setHasPackage(true)
                     setPackageDetails(loadedData.packageDetails)
                 }
+            //Accessing existing Package
             } else {
                 setIsOptionsMode(false)
                 setJobDetails({
@@ -413,7 +459,7 @@ function OptionsCreator() {
             <OptionsCreatorNav isOptionsMode={isOptionsMode} jobDetails={jobDetails} currentLotNum={currentLotNum} listOfLots={listOfLots} onJobDetailsChange={onJobDetailsChange} setModalType={setModalType}
                 setIsLotCopy={setIsLotCopy} setCurrentLotNum={setCurrentLotNum} setCurrentLot={setCurrentLot} sortListOfLots={sortListOfLots} changeLotTable={changeLotTable}/>
             <div id="optionsEditor">
-                {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} onJobDetailsChange={onJobDetailsChange} jobDetails={jobDetails} setModalType={setModalType}
+                {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} onJobDetailsChange={onJobDetailsChange} jobDetails={jobDetails} setModalType={setModalType} convertToMixedOptions={convertToMixedOptions}
                                                                             lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode} />)}
             </div>
             <Notification submissionValid={submissionValid}/>

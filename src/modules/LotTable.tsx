@@ -10,17 +10,20 @@ type LotTable = {
     onJobDetailsChange: (value: string | boolean, key: string) => void;
     saveLotTable: (lotTableDetails: LotTableInterface, lotNumber: string) => void;
     setCurrentLotNum: (lotNum: string) => void; 
+    convertToMixedOptions: (lot: LotTableInterface) => LotTableInterface;
     setModalType: React.Dispatch<React.SetStateAction<string>>,
 }
 
-const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetails, saveLotTable, onJobDetailsChange, setCurrentLotNum, setModalType}) => {
+const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetails, convertToMixedOptions, saveLotTable, onJobDetailsChange, setCurrentLotNum, setModalType}) => {
     const deleteLotSection = (lotSectionIndex:number) => {
-        const updatedTable:LotTableInterface = {...lotTableDetails}
+        let updatedTable:LotTableInterface = {...lotTableDetails}
 
         if(updatedTable.partsOfLot.length === 2) {
             const balanceOfHouseLot = updatedTable.partsOfLot[0]
             updatedTable.partsOfLot.splice(0, 1, {...balanceOfHouseLot, roomID: "Throughout"})
             updatedTable.hasThroughoutLot = true
+            updatedTable.editingPartsOfLot = false
+            updatedTable = setLotToThroughout(updatedTable)
         }
         updatedTable.partsOfLot.splice(lotSectionIndex, 1)
         saveLotTable(updatedTable, isOptionsMode ? lotTableDetails.lot : lotTableDetails.plan)
@@ -38,8 +41,28 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
         }
     }
 
+    const setLotToThroughout = (lot:LotTableInterface) => {
+        return {...lot,
+            drawerFronts: lotTableDetails.partsOfLot[0].drawerFronts ?? "",
+            drawerBoxes: lotTableDetails.partsOfLot[0].drawerBoxes ?? "",
+            drawerGuides: lotTableDetails.partsOfLot[0].drawerGuides ?? "",
+            doorHinges: lotTableDetails.partsOfLot[0].doorHinges ?? "",
+            boxStyle: lotTableDetails.partsOfLot[0].boxStyle ?? "",
+            interiors: lotTableDetails.partsOfLot[0].interiors ?? "",
+        }
+    }
+
+    const changeLotEditingMode = (isEditing:boolean) => {
+        let newLot = lotTableDetails
+        if(isEditing) {
+            newLot = convertToMixedOptions(lotTableDetails)
+        } else {
+            newLot = setLotToThroughout(lotTableDetails)
+        }
+        saveLotTable({...newLot, editingPartsOfLot: isEditing}, (isOptionsMode ? newLot.lot : newLot.plan))
+    }
+
     const onFormChange = (value: string | boolean | number, key: string, optionSectionNum: number=-1) => {
-        console.log(value)
         let updatedTable:LotTableInterface;
         const example = {[key]: value}
 
@@ -55,6 +78,9 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
             updatedTable = {...lotTableDetails}
             updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot, index:number) => (index === optionSectionNum ? { ...partOfLot, ...example } : partOfLot))
         }
+
+        if(lotTableDetails.editingPartsOfLot)
+            updatedTable = convertToMixedOptions(updatedTable)
 
         if((key === "lot" || key === "plan") && typeof value === "string") 
             setCurrentLotNum(value)
@@ -103,39 +129,39 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
                         </tr>}
                     <tr>
                         <th>Box Style</th>
-                        <td><InputSearch inputName={"boxStyle"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch></td>
+                        <td><InputSearch inputName={"boxStyle"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true} locked={lotTableDetails.editingPartsOfLot}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Drawer Fronts</th>
                         <td>
-                            <InputSearch inputName={"drawerFronts"} optionSectionNum={0} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                            <InputSearch inputName={"drawerFronts"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true} locked={lotTableDetails.editingPartsOfLot}></InputSearch>
                         </td>
                     </tr>
                     <tr>
                         <th>Drawer Boxes</th>
                         {/* Look at changing this Input Search */}
                         <td>
-                            <InputSearch inputName={"drawerBoxes"} optionSectionNum={0} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                            <InputSearch inputName={"drawerBoxes"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true} locked={lotTableDetails.editingPartsOfLot}></InputSearch>
                         </td>
                     </tr>
                     <tr>
                         <th>Drawer Guides</th>
                         {/* Look at changing this Input Search */}
                         <td>
-                            <InputSearch inputName={"drawerGuides"} optionSectionNum={0} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                            <InputSearch inputName={"drawerGuides"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true} locked={lotTableDetails.editingPartsOfLot}></InputSearch>
                         </td>
                     </tr>
                     <tr>
                         <th>Door Hinges</th>
                         {/* Look at changing this Input Search */}
                         <td>
-                            <InputSearch inputName={"doorHinges"} optionSectionNum={0} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                            <InputSearch inputName={"doorHinges"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true} locked={lotTableDetails.editingPartsOfLot}></InputSearch>
                         </td>
                     </tr>
                     <tr>
                         <th>Interiors</th>
                         {/* Look at changing this Input Search */}
-                        <td><InputSearch inputName={"interiors"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch></td>
+                        <td><InputSearch inputName={"interiors"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true} locked={lotTableDetails.editingPartsOfLot}></InputSearch></td>
                     </tr>
                     <tr>
                         <th>Upper Height</th>
@@ -212,22 +238,27 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
                                 {isOptionsMode &&
                                     <td>
                                         {(currentRow === 0 || !lotTableDetails.hasThroughoutLot && currentRow === 1) &&
-                                            <InputSearch inputName={"lot"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
+                                            <InputSearch inputName={"lot"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={false} locked={true}></InputSearch>
                                         }
                                         <button className="deleteButton" style={{display: currentRow !== 0 ? "block" : "none"}} onClick={() => deleteLotSection(currentRow)}>Delete Row</button>
                                     </td>
                                 }
                                 <td>
                                     {(currentRow === 0 || !lotTableDetails.hasThroughoutLot && currentRow === 1) &&
-                                        <InputSearch inputName={"plan"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
+                                        <InputSearch inputName={"plan"} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={false} locked={true}></InputSearch>
                                     }
                                     {!isOptionsMode && <button className="deleteButton" style={{display: currentRow !== 0 ? "block" : "none"}} onClick={() => deleteLotSection(currentRow)}>Delete Row</button>}
                                 </td>
                                 <td>
-                                    {(lotTableDetails.partsOfLot.length > 1 && (lotTableDetails.hasThroughoutLot && currentRow === 0 || !lotTableDetails.hasThroughoutLot && currentRow === 1))&& <button onClick={() => {
-                                        onFormChange(!lotTableDetails.hasThroughoutLot, "hasThroughoutLot")
-                                        console.log(lotTableDetails)
-                                        }}>{lotTableDetails.hasThroughoutLot ? "Remove Balance of House" : "Reveal Balance of House"}</button>}
+                                    {(lotTableDetails.partsOfLot.length > 1 && (lotTableDetails.hasThroughoutLot && currentRow === 0 || !lotTableDetails.hasThroughoutLot && currentRow === 1)) && 
+                                        <>
+                                            <button className="editPartsOfLotButton" onClick={() => changeLotEditingMode(!lotTableDetails.editingPartsOfLot)}>{lotTableDetails.editingPartsOfLot ? `Set Options to Balance of House` : "Edit By Part of Lot"}</button>
+                                            <button onClick={() => {
+                                                onFormChange(!lotTableDetails.hasThroughoutLot, "hasThroughoutLot")
+                                                console.log(lotTableDetails)
+                                                }}>{lotTableDetails.hasThroughoutLot ? "Remove Balance of House" : "Reveal Balance of House"}
+                                            </button>
+                                        </>}
                                     <label htmlFor={`material${idNumber}`}>Material:</label>
                                     <InputSearch inputName={`material`} optionSectionNum={currentRow} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
                                     <label htmlFor={`color${idNumber}`}>Color:</label>
@@ -294,7 +325,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
                                         </div>
                                         <div className={"fingerPullList"}>
                                             <label htmlFor={`fingerpull${idNumber}`}>Fingerpull:</label>
-                                            <InputSearch inputName={`fingerpull`} optionSectionNum={currentRow} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                                            <InputSearch inputName={`fingerpull`} optionSectionNum={currentRow} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true} locked={true}></InputSearch>
                                         </div>
                                         {Array.from({length: lotSection.numOfPulls}, (_, i) => i + 1).map((i) => {
                                             return <div key={i} className={"pullList"} style={{display: ["both", "pulls"].includes(lotSection.handleType ?? "") && lotSection.handleType !== "none" ? "block" : "none"}}>
@@ -309,6 +340,34 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
                                                     </div>
                                         })}
                                     </section>
+                                    {lotTableDetails.editingPartsOfLot &&
+                                        <section id="additionalOptions" className="optionParts">
+                                            <div className={"boxStyleList"}>
+                                                <label htmlFor={`boxStyle${idNumber}`}>Box Style:</label>
+                                                <InputSearch inputName={`boxStyle`} optionSectionNum={currentRow} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                                            </div>
+                                            <div className={"drawerFrontList"}>
+                                                <label htmlFor={`drawerFronts${idNumber}`}>Drawer Front:</label>
+                                                <InputSearch inputName={`drawerFronts`} optionSectionNum={currentRow} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                                            </div>
+                                            <div className={"drawerBoxesList"}>
+                                                <label htmlFor={`drawerBoxes${idNumber}`}>Drawer Boxes:</label>
+                                                <InputSearch inputName={`drawerBoxes`} optionSectionNum={currentRow} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                                            </div>
+                                            <div className={"drawerGuidesList"}>
+                                                <label htmlFor={`drawerGuides${idNumber}`}>Drawer Guides:</label>
+                                                <InputSearch inputName={`drawerGuides`} optionSectionNum={currentRow} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                                            </div>
+                                            <div className={"doorHingesList"}>
+                                                <label htmlFor={`doorHinges${idNumber}`}>Door Hinges:</label>
+                                                <InputSearch inputName={`doorHinges`} optionSectionNum={currentRow} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                                            </div>
+                                            <div className={"interiorsList"}>
+                                                <label htmlFor={`interiors${idNumber}`}>Interiors:</label>
+                                                <InputSearch inputName={`interiors`} optionSectionNum={currentRow} formState={lotTableDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                                            </div>
+                                        </section>
+                                    }
                                     <label>Details: </label>
                                     <ControlledTextArea inputName={"details"} optionSectionNum={currentRow} formState={lotTableDetails} onFormChange={onFormChange}></ControlledTextArea>
                                     <button style={{display: currentRow === (lotTableDetails.partsOfLot?.length - 1) ? "block" : "none"}} onClick={() => setModalType("partOfLot")} className='newPartOfLotButton'>Add Part Of Lot</button>

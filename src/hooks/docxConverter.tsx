@@ -148,7 +148,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
                         }),
                         new TableCell({
                             children: [new Paragraph({
-                                text: selectedLot.partsOfLot[0].drawerFronts ?? "",
+                                text: selectedLot.drawerFronts ?? "",
                                 alignment: AlignmentType.CENTER
                             })],
                         })
@@ -164,7 +164,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
                         }),
                         new TableCell({
                             children: [new Paragraph({
-                                text: selectedLot.partsOfLot[0].drawerBoxes ?? "",
+                                text: selectedLot.drawerBoxes ?? "",
                                 alignment: AlignmentType.CENTER
                             })],
                         })
@@ -180,7 +180,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
                         }),
                         new TableCell({
                             children: [new Paragraph({
-                                text: selectedLot.partsOfLot[0].drawerGuides ?? "",
+                                text: selectedLot.drawerGuides ?? "",
                                 alignment: AlignmentType.CENTER
                             })],
                         })
@@ -196,7 +196,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
                         }),
                         new TableCell({
                             children: [new Paragraph({
-                                text: selectedLot.partsOfLot[0].doorHinges ?? "",
+                                text: selectedLot.doorHinges ?? "",
                                 alignment: AlignmentType.CENTER
                             })],
                         })
