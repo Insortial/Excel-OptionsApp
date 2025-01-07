@@ -269,7 +269,7 @@ function OptionsCreator() {
             setNotification(validJob.ok)
 
             if(validJob.ok)
-                onJobDetailsChange(true, "prodReady")
+                onJobDetailsChange(prodReady, "prodReady")
         }
         setModalType("none")
     }
