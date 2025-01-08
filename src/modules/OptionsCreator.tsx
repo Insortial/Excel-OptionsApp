@@ -90,6 +90,7 @@ function OptionsCreator() {
         let updatedListOfLots:LotTableInterface[] = []
         let lotNums;
 
+        console.log(listOfLots)
         if(typeof newLot === "undefined")
             updatedListOfLots = listOfLots
         else
@@ -103,6 +104,7 @@ function OptionsCreator() {
         updatedListOfLots.forEach((lot, index, listOfLots) => {
             listOfLots[index] = convertToMixedOptions(lot)
         })
+        console.log(updatedListOfLots)
 
         setListOfLots(updatedListOfLots.sort((a, b) => lotNums.findIndex(lot => lot.lotNum === a.lot) - lotNums.findIndex(lot => lot.lotNum === b.lot)))
     }
@@ -130,12 +132,10 @@ function OptionsCreator() {
                 optionArray = optionArray.slice(1)
 
             const filteredOptionArray = optionArray.filter((array) => array[1] !== optionArray[0][1] || optionArray[0][0] === array[0])
-            console.log(filteredOptionArray)
             obj[key] = filteredOptionArray.length === 1 ? String(filteredOptionArray[0][1]) : filteredOptionArray.map(pair => `${pair[0]} - ${pair[1]}`).join(", ");
         })
 
         const newObj = {...lot, ...obj}
-        console.log(newObj)
         return newObj
     }
 
@@ -195,7 +195,7 @@ function OptionsCreator() {
     const saveLotTable = (lotTableData: LotTableInterface, lotInputValue: string) => {
         const filteredTableList = listOfLots.filter((lotDetails:LotTableInterface) => (isOptionsMode && lotDetails.lot !== lotInputValue) ||
                                                                                          (!isOptionsMode && lotDetails.plan !== lotInputValue))
-        console.log(lotTableData)
+        //console.log(lotTableData)
         setCurrentLot(lotTableData)
         sortListOfLots(filteredTableList, lotTableData)
     }
@@ -212,6 +212,7 @@ function OptionsCreator() {
     }
 
     const addLotTable = () => {
+        console.log(listOfLots)
         let table:LotTableInterface;
         if(modalInputValue !== "") {
             if(!isLotCopy) {
@@ -224,6 +225,7 @@ function OptionsCreator() {
                     table.partsOfLot = Object.assign([], table.partsOfLot)
                 }
             } else {
+                console.log("COPYING")
                 table = Object.assign({}, listOfLots.find((lotDetails:LotTableInterface) => {return (isOptionsMode ? lotDetails.lot : lotDetails.plan) === currentLotNum}))
                 table.plan = jobDetails.lotNums.find(lotInfo => lotInfo.lotNum === modalInputValue)?.plan ?? ""
                 table.partsOfLot = Object.assign([], table.partsOfLot)
@@ -241,6 +243,7 @@ function OptionsCreator() {
             setModalType("none")
         }
     }
+
     const setNotification = (submissionState:boolean) => {
         setSubmissionValid(submissionState)
 

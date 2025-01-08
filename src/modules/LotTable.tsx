@@ -45,12 +45,12 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
 
     const setLotToThroughout = (lot:LotTableInterface) => {
         return {...lot,
-            drawerFronts: lotTableDetails.partsOfLot[0].drawerFronts ?? "",
-            drawerBoxes: lotTableDetails.partsOfLot[0].drawerBoxes ?? "",
-            drawerGuides: lotTableDetails.partsOfLot[0].drawerGuides ?? "",
-            doorHinges: lotTableDetails.partsOfLot[0].doorHinges ?? "",
-            boxStyle: lotTableDetails.partsOfLot[0].boxStyle ?? "",
-            interiors: lotTableDetails.partsOfLot[0].interiors ?? "",
+            drawerFronts: lot.partsOfLot[0].drawerFronts ?? "",
+            drawerBoxes: lot.partsOfLot[0].drawerBoxes ?? "",
+            drawerGuides: lot.partsOfLot[0].drawerGuides ?? "",
+            doorHinges: lot.partsOfLot[0].doorHinges ?? "",
+            boxStyle: lot.partsOfLot[0].boxStyle ?? "",
+            interiors: lot.partsOfLot[0].interiors ?? "",
         }
     }
 
@@ -66,6 +66,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
 
     const onFormChange = (value: string | boolean | number, key: string, optionSectionNum: number=-1) => {
         let updatedTable:LotTableInterface;
+        const hardware = ["boxStyle", "drawerFronts", "drawerHinges", "drawerGuides", "drawerBoxes", "doorHinges", "interiors"]
         const example = {[key]: value}
 
         if(key === "doors")
@@ -80,6 +81,9 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
             updatedTable = {...lotTableDetails}
             updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot, index:number) => (index === optionSectionNum ? { ...partOfLot, ...example } : partOfLot))
         }
+
+        if(hardware.includes(key))
+            updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot) => { return {...partOfLot, [key]: value}})
 
         if(lotTableDetails.editingPartsOfLot)
             updatedTable = convertToMixedOptions(updatedTable)
