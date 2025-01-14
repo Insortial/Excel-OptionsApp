@@ -82,8 +82,10 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
             updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot, index:number) => (index === optionSectionNum ? { ...partOfLot, ...example } : partOfLot))
         }
 
-        if(hardware.includes(key))
-            updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot) => { return {...partOfLot, [key]: value}})
+        //TEMPORARY FIX FOR NEW LOT/COPY BUG
+        if(hardware.includes(key) && optionSectionNum == -1) {
+            updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot, index:number) => { return index === 0 ? {...partOfLot, [key]: value} : partOfLot})
+        }
 
         if(lotTableDetails.editingPartsOfLot)
             updatedTable = convertToMixedOptions(updatedTable)
