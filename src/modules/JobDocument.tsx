@@ -9,7 +9,7 @@ type JobDocument = {
 }
 
 const JobDocument: React.FC<JobDocument> = ({JobDocumentDetails, isDeleteMode, turnOnDeleteModal}) => {
-    const { customerName, jobOptionID, jobID, optionCoordinator, phase, projectName} = JobDocumentDetails
+    const { customerName, jobOptionID, jobID, optionCoordinator, phase, projectName } = JobDocumentDetails
 
     return (
         <div className="jobDocumentContainer">

@@ -10,6 +10,7 @@ type OptionsCreatorModal = {
     modalInputValue: string,
     setModalType: React.Dispatch<React.SetStateAction<string>>,
     setModalInputValue: React.Dispatch<React.SetStateAction<string>>,
+    onJobDetailsChange: (value: string | boolean, key: string) => void,
     setIsLotCopy?: React.Dispatch<React.SetStateAction<boolean>>,
     optionsCreatorObject?: OptionsCreatorObject,
     jobMenuObject?: JobMenuObject,
@@ -17,7 +18,7 @@ type OptionsCreatorModal = {
 }
 
 
-const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, setModalType, setModalInputValue, setIsLotCopy, modalType, optionsCreatorObject, jobMenuObject, packageObject}) => {
+const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, setModalType, setModalInputValue, onJobDetailsChange, setIsLotCopy, modalType, optionsCreatorObject, jobMenuObject, packageObject}) => {
     const fetchHook = useFetch()
     const [errors, setErrors] = useState<ErrorObject>({})
     const [availableLots, setAvailableLots] = useState<LotInfo[]>([])
@@ -25,6 +26,11 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
 
     const handleInputChange = (event: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
         setModalInputValue(event.target.value)
+    }
+
+    const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        event.preventDefault()
+        onJobDetailsChange(event.target.value, "date")
     }
 
     const turnOffModal = () => {
@@ -200,23 +206,6 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
                         </div>
                     </> : <></>}
                  </>
-                /* ["drawerBoxes", "drawerGuides", "doorHinges"].includes(modalType) 
-                ? (<>
-                        <h2>Modify {modalType === "drawerBoxes" ? "Drawer Box" : modalType === "drawerGuides" ? "Drawer Guides" : "Door Hinges"} Hardware</h2>
-                        <div className="modalProjectDiv">
-                                <select style={{marginBottom: "10px"}}value={hardwareIndex} onChange={handleHardwareInputChange}>
-                                    <option value="-1">None</option>
-                                    {currentLot?.partsOfLot.map((lot, index) => {
-                                        return !["Throughout", "Balance of House"].includes(lot.roomID) && <option key={index} value={index}>{lot.roomID}</option>
-                                    })}
-                                </select>
-                                <div className="modalInputRow">
-                                    {(currentLot && hardwareIndex !== -1) && <InputSearch inputName={modalType} optionSectionNum={hardwareIndex} formState={currentLot} onFormChange={modifyPartOfLotHardware} isDropDown={true} postfix={currentLot.partsOfLot[hardwareIndex].roomID}></InputSearch>}
-                                </div>
-                            <button className="modalSubmit"onClick={() => turnOffModal()}>Submit</button>
-                        </div>
-                        
-                </>): */
                 : modalType === "partOfLot" ? 
                 <>
                     <h2>Enter Room ID:</h2>
@@ -230,7 +219,7 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
                 <>
                     <h2>Enter Production Date:</h2>
                     <div className='modalRow'>
-                        <input type="date" onChange={() => console.log()}></input>
+                        <input type="date" onChange={handleDateChange}></input>
                         <button onClick={() => submitJob(false)}>Submit</button>
                     </div>
                 </>

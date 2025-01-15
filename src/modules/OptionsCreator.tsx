@@ -461,7 +461,7 @@ function OptionsCreator() {
 
     return (
         <>
-            <OptionsCreatorModal modalInputValue={modalInputValue} setModalInputValue={setModalInputValue} setModalType={setModalType} setIsLotCopy={setIsLotCopy} modalType={modalType} optionsCreatorObject={optionsCreatorObject}/>
+            <OptionsCreatorModal modalInputValue={modalInputValue} setModalInputValue={setModalInputValue} setModalType={setModalType} setIsLotCopy={setIsLotCopy} modalType={modalType} onJobDetailsChange={onJobDetailsChange} optionsCreatorObject={optionsCreatorObject}/>
             <OptionsCreatorNav isOptionsMode={isOptionsMode} jobDetails={jobDetails} currentLotNum={currentLotNum} listOfLots={listOfLots} onJobDetailsChange={onJobDetailsChange} setModalType={setModalType}
                 setIsLotCopy={setIsLotCopy} setCurrentLotNum={setCurrentLotNum} setCurrentLot={setCurrentLot} sortListOfLots={sortListOfLots} changeLotTable={changeLotTable}/>
             <div id="optionsEditor">

@@ -24,9 +24,7 @@ type OptionsCreatorNav = {
 const OptionsCreatorNav: React.FC<OptionsCreatorNav> = ({ isOptionsMode, jobDetails, currentLotNum, listOfLots, onJobDetailsChange, setModalType, setIsLotCopy, setCurrentLotNum, setCurrentLot, sortListOfLots, changeLotTable}) => {
     const { errors, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const { name } = AuthInfo()
-    
     const [isChangingDate, setIsChangingDate] = useState<boolean>(false)
-    
 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         event.preventDefault()
