@@ -10,7 +10,7 @@ type OptionsCreatorModal = {
     modalInputValue: string,
     setModalType: React.Dispatch<React.SetStateAction<string>>,
     setModalInputValue: React.Dispatch<React.SetStateAction<string>>,
-    onJobDetailsChange: (value: string | boolean, key: string) => void,
+    onJobDetailsChange?: (value: string | boolean, key: string) => void,
     setIsLotCopy?: React.Dispatch<React.SetStateAction<boolean>>,
     optionsCreatorObject?: OptionsCreatorObject,
     jobMenuObject?: JobMenuObject,
@@ -30,7 +30,7 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         event.preventDefault()
-        onJobDetailsChange(event.target.value, "date")
+        onJobDetailsChange?.(event.target.value, "date")
     }
 
     const turnOffModal = () => {
