@@ -267,7 +267,7 @@ function OptionsCreator() {
             //revalidator.revalidate() 
             const validJob = await postSQLDetails(listOfLots, jobDetails, isOptionsMode, packageProjects, requestedJobDetails, loaderData, prodReady)
             const responseBody = await validJob.json()
-            if(location.pathname === '/optionCreator/')
+            if(validJob.ok && location.pathname === '/optionCreator/')
                 navigate(`/optionCreator/jobOption/${responseBody.jobDocumentID}`)
             setNotification(validJob.ok)
 

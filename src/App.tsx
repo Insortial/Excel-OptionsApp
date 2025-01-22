@@ -44,12 +44,15 @@ const App: React.FC = () => {
               element: <OptionsCreator key="packageID"/>,
               path: "/optionCreator/package/:packageID",
               loader: async ({params}) => {
+                let data = null
                 const response = await fetchHook(`/getPackage/${params.packageID}`, "GET")
                 if (!response.ok) {
-                  throw new Error(response.statusText);
+                  return null
+                } else {
+                  data = await response.json()
+                  console.log(data)
                 }
-                const data = await response.json()
-                console.log(data)
+                
                 return {state: data}
               }
             },
