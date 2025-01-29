@@ -145,9 +145,9 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
         } else if (propertyName === "lightRail") {
             listOfOptions = ["None", "Behind Door"]
         } else if (propertyName === "crown") {
-            listOfOptions = [`2" Shadow`, `3" Shadow`, "CR238", "CR375", "CR338", "CR45", "CR45 w/ Build Up to Ceiling", "CR45 w/ build up to ceiling kitchen only", "CR238 STD Sub Crown Balance of House", `3.5" Shadow Crown on Back Burner`]
+            listOfOptions = [`2" Shadow`, `3" Shadow`, `2" Boxed Out`, `3" Boxed Out`, "CR238", "CR375", "CR338", "CR45", "CR45 w/ Build Up to Ceiling", "CR45 w/ build up to ceiling kitchen only", "CR238 STD Sub Crown Balance of House", `3.5" Shadow Crown on Back Burner`]
         } else if (propertyName === "baseShoe") {
-            listOfOptions = ["None Supplied Only", "Island Only"]
+            listOfOptions = ["None", "Supplied Only", "Island Only"]
         } else if (propertyName === "recyclingBins") {
             listOfOptions = ["None", "Standard", "Optional"]
         }
