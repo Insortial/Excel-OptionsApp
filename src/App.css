@@ -183,6 +183,106 @@ input {
     width: 100%;
 }
 
+#formOptionsBody {
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-around;
+    width: 95%;
+    margin-top: 150px;
+    padding-top: 50px;
+    height: calc(100vh - 150px);
+}
+
+#formChoiceSelector {
+    min-height: 300px;
+    border-radius: 5px;
+    min-width: 450px;
+    border:0.5px solid rgb(80, 80, 80);
+}
+
+#formChoiceSelector > h2 {
+    background-color: #945766;
+    margin: 0;
+    color: white;
+    padding: 15px 10px;
+}
+
+.choiceButton {
+    color: rgb(51, 51, 51);
+    font-size: 1.2em;
+    padding-left: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-weight: bold;
+}
+
+#formOptions {
+    min-height: 200px;
+    border:0.5px solid rgb(37, 37, 37);
+    max-height: 600px;
+    overflow: hidden;
+    height: 100%;
+}
+
+#formOptions > h2 {
+    background-color: #D35757;
+    margin: 0;
+    color: white;
+    padding: 15px 10px;
+}
+
+
+.formOptionRowsBody {
+    overflow-y: auto;
+    height: calc(100% - 118.0833px);
+    background-color: #eeeeee;
+}
+
+.formOptionHeader > h3 {
+    text-align: center;
+    margin: 0;
+    padding: 12px 0px;
+}
+
+.formOptionRow {
+    display: flex;
+    flex-direction: row;
+}
+
+.tableWidth {
+    width: 280px;
+    box-sizing: border-box;
+}
+
+.lastColumn {
+    width: 60px;
+    box-sizing: border-box;
+}
+
+#formMenuGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 50px;
+    column-gap: 20px;
+    row-gap: 15px;
+    padding: 10px;
+}
+
+.choiceButton {
+    background-color: rgb(230, 230, 230);
+    border-right: 10px solid #b4536b;
+    border-radius: 4px;
+    transition: .2s;
+}
+
+.choiceButton:hover {
+    cursor: pointer;
+    border-right-width: 30px;
+}
+
 .jobMenuSection {
     align-self: center;
     padding: 10px;

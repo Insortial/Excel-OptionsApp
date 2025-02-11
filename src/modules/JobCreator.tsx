@@ -75,13 +75,9 @@ function JobCreator() {
     }));
   }
 
-  const checkValidLotNumJobID = async(lotNum:string[], jobID:number):Promise<lotJobResponse> => {
-    const raw = JSON.stringify({
-        "lotNumber": lotNum,
-        "jobID": jobID
-    });
+  const checkValidJobID = async(jobID:number):Promise<lotJobResponse> => {
 
-    const response = await fetchHook("/isValidLotNumAndJobID", "POST", raw)
+    const response = await fetchHook(`/isValidJobID/${jobID}`, "GET")
     if (!response.ok) {
         throw new Error(response.statusText);
     }
@@ -133,7 +129,7 @@ function JobCreator() {
     const requiredFields = ["builder", "project", "optionCoordinator", "phase", "jobID"];
     const newErrors:ErrorObject = {};
     const jobID = Number(jobDetails.jobID)
-    const jobIDIsValid = (await checkValidLotNumJobID([], jobID)).isJobIDValid
+    const jobIDIsValid = (await checkValidJobID(jobID)).isJobIDValid
     const jobHasBeenMade = (await checkJobHasBeenMade(jobID))
     const allLotsMade = (await checkIfAllLotsMade(jobID))
 
