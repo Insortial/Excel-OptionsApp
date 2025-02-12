@@ -47,7 +47,7 @@ const App: React.FC = () => {
               console.log(data)
             }
             
-            return {state: data}
+            return data
           }
         },
         {

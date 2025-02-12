@@ -189,7 +189,7 @@ input {
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-around;
-    width: 95%;
+    width: 100%;
     margin-top: 150px;
     padding-top: 50px;
     height: calc(100vh - 150px);
@@ -234,11 +234,19 @@ input {
     padding: 15px 10px;
 }
 
-
 .formOptionRowsBody {
+    padding: 5px;
     overflow-y: auto;
-    height: calc(100% - 118.0833px);
+    height: calc(100% - 123.0833px);
     background-color: #eeeeee;
+}
+
+.selectedRow {
+    border: 2px solid #ffb74a;
+}
+
+.formOptionHeader {
+    padding: 0 5px;
 }
 
 .formOptionHeader > h3 {
@@ -250,6 +258,9 @@ input {
 .formOptionRow {
     display: flex;
     flex-direction: row;
+    box-sizing: border-box;
+    width: 100%;
+    margin-bottom: 5px;
 }
 
 .tableWidth {
@@ -259,7 +270,35 @@ input {
 
 .lastColumn {
     width: 60px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     box-sizing: border-box;
+}
+
+.formOptionRow > button {
+    width: 50px;
+    font-weight: 500;
+    color: rgb(53, 53, 53);
+}
+
+.addRow {
+    width: 100%;
+    padding: 5px 5px;
+    box-sizing: border-box;
+}
+
+.addRow > button {
+    width: 100%;
+    height: 35px;
+}
+
+.submitButton {
+    background-color: rgb(149, 185, 152);
+}
+
+.editButton {
+    background-color: rgb(233, 156, 128);
 }
 
 #formMenuGrid {
@@ -276,6 +315,15 @@ input {
     border-right: 10px solid #b4536b;
     border-radius: 4px;
     transition: .2s;
+}
+
+#addButton {
+    width: 100%;
+    height: 35px;
+}
+
+.selectedChoice {
+    background-color: rgb(197, 197, 197);
 }
 
 .choiceButton:hover {

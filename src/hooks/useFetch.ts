@@ -24,7 +24,7 @@ const useFetch = () => {
         }
         config.method = requestType
 
-        if(requestType === "POST")
+        if(["POST", "PUT"].includes(requestType))
             config.body = body ?? {} as BodyInit
 
         const response = await originalRequest(url, config)
