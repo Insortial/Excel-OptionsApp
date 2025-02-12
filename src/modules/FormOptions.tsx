@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+/* eslint-disable react/react-in-jsx-scope */
+import { useState } from 'react'
 import { Link, useLoaderData } from 'react-router-dom'
 import useFetch from '../hooks/useFetch'
 import { useForm } from 'react-hook-form'
@@ -9,9 +10,7 @@ const FormOptions = () => {
     const [currentTable, setCurrentTable] = useState<{headers: string[], rows: {[key:string]:string|number|boolean}[]}>({headers: [], rows: []})
     const [tableID, setTableID] = useState<number>(-1)
     const [addingRow, setAddingRow] = useState<boolean>(false)
-    const { register, reset, getValues,
-            formState: {isDirty, dirtyFields}
-     } = useForm()
+    const { register, reset, getValues } = useForm()
     const fetchHook = useFetch()
 
     /* const getDefaultValues = (obj: {headers: string[], rows: {[key:string]:string|number|boolean}[]}) => {

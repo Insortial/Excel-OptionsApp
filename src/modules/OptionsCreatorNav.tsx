@@ -3,7 +3,6 @@ import { JobDetails, LotTableInterface} from '../types/LotTableInterface'
 import { Link } from 'react-router-dom'
 import InputError from './InputError'
 import docxConverter from '../hooks/docxConverter'
-import { AuthInfo } from '../context/AuthContext'
 import { FormOptionsContext } from '../context/OptionsTemplateContext'
 import { FormOptionsContextType } from '../types/FormOptions'
 
@@ -23,7 +22,6 @@ type OptionsCreatorNav = {
 
 const OptionsCreatorNav: React.FC<OptionsCreatorNav> = ({ isOptionsMode, jobDetails, currentLotNum, listOfLots, onJobDetailsChange, setModalType, setIsLotCopy, setCurrentLotNum, setCurrentLot, sortListOfLots, changeLotTable}) => {
     const { errors, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
-    const { name } = AuthInfo()
     const [isChangingDate, setIsChangingDate] = useState<boolean>(false)
 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +43,7 @@ const OptionsCreatorNav: React.FC<OptionsCreatorNav> = ({ isOptionsMode, jobDeta
     }
 
     const testCreateDocument = async () => {
-        docxConverter(jobDetails, listOfLots, name)
+        docxConverter(jobDetails, listOfLots)
     }
 
 

@@ -3,7 +3,7 @@ import { LotTableInterface, PartOfLot, JobDetails } from "../types/LotTableInter
 import { saveAs } from "file-saver";
 
 
-export default function docxConverter(jobDetails:JobDetails, lotCollection: LotTableInterface[], name:string) {
+export default function docxConverter(jobDetails:JobDetails, lotCollection: LotTableInterface[]) {
     console.log(jobDetails)
     console.log(lotCollection)
     
@@ -346,11 +346,11 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
             text: partOfLot.doors !== "" ? `Doors: ${partOfLot.doors} ${partOfLot.fingerpull}` : ""
         }),
         new TextRun({
-            text: partOfLot.pulls !== "" && partOfLot.pulls !== "1" ? `Pulls: ${partOfLot.pulls} ${partOfLot.pulls2 !== "" && partOfLot.pulls2 !== "1" ? `& ${partOfLot.pulls2}`: ""}` : "",
+            text: ["pulls", "both"].includes(partOfLot.handleType) ? (partOfLot.pulls !== "" && partOfLot.pulls !== "1" ? `Pulls: ${partOfLot.pulls} ${partOfLot.pulls2 !== "" && partOfLot.pulls2 !== "1" ? `& ${partOfLot.pulls2}`: ""}` : "") : "",
             break: partOfLot.doors !== "" ? 1 : 0
         }),
         new TextRun({
-            text: partOfLot.knobs !== "" && partOfLot.knobs !== "1" ? `Knobs: ${partOfLot.knobs} ${partOfLot.knobs2 !== "" && partOfLot.knobs2 !== "1" ? `& ${partOfLot.knobs2}`: ""}` : "",
+            text: ["knobs", "both"].includes(partOfLot.handleType) ? (partOfLot.knobs !== "" && partOfLot.knobs !== "1" ? `Knobs: ${partOfLot.knobs} ${partOfLot.knobs2 !== "" && partOfLot.knobs2 !== "1" ? `& ${partOfLot.knobs2}`: ""}` : "") : "",
             break: partOfLot.pulls !== "" ? 1 : 0
         }),
         new TextRun({
@@ -693,7 +693,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
                 footers: {
                     default: new Footer({
                         children: [new Paragraph({
-                            children : [new TextRun({text: name, break: 1}), 
+                            children : [new TextRun({text: jobDetails.optionCoordinator, break: 1}), 
                                         new TextRun({text: '\nOptions Coordinator', break: 1}), 
                                         new TextRun({text: '\n225 Jason Court, Corona CA 92879', break: 1}),
                                         new TextRun({text: '\nOffice (951) 279-4545', break: 1}), 
