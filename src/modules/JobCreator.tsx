@@ -7,6 +7,7 @@ import InputError from './InputError.tsx';
 import { FormOptionsContext } from '../context/OptionsTemplateContext.tsx';
 import { FormOptionsContextType } from '../types/FormOptions.ts';
 import useFetch from '../hooks/useFetch.ts';
+import { AuthInfo } from '../context/AuthContext.tsx';
 
 type lotJobResponse = {
   isJobIDValid: boolean,
@@ -15,11 +16,12 @@ type lotJobResponse = {
 }
 
 function JobCreator() {
+  const { name } = AuthInfo()
   const defaultJobDetails:JobDetails = {
     builder: "",
     project: "",
     superintendent: "",
-    optionCoordinator: "",
+    optionCoordinator: name,
     jobNotes: "",
     phone: "",
     lotNums: [],
@@ -126,7 +128,7 @@ function JobCreator() {
 
 
   const validate = async () => {
-    const requiredFields = ["builder", "project", "optionCoordinator", "phase", "jobID"];
+    const requiredFields = ["builder", "project", "phase", "jobID"];
     const newErrors:ErrorObject = {};
     const jobID = Number(jobDetails.jobID)
     const jobIDIsValid = (await checkValidJobID(jobID)).isJobIDValid
@@ -199,11 +201,11 @@ function JobCreator() {
             <InputSearch inputName={"date"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
             <InputError errorKey={"date"} errorState={errors}></InputError>
           </div> */}
-          <div className="formRow">
+          {/* <div className="formRow">
             <label htmlFor={"optionCoordinator"}>Options Coordinator: </label>
             <InputSearch inputName={"optionCoordinator"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>
             <InputError errorKey={"optionCoordinator"} errorState={errors}></InputError>
-          </div>
+          </div> */}
           <button className="createButton">Create Form</button>
         </form>
       </section>

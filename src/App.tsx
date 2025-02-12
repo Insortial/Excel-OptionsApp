@@ -14,7 +14,7 @@ import ProtectedRoute from './modules/ProtectedRoute.tsx';
 import JobPackageCreator from './modules/JobPackageCreator.tsx';
 import { jobOptionLoader } from './loader/JobOptionLoader.ts';
 import useFetch from './hooks/useFetch.ts';
-import FormOptions from './modules/FormOptions.tsx';
+/* import FormOptions from './modules/FormOptions.tsx'; */
 
 const App: React.FC = () => {
   const fetchHook = useFetch()
@@ -34,7 +34,7 @@ const App: React.FC = () => {
           path: "/creatingJob",
           element: <JobCreator />
         },
-        {
+        /* {
           path: "/formOptions",
           element: <FormOptions />,
           loader: async () => {
@@ -49,7 +49,7 @@ const App: React.FC = () => {
             
             return data
           }
-        },
+        }, */
         {
           path: "/optionCreator",
           children : [
