@@ -4,7 +4,7 @@ import useFetch from '../hooks/useFetch'
 import { useForm } from 'react-hook-form'
 
 const FormOptions = () => {
-    const { tables, identity } = useLoaderData() as {tables: {[key:number]:string}, identity: {[key:number]:string}}
+    const { tables, identity, nonIdentity } = useLoaderData() as {tables: {[key:number]:string}, identity: {[key:number]:string}, nonIdentity: number[]}
     const [editableRow, setEditableRow] = useState<number>(-1)
     const [currentTable, setCurrentTable] = useState<{headers: string[], rows: {[key:string]:string|number|boolean}[]}>({headers: [], rows: []})
     const [tableID, setTableID] = useState<number>(-1)
@@ -34,7 +34,7 @@ const FormOptions = () => {
         setCurrentTable(tableData)
     }
 
-    const submitUpdate = async (idx:number) => {
+    const decodeFormHookValues = (idx:number) => {
         const updatedObj:{[key:string]:string|number|boolean} = {}
         let rowID;
 
@@ -47,15 +47,36 @@ const FormOptions = () => {
         }   
 
         console.log(getValues())
-        const body = JSON.stringify({propertyRows: updatedObj})
+        const body = JSON.stringify({propertyRow: updatedObj})
+
+        return {body, rowID}
+    }
+
+    const submitUpdate = async (idx:number) => {
+        const { body, rowID } = decodeFormHookValues(idx)
         const response = await fetchHook(`/formOptions/table/${tableID}/row/${rowID}`, "PUT", body)
 
-        if(response.ok)
+        if(response.ok) 
             getFormOptionDetails(tableID)
         else 
             reset()
+    }
 
-        console.log(updatedObj)
+    const submitNewRow = async () => {
+        const { body } = decodeFormHookValues(0)
+        const response = await fetchHook(`/formOptions/table/${tableID}`, "POST", body)
+
+        console.log(response.ok)
+        if(response.ok) {
+            setAddingRow(false)
+            getFormOptionDetails(tableID)
+        } else 
+            reset()
+    }
+
+    const switchAddMode = () => {
+        setAddingRow(!addingRow)
+        reset()
     }
 
     const rowButton = async (sameIDX:boolean, idx:number) => {
@@ -89,17 +110,19 @@ const FormOptions = () => {
                             })}
                         </div>
                         <div className='addRow'>
-                            <button onClick={() => setAddingRow(!addingRow)}>Add Item</button>
+                            <button style={{backgroundColor: !addingRow ? "#b4d386" : "#daab6d"}}onClick={() => switchAddMode()}>{addingRow ? `View ${tables[tableID]} List` : "Add Item"}</button>
                         </div>
                     </div>
-                    <div id="formOptions">
-                        <h2>{tables[tableID]}</h2>
+                    <div id="formOptions" style={{height: addingRow ? "auto" : "100%"}}>
+                        <h2>{(addingRow ? "Adding " : " ") + tables[tableID]}</h2>
                         <div className='formOptionRow formOptionHeader'>
                             {currentTable.headers.map((title, idx) => {
-                                if(title === "inUse")
-                                    return <h3 key={idx} className='lastColumn'>{title}</h3>
-                                else 
-                                    return <h3 key={idx} className='tableWidth'>{title}</h3>
+                                if((title !== identity[tableID] || nonIdentity.includes(tableID)) || !addingRow) {
+                                    if(title === "inUse")
+                                        return <h3 key={idx} className='lastColumn'>{title}</h3>
+                                    else 
+                                        return <h3 key={idx} className='tableWidth'>{title}</h3>
+                                }
                             })}
                         </div>
                         <div className='formOptionRowsBody'>
@@ -120,15 +143,18 @@ const FormOptions = () => {
                                 }) :
                                 <>
                                     <div className='formOptionRow'>
-                                        {Object.keys(currentTable.rows[0]).map((columnName, idx) => {
-                                            if(columnName === "inUse")
-                                                return <input key={`${tableID} ~ ${idx}`} type="checkbox" className='lastColumn'></input>
-                                            else
-                                                return <input key={`${tableID} ~ ${idx}`} className='tableWidth'></input>
+                                        {Object.keys(currentTable.rows[0]).map((columnName) => {
+                                            if(columnName !== identity[tableID] || nonIdentity.includes(tableID)) {
+                                                if(columnName === "inUse")
+                                                    return <input key={`${tableID} ~ ${0} ~ ${columnName}`} type="checkbox" className='lastColumn' {...register(`${tableID} ~ ${0} ~ ${columnName}`)}></input>
+                                                else
+                                                    return <input key={`${tableID} ~ ${0} ~ ${columnName}`} className='tableWidth' {...register(`${tableID} ~ ${0} ~ ${columnName}`)}></input>
+                                            }
+                                            
                                         })}
 
                                     </div>
-                                    <button id="addButton">Add Row</button>
+                                    <button id="addButton" onClick={() => submitNewRow()}>Add Row</button>
                                 </>
                             }
                         </div>
