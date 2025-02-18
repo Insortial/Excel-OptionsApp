@@ -29,3 +29,7 @@ export interface JobMenuObject {
     refreshJobMenu: () => void,
     setDeleteMode: React.Dispatch<React.SetStateAction<boolean>>
 }
+
+export interface FormOptionsObject {
+    submitDeleteRow: () => void
+}

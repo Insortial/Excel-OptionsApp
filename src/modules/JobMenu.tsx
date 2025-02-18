@@ -8,8 +8,10 @@ import { FormOptionsContextType } from '../types/FormOptions.ts';
 import useFetch from '../hooks/useFetch.ts';
 import OptionsCreatorModal from './OptionsCreatorModal.tsx';
 import { JobMenuObject } from '../types/ModalTypes.ts';
-import { LoggedInUpdate } from '../context/AuthContext.tsx';
+import { AuthInfo, LoggedInUpdate } from '../context/AuthContext.tsx';
 import InputSearch from './InputSearch.tsx';
+import { DecodedToken } from '../types/AuthContextTypes.ts';
+import { jwtDecode } from 'jwt-decode';
 
 
 const JobMenu = () => {
@@ -21,8 +23,11 @@ const JobMenu = () => {
     const [isDeleteMode, setDeleteMode] = useState<boolean>(false)
     const { setIsCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const { saveLogInState } = LoggedInUpdate()
+    const { accessToken } = AuthInfo()
+    const decodedToken:DecodedToken|undefined = accessToken !== "token" ? jwtDecode(accessToken) : undefined
     const fetchHook = useFetch()
     const navigate = useNavigate()
+
     
     useEffect(() => {
         setIsCheckingError(false) 
@@ -81,7 +86,7 @@ const JobMenu = () => {
                     <nav>
                         <Link to="/creatingJob" className='jobMenuButtons'>Create Job Document</Link>
                         <Link to="/creatingJobPackage" className='jobMenuButtons'>Edit/Create Job Package</Link>
-                        {/* <Link to="/formOptions" className='jobMenuButtons'>Edit Form Options</Link> */}
+                        {(decodedToken !== undefined && decodedToken.roles.includes("ADMIN")) && <Link to="/formOptions" className='jobMenuButtons'>Edit Form Options</Link>}
                     </nav>
                 </header>
                 <div id="jobMenuBody">

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import InputSearch from './InputSearch'
-import { JobMenuObject, OptionsCreatorObject, PackageObject } from '../types/ModalTypes'
+import { FormOptionsObject, JobMenuObject, OptionsCreatorObject, PackageObject } from '../types/ModalTypes'
 import useFetch from '../hooks/useFetch'
 import { ErrorObject, LotInfo } from '../types/LotTableInterface'
 import InputError from './InputError'
@@ -15,10 +15,11 @@ type OptionsCreatorModal = {
     optionsCreatorObject?: OptionsCreatorObject,
     jobMenuObject?: JobMenuObject,
     packageObject?: PackageObject,
+    formOptionsObject?: FormOptionsObject
 }
 
 
-const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, setModalType, setModalInputValue, onJobDetailsChange, setIsLotCopy, modalType, optionsCreatorObject, jobMenuObject, packageObject}) => {
+const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, setModalType, setModalInputValue, onJobDetailsChange, setIsLotCopy, modalType, optionsCreatorObject, jobMenuObject, packageObject, formOptionsObject}) => {
     const fetchHook = useFetch()
     const [errors, setErrors] = useState<ErrorObject>({})
     const [availableLots, setAvailableLots] = useState<LotInfo[]>([])
@@ -58,6 +59,12 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
             .catch((error) => console.error(error));
         } else {
             turnOffModal()
+        }
+    }
+
+    const deleteFormOption = () => {
+        if(formOptionsObject) {
+            formOptionsObject.submitDeleteRow()
         }
     }
 
@@ -206,6 +213,15 @@ const OptionsCreatorModal: React.FC<OptionsCreatorModal> = ({modalInputValue, se
                         </div>
                     </> : <></>}
                  </>
+                : modalType === "deleteFormOption" ? 
+                <>
+                   <h2>Are You Sure You Want To Delete Form Option?</h2>
+                    <h3>{modalInputValue}</h3>
+                    <div className="modalButtonRow">
+                        <button onClick={() => deleteFormOption()}>YES</button>
+                        <button onClick={() => turnOffModal()}>NO</button>
+                    </div>
+                </>
                 : modalType === "partOfLot" ? 
                 <>
                     <h2>Enter Room ID:</h2>

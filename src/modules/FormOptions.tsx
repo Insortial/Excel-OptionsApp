@@ -3,15 +3,23 @@ import { useState } from 'react'
 import { Link, useLoaderData } from 'react-router-dom'
 import useFetch from '../hooks/useFetch'
 import { useForm } from 'react-hook-form'
+import OptionsCreatorModal from './OptionsCreatorModal'
+import { FormOptionsObject } from '../types/ModalTypes'
 
 const FormOptions = () => {
     const { tables, identity, nonIdentity } = useLoaderData() as {tables: {[key:number]:string}, identity: {[key:number]:string}, nonIdentity: number[]}
+    const { register, reset, getValues } = useForm()
+    const fetchHook = useFetch()
+
     const [editableRow, setEditableRow] = useState<number>(-1)
+    const [rowToDelete, setRowToDelete] = useState<number>(-1)
+    const [modalType, setModalType] = useState<string>("none")
+    const [modalInputValue, setModalInputValue] = useState<string>("")
     const [currentTable, setCurrentTable] = useState<{headers: string[], rows: {[key:string]:string|number|boolean}[]}>({headers: [], rows: []})
     const [tableID, setTableID] = useState<number>(-1)
     const [addingRow, setAddingRow] = useState<boolean>(false)
-    const { register, reset, getValues } = useForm()
-    const fetchHook = useFetch()
+    const [isDeleteMode, setDeleteMode] = useState<boolean>(false)
+    
 
     /* const getDefaultValues = (obj: {headers: string[], rows: {[key:string]:string|number|boolean}[]}) => {
         return obj.rows.reduce((acc, row, rowIdx) => {
@@ -40,19 +48,18 @@ const FormOptions = () => {
         for (const header of currentTable.headers) {
             if(header === identity[tableID])
                 rowID = getValues(`${tableID} ~ ${idx} ~ ${header}`)
-            else {
+
+            if(header !== identity[tableID] || nonIdentity.includes(tableID)) 
                 updatedObj[header] = getValues(`${tableID} ~ ${idx} ~ ${header}`)
-            }
         }   
 
-        console.log(getValues())
-        const body = JSON.stringify({propertyRow: updatedObj})
-
-        return {body, rowID}
+        return {rows: updatedObj, rowID}
     }
 
     const submitUpdate = async (idx:number) => {
-        const { body, rowID } = decodeFormHookValues(idx)
+        const { rows, rowID } = decodeFormHookValues(idx)
+        const body = JSON.stringify({propertyRow: rows})
+
         const response = await fetchHook(`/formOptions/table/${tableID}/row/${rowID}`, "PUT", body)
 
         if(response.ok) 
@@ -62,15 +69,49 @@ const FormOptions = () => {
     }
 
     const submitNewRow = async () => {
-        const { body } = decodeFormHookValues(0)
+        const { rows } = decodeFormHookValues(0)
+        const body = JSON.stringify({propertyRow: rows})
+
         const response = await fetchHook(`/formOptions/table/${tableID}`, "POST", body)
 
-        console.log(response.ok)
         if(response.ok) {
             setAddingRow(false)
             getFormOptionDetails(tableID)
         } else 
             reset()
+    }
+
+    const submitDeleteRow = async () => {
+        const { rowID } = decodeFormHookValues(rowToDelete)
+
+        const response = await fetchHook(`/formOptions/table/${tableID}/row/${rowID}`, "DELETE")
+
+        if(response.ok) {
+            setModalType("none")
+            getFormOptionDetails(tableID)
+            setRowToDelete(-1)
+        } else {
+            setModalInputValue("Cannot delete, there are child records associated")
+        }
+    }
+
+    const openDeleteModal = async (idx:number) => {
+        setRowToDelete(idx)
+        const { rows, rowID } = decodeFormHookValues(idx)
+        const objArray = []
+
+        if(nonIdentity.includes(tableID)) {
+            console.log("Not Identity")
+            objArray.push(`ID: ${rowID}`)
+        } else {
+            for (const key of Object.keys(rows)) {
+                if(key !== 'inUse')
+                    objArray.push(`${key}: ${rows[key]}`)
+            }  
+        }
+            
+        setModalInputValue(objArray.join(', '))
+        setModalType("deleteFormOption")
     }
 
     const switchAddMode = () => {
@@ -79,17 +120,32 @@ const FormOptions = () => {
     }
 
     const rowButton = async (sameIDX:boolean, idx:number) => {
+        setDeleteMode(false)
+        if(sameIDX) {
+            setEditableRow(-1)
+        } else {
+            setEditableRow(idx)
+        }
+        reset()
+    }
+
+    const secondaryRowButton = async (sameIDX:boolean, idx:number) => {
         if(sameIDX) {
             setEditableRow(-1)
             submitUpdate(idx)
         } else {
-            setEditableRow(idx)
+            openDeleteModal(idx)
             reset()
         }
+    }   
+
+    const formOptionsObject:FormOptionsObject = {
+        submitDeleteRow: submitDeleteRow
     }
 
     return (
         <>
+            <OptionsCreatorModal modalType={modalType} modalInputValue={modalInputValue} setModalType={setModalType} setModalInputValue={setModalInputValue} formOptionsObject={formOptionsObject}></OptionsCreatorModal>
             <div id="jobMenuScreen">
                 <header id="jobMenuHeader">
                     <h1>Form Options</h1>
@@ -108,12 +164,15 @@ const FormOptions = () => {
                                 return <div key={idx} className={`${+key === tableID ? "selectedChoice" : ""} choiceButton`} onClick={() => getFormOptionDetails(Number(key))}>{tables[Number(key)]}</div>
                             })}
                         </div>
-                        <div className='addRow'>
-                            <button style={{backgroundColor: !addingRow ? "#b4d386" : "#daab6d"}}onClick={() => switchAddMode()}>{addingRow ? `View ${tables[tableID]} List` : "Add Item"}</button>
+                        <div className='addRow buttonRow'>
+                            <button style={{display: tableID !== -1 ? "block" : "none", backgroundColor: !addingRow ? "#b4d386" : "#daab6d"}}onClick={() => switchAddMode()}>{addingRow ? `View ${tables[tableID]} List` : "Add Item"}</button>
+                        </div>
+                        <div className='deleteRow buttonRow'>
+                            <button style={{display: tableID !== -1 && editableRow === -1 ? "block" : "none"}} onClick={() => setDeleteMode(!isDeleteMode)}>Delete Row</button>
                         </div>
                     </div>
-                    <div id="formOptions" style={{height: addingRow ? "auto" : "100%"}}>
-                        <h2>{(addingRow ? "Adding " : " ") + tables[tableID]}</h2>
+                    <div id="formOptions" style={{width: tableID !== -1 ? "auto" : "40%", height: addingRow ? "auto" : "100%"}}>
+                        <h2>{tableID !== -1 ? (addingRow ? "Adding " : " ") + tables[tableID] : "Select a Form Option"}</h2>
                         <div className='formOptionRow formOptionHeader'>
                             {currentTable.headers.map((title, idx) => {
                                 if((title !== identity[tableID] || nonIdentity.includes(tableID)) || !addingRow) {
@@ -136,7 +195,8 @@ const FormOptions = () => {
                                                 else
                                                     return <input key={`${tableID} ~ ${idx} ~ ${item}`} readOnly={identity[tableID] === item} disabled={idx !== editableRow} className='tableWidth' {...register(`${tableID} ~ ${idx} ~ ${item}`, {value: row[item]})}></input>
                                             })}
-                                            <button /* style={{display: isDirty && sameIDX ? "none" : "block"}} */ className={sameIDX ? "submitButton": "editButton"} onClick={() => rowButton(sameIDX, idx)}>{sameIDX ? "Submit" : "Edit"}</button>
+                                            <button /* style={{display: isDirty && sameIDX ? "none" : "block"}} */ className={sameIDX ? "cancelButton" : "editButton"} onClick={() => rowButton(sameIDX, idx)}>{sameIDX ? "Cancel" : "Edit"}</button>
+                                            <button style={{display: isDeleteMode || sameIDX ? "block" : "none"}} className={sameIDX ? "submitButton" : 'deleteRowButton'} onClick={() => secondaryRowButton(sameIDX, idx)}>{sameIDX ? "Submit" : "X"}</button>
                                         </div>
                                     )
                                 }) :
