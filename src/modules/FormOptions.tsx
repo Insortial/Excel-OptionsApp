@@ -153,7 +153,7 @@ const FormOptions = () => {
                     <nav>
                         <Link to="/creatingJob" className='jobMenuButtons'>Create Job Document</Link>
                         <Link to="/creatingJobPackage" className='jobMenuButtons'>Edit/Create Job Package</Link>
-                        <Link to="/formOptions" className='jobMenuButtons'>Edit Form Options</Link>
+                        <Link to="/jobMenu" className='jobMenuButtons'>View Job Menu</Link>
                     </nav>
                 </header>
                 <div id="formOptionsBody">
