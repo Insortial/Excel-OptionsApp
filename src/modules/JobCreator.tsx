@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import '../App.css'
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InputSearch from '../modules/InputSearch.tsx';
 import { ErrorObject, JobDetails, JobDocumentInterface, PackageDetails } from "../types/LotTableInterface";
 import InputError from './InputError.tsx';
@@ -177,10 +177,11 @@ function JobCreator() {
     <div id="mainScreen">
       <div id="titleCover">
         <h1>Start New<br></br>Job</h1>
+        <Link to="/jobMenu" style={{marginTop: "auto"}}>Back to Job Menu</Link>
       </div>
       <section id="formSection">
         <form onSubmit={goToOptionsCreator}>
-          <h2>Enter Job Details:</h2>
+          <h2>Enter Job ID</h2>
           <div className="formRow">
             <label htmlFor={"jobID"}>Job ID: </label>
             <InputSearch inputName={"jobID"} formState={jobDetails} onFormChange={onFormChange} isDropDown={false}></InputSearch>

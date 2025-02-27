@@ -114,6 +114,7 @@ function JobPackageCreator() {
       <div id="mainScreen">
         <div id="titleCover">
           <h1>Job Package<br></br>Manager</h1>
+          <Link to="/jobMenu" style={{marginTop: "auto"}}>Back to Job Menu</Link>
         </div>
         <section id="formSection">
           <form onSubmit={goToPackageCreator}>

@@ -52,7 +52,7 @@ const OptionsCreatorNav: React.FC<OptionsCreatorNav> = ({ isOptionsMode, jobDeta
             <h1>{isOptionsMode ? "Options" : "Package" } Creator</h1>
             {isOptionsMode ? (
                 <>
-                    <h2 style={{display: jobDetails.prodReady ? "block" : "none"}}>PRODUCTION APPROVED</h2>
+                    <h2 style={{display: jobDetails.prodReady ? "block" : "none", color: '#ffb96e'}}>PRODUCTION APPROVED</h2>
                     <h2>Current Lot: {currentLotNum}</h2>
                     <section id="classRow">
                         {isChangingDate ? <input type="date" value={jobDetails.date} onChange={handleDateChange}></input>: <h2>Date: {jobDetails.date}</h2>}
