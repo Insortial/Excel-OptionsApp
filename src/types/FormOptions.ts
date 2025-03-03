@@ -31,6 +31,7 @@ export type FormOptionsContextType = {
     filterColors: (materialName:string) => string[];
     filterProjects: (builderName:string) => string[];
     updateDropDowns: (accessToken:string) => void;
+    retrieveCharMax: (propName:string) => null|number;
 }
 
 export type AdminDashboardInfoContextType = {

@@ -26,6 +26,7 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
     
     const [errors, setErrors] = useState<ErrorObject>({})
     const [isCheckingError, setIsCheckingError] = useState<boolean>(false);
+    const [columnPropMax, setColumnPropMax] = useState<{[key:string]:number}>({})
     const [loaded, setLoaded] = useState<boolean>(false);
     const { accessToken } = AuthInfo()
     
@@ -40,37 +41,27 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
             method: "GET",
             headers: myHeaders,
         }
+    
+        try {
+            const propMaxResponse = await fetch(import.meta.env.VITE_BACKEND_URL + "/propertyMax", config)
+            const dropDownResponse = await fetch(import.meta.env.VITE_BACKEND_URL + "/dropDownInfo", config)
+        
+            const propMax = await propMaxResponse.json()
+            const formListObject = await dropDownResponse.json()
 
-        fetch(import.meta.env.VITE_BACKEND_URL + "/dropDownInfo", config)
-            .then((response) => response.text())
-            .then((result) => {
-                console.log(JSON.parse(result))
-                const formListObject = JSON.parse(result)
-                const formList = formListObject.formList
-                const formOptions:FormOptionsInterface = {
-                    builder: formList.builder,
-                    project: formList.project, 
-                    foreman: formList.foreman,
-                    jobID: formList.jobID, 
-                    boxStyle: formList.boxStyle,
-                    drawerBoxes: formList.drawerBoxes, 
-                    interiors: formList.interiors,
-                    drawerFronts: formList.drawerFronts,
-                    drawerGuides: formList.drawerGuides,
-                    doorHinges: formList.doorHinges, 
-                    material: formList.material, 
-                    knobs: formList.knobs,
-                    color: formList.color,
-                    doors: formList.doors, 
-                    pulls: formList.pulls,
-                }
-                setFormOptions(formOptions)
-                setLoaded(true)
-            })
-            .catch((error) => {
-                console.error(error)
-                setLoaded(false)
-            });
+            setFormOptions(formListObject.formList)
+            setColumnPropMax(propMax)
+        } catch(error) {
+            console.error(error)
+            setLoaded(false)
+        }
+    }
+
+    const retrieveCharMax = (propName: string) => {
+        if(propName in columnPropMax)
+            return columnPropMax[propName]
+        else
+            return null
     }
 
     const saveFormOptions = (formOptions: FormOptionsInterface) => {
@@ -112,7 +103,6 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
                 break
             default:
         }
-
         
         return formOptions.color.filter((colorTuple:[number, string, string]) => filterWords.includes(colorTuple[2])).map((colorTuple:[number, string, string]) => colorTuple[1])
     }
@@ -156,7 +146,7 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
     }
 
     return (
-        <FormOptionsContext.Provider value={{ filterProjects, loaded, getFormIDs, errors, setErrors, isCheckingError, setIsCheckingError, formOptions, saveFormOptions, retrieveDropDown, filterColors, updateDropDowns }}>
+        <FormOptionsContext.Provider value={{ filterProjects, loaded, getFormIDs, errors, setErrors, isCheckingError, setIsCheckingError, formOptions, saveFormOptions, retrieveDropDown, filterColors, updateDropDowns, retrieveCharMax }}>
             {children}
         </FormOptionsContext.Provider>
     )

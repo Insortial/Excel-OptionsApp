@@ -639,7 +639,7 @@ input {
 }
 
 input:focus {
-    border: 1px solid #ffb74a !important;
+    border: 1px solid #ffb74a;
 }
 
 input::placeholder {
@@ -647,8 +647,16 @@ input::placeholder {
     color: black;
 }
 
+.cellTextArea {
+    border: none;
+}
+
+.errorTextArea:focus {
+    border: 2px solid #F06363;
+}
+
 textarea:focus {
-    border: 2px solid #ffb74a
+    border: 2px solid #ffb74a;
 }
 
 td > div > input {
@@ -662,7 +670,7 @@ td > div > input {
 
 .jobMenuButtons {
     padding: 7px;
-    background-color: #DBBEA1;
+    background-color: #F06363;
     font-weight: bold;
     color: #2d2d2d;
     margin-left: 15px;
@@ -1205,13 +1213,19 @@ h1 {
     grid-column-gap: 10px;
 }
 
+/* .lotFooter > tbody > tr > td {
+    height: 100%;
+} */
+
 .lotFooter .optionSearchContainer {
     height: 100%;
+    display: flex;
 }
 
 .lotFooter .optionSearch {
     height: 100%;
     font-size: 0.7em;
+    flex-grow: 1;
 }
 
 .lotFooter .optionResults {

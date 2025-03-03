@@ -17,15 +17,17 @@ type inputOptions = {
 }
 
 const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, onFormChange, inputName, optionSectionNum, filterValue, locked}) => {
-    const [suggestion, setSuggestion] = useState<string[]>([]);
-    const [dropDownOptions, setDropDownOptions] = useState<string[]>([]);
-    const [inFocus, setInFocus] = useState<boolean | boolean>(false);
-    const [focusedIndex, setFocusedIndex] = useState(0);
-    const [value, setValue] = useState<string>("");
+    const [suggestion, setSuggestion] = useState<string[]>([])
+    const [dropDownOptions, setDropDownOptions] = useState<string[]>([])
+    const [inFocus, setInFocus] = useState<boolean | boolean>(false)
+    const [isTextLimit, setIsTextLimit] = useState<boolean>(false)
+    const [focusedIndex, setFocusedIndex] = useState(0)
+    const [value, setValue] = useState<string>("")
     const [hasError, setError] = useState(false)
-    const { loaded, errors, retrieveDropDown, isCheckingError, filterColors, filterProjects } = useContext(FormOptionsContext) as FormOptionsContextType
+    const { loaded, errors, retrieveDropDown, isCheckingError, filterColors, filterProjects, retrieveCharMax } = useContext(FormOptionsContext) as FormOptionsContextType
     const inputRef = useRef<HTMLInputElement>(null)
     const dropDownRef = useRef<HTMLDivElement>(null)
+    const charMax = retrieveCharMax(inputName)
 
     const handleClickOutside = () => {
         if(isDropDown)
@@ -132,13 +134,19 @@ const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, on
     function readInput(input: React.ChangeEvent<HTMLInputElement>): void {
         setValue(input.target.value)
 
+        if(charMax && input.target.value.length === charMax) {
+            setIsTextLimit(true)
+            setTimeout(() => {
+                setIsTextLimit(false)
+            }, 2000)
+        }
+
         if(!isDropDown)
             onFormChange?.(input.target.value, inputName, optionSectionNum)
 
         if(suggestion != undefined) {
             const prefix = input.target.value.toLowerCase()
             const stringArray:string[] = dropDownOptions
-            stringArray.map((x: string) => console.log(x)).slice(0, 50)
             setSuggestion(stringArray.filter((x: string) => x?.toLowerCase().includes(prefix)).slice(0, 50));
         }
     }
@@ -148,7 +156,8 @@ const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, on
             <input 
                     type={inputName === "date" ? "date" : "text"} 
                     className="optionSearch" 
-                    style={{border: hasError && isCheckingError ? "1px solid red" : "black"}}
+                    style={{border: (hasError && isCheckingError) || isTextLimit ? "1px solid red" : inFocus ? "1px solid #ffb74a" :"black"}}
+                    {...(charMax ? {maxLength: charMax ?? 0} : {})}
                     value={!isDropDown && !locked ? getPartOfLotValue() : value}
                     placeholder={postfix ? getPartOfLotValue() + " - " + postfix :  getPartOfLotValue()} 
                     ref={inputRef}
