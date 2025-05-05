@@ -151,10 +151,11 @@ input {
 }
 
 #jobMenuScreen {
-    height: 100vh;
+    height: auto;
     width: 100vw;
     display: flex;
     flex-direction: column;
+
 }
 
 #jobMenuHeader {
@@ -182,6 +183,113 @@ input {
     flex-direction: column;
     margin-top: 180px;
     width: 100%;
+}
+
+#pdBody {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 80px;
+}
+
+#pdFilters {
+    height: 100%;
+    width: 40%;
+    display: flex;
+    flex-direction: row;
+}
+
+#pdHeader {
+    width: 100%;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    min-height: 250px;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 0 0 20px 20px;
+}
+
+.filterSection {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#pdHeader > h1 {
+    width: 30%;
+    display: inline-block;
+    color: #353434;
+    margin: 0;
+    font-size: 4em;
+}
+
+#pdHeader > h1 > span {
+    color: #EF6565;
+}
+
+#pdHeader > h1 > span:hover {
+    cursor: pointer;
+}
+
+#lastLetter {
+    font-size: .6em;
+}
+
+#pdTableBody {
+    width: 100%;
+}
+
+#pdTable {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#pageNavigation {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    height: 30px;
+    align-items: center;
+}
+
+#pageNavigation > button {
+    height: 25px;
+    width: 90px;
+    background-color: #945766;
+    color: white;
+    font-weight: normal;
+}
+
+#pageNavigation > h3 {
+    margin: 0 10px 0 10px;
+    font-weight: normal;
+}
+
+
+.pdRow {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Makes columns equal width */
+}
+
+.pdRow > h4 {
+    margin: 20px 0 10px 0;
+    font-size: 1.2em;
+}
+
+.pdRow > input {
+    outline: 1.5px solid black;
 }
 
 #formOptionsBody {
@@ -640,6 +748,8 @@ input {
 
 input:focus {
     border: 1px solid #ffb74a;
+    outline: 1px solid #ffb74a;
+    z-index: 2;
 }
 
 input::placeholder {
@@ -1049,7 +1159,6 @@ th {
 
 tr {
     box-sizing: border-box;
-    height: 1px;
 }
 
 .noteColumn {

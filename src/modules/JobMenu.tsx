@@ -87,6 +87,7 @@ const JobMenu = () => {
                         <Link to="/creatingJob" className='jobMenuButtons'>Create Job Document</Link>
                         <Link to="/creatingJobPackage" className='jobMenuButtons'>Edit/Create Job Package</Link>
                         {(decodedToken !== undefined && decodedToken.roles.includes("ADMIN")) && <Link to="/formOptions" className='jobMenuButtons'>Edit Form Options</Link>}
+                        {(decodedToken !== undefined && decodedToken.roles.includes("ADMIN")) && <Link to="/pdEditor" className='jobMenuButtons'>P&D Editor</Link>}
                     </nav>
                 </header>
                 <div id="jobMenuBody">

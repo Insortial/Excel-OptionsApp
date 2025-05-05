@@ -10,12 +10,12 @@ const useFetch = () => {
     }
 
     const originalRequest = async (url: string, reqConfig:RequestInit) => {
-        url = `${import.meta.env.VITE_BACKEND_URL}${url}`
+        url = `${url}`
         const response = await fetch(url, reqConfig)
         return response
     }
 
-    const callFetch = async (url:string, requestType:string, body?:BodyInit) => {
+    const callFetch = async (route:string, requestType:string, body?:BodyInit, url:string=import.meta.env.VITE_BACKEND_URL) => {
         const accessToken = await getToken()
         myHeaders.set("Authorization", `Bearer ${accessToken}`)
         config = {
@@ -27,7 +27,7 @@ const useFetch = () => {
         if(["POST", "PUT"].includes(requestType))
             config.body = body ?? {} as BodyInit
 
-        const response = await originalRequest(url, config)
+        const response = await originalRequest(`${url}${route}`, config)
         return response
     }
 
