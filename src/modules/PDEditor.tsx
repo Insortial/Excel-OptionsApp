@@ -10,7 +10,6 @@ const PDEditor = () => {
     const { items, pageNum, totalPages, limit } = useLoaderData() as {items: jobInfoObj[], pageNum: number, totalPages: number, limit: number}
     const [itemList, setItemList] = useState(items)
     const [modalType, setModalType] = useState("none")
-    const [modalInputValue, setModalInputValue] = useState("")
     const [currentLevel, setCurrentLevel] = useState<"job"|"customer"|"project"|"lot">("job")
     const [currentPage, setCurrentPage] = useState<number>(pageNum)
     const [numOfPages, setNumOfPages] = useState<number>(totalPages)
@@ -65,9 +64,15 @@ const PDEditor = () => {
       return val.charAt(0).toUpperCase() + val.slice(1);
     }
 
+    const turnOffModal = () => {
+      setModalType("none")
+    }
+
     return (
       <>
-        <OptionsCreatorModal modalType={modalType} setModalType={setModalType} modalInputValue={modalInputValue} setModalInputValue={setModalInputValue}/>
+        <OptionsCreatorModal modalType={modalType} turnOffModal={turnOffModal}>
+          <h3>Example</h3>
+        </OptionsCreatorModal>
         <div id="jobMenuScreen" style={{backgroundColor: "#f0f0f0"}}>
             <header id="jobMenuHeader" style={{justifyContent: "flex-end", minHeight: "80px"}}>
                 <h4 id="logOutButtonHeader" onClick={() => console.log()}>Logout</h4>

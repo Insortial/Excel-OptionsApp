@@ -12,6 +12,7 @@ import { AuthInfo, LoggedInUpdate } from '../context/AuthContext.tsx';
 import InputSearch from './InputSearch.tsx';
 import { DecodedToken } from '../types/AuthContextTypes.ts';
 import { jwtDecode } from 'jwt-decode';
+import DeleteOptionModal from './ModalScreens/DeleteOptionModal.tsx';
 
 
 const JobMenu = () => {
@@ -19,7 +20,6 @@ const JobMenu = () => {
     const [modalType, setModalType] = useState<string>("none")
     const [jobDocument, setJobDocument] = useState<JobDocumentInterface|null>(null)
     const [filterObject, setFilterObject] = useState<FilterObject>({jobID: '', builder: '', project: ''})
-    const [modalInputValue, setModalInputValue] = useState<string>("")
     const [isDeleteMode, setDeleteMode] = useState<boolean>(false)
     const { setIsCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const { saveLogInState } = LoggedInUpdate()
@@ -76,9 +76,17 @@ const JobMenu = () => {
                 && (jobID.includes(filterObject.jobID) || jobID === "")
     }
 
+    const turnOffModal = () => {
+        setModalType("none")
+    }
+
     return (
         <>
-            <OptionsCreatorModal modalType={modalType} setModalType={setModalType} modalInputValue={modalInputValue} setModalInputValue={setModalInputValue} jobMenuObject={jobMenuObject}/>
+            <OptionsCreatorModal modalType={modalType} turnOffModal={turnOffModal}>
+                {modalType === "delete" ? 
+                    <DeleteOptionModal jobMenuObject={jobMenuObject} turnOffModal={turnOffModal}/> : 
+                <></>}
+            </OptionsCreatorModal>
             <div id="jobMenuScreen">
                 <header id="jobMenuHeader">
                     <h1>Job Menu</h1>

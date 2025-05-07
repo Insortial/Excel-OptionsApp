@@ -9,6 +9,7 @@ import { FormOptionsContextType } from '../types/FormOptions.ts';
 import useFetch from '../hooks/useFetch.ts';
 import OptionsCreatorModal from './OptionsCreatorModal.tsx';
 import { PackageObject } from '../types/ModalTypes.ts';
+import DeleteOptionModal from './ModalScreens/DeleteOptionModal.tsx';
 
 const defaultJobDetails:JobDetails = {
   builder: "",
@@ -30,7 +31,6 @@ function JobPackageCreator() {
   const [packages, setPackages] = useState<PackageInfo[]>([]);
   const [jobDetails, setJobDetails] = useState<JobDetails>(defaultJobDetails);
   const [modalType, setModalType] = useState<string>("none")
-  const [modalInputValue, setModalInputValue] = useState<string>("")
   const [packageToDelete, setPackageToDelete] = useState<PackageInfo | null>(null)
   const [errors, setErrors] = useState<ErrorObject>({})
   const { setIsCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
@@ -100,7 +100,10 @@ function JobPackageCreator() {
     e.preventDefault()
     setModalType("delete")
     setPackageToDelete(packageDetails)
-    setModalInputValue("")
+  }
+
+  const turnOffModal = () => {
+    setModalType("none")
   }
 
   const packageObject:PackageObject = {
@@ -110,7 +113,11 @@ function JobPackageCreator() {
 
   return (
     <>
-      <OptionsCreatorModal modalType={modalType} setModalType={setModalType} modalInputValue={modalInputValue} setModalInputValue={setModalInputValue} packageObject={packageObject}/>
+      <OptionsCreatorModal modalType={modalType} turnOffModal={turnOffModal}>
+        {modalType === "delete" ? 
+            <DeleteOptionModal turnOffModal={turnOffModal} packageObject={packageObject}/> : 
+        <></>}
+      </OptionsCreatorModal>
       <div id="mainScreen">
         <div id="titleCover">
           <h1>Job Package<br></br>Manager</h1>

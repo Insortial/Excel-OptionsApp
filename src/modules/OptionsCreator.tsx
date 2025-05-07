@@ -12,6 +12,7 @@ import OptionsCreatorNav from "./OptionsCreatorNav.tsx";
 import validate from "../hooks/validate.tsx";
 import useSQLJobDetailsPost from "../hooks/useSQLJobDetailsPost.tsx";
 import Notification from "./Notification.tsx";
+import OptionsCreatorModalScreens from "./ModalScreens/OptionsCreatorModalScreens.tsx";
   
 function OptionsCreator() {
     const initialJobDetails:JobDetails = {
@@ -429,6 +430,7 @@ function OptionsCreator() {
         }
     }, [requestedJobDetails, loaderData])
 
+    //Modal object and functions
     const optionsCreatorObject:OptionsCreatorObject = {
         isOptionsMode: isOptionsMode, 
         currentLot: currentLot,
@@ -446,12 +448,22 @@ function OptionsCreator() {
         onProjectsChange: onProjectsChange,
         addOptionRow: addOptionRow
     }
+    
+    const turnOffModal = () => {
+        setModalInputValue("")
+        setErrors({})
+        setModalType("none")
+        
+        setIsLotCopy(false)
+    } 
 
     return (
         <>
-            <OptionsCreatorModal modalInputValue={modalInputValue} setModalInputValue={setModalInputValue} setModalType={setModalType} setIsLotCopy={setIsLotCopy} modalType={modalType} onJobDetailsChange={onJobDetailsChange} optionsCreatorObject={optionsCreatorObject}/>
+            <OptionsCreatorModal modalType={modalType} turnOffModal={turnOffModal}>
+                <OptionsCreatorModalScreens optionsCreatorObject={optionsCreatorObject} modalType={modalType} setModalType={setModalType} modalInputValue={modalInputValue} setModalInputValue={setModalInputValue} onJobDetailsChange={onJobDetailsChange} turnOffModal={turnOffModal}/>
+            </OptionsCreatorModal>
             <OptionsCreatorNav isOptionsMode={isOptionsMode} jobDetails={jobDetails} currentLotNum={currentLotNum} listOfLots={listOfLots} onJobDetailsChange={onJobDetailsChange} setModalType={setModalType}
-                setIsLotCopy={setIsLotCopy} setCurrentLotNum={setCurrentLotNum} setCurrentLot={setCurrentLot} sortListOfLots={sortListOfLots} changeLotTable={changeLotTable}/>
+                setIsLotCopy={setIsLotCopy} setCurrentLotNum={setCurrentLotNum} setCurrentLot={setCurrentLot} sortListOfLots={sortListOfLots} changeLotTable={changeLotTable} />
             <div id="optionsEditor">
                 {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} onJobDetailsChange={onJobDetailsChange} jobDetails={jobDetails} setModalType={setModalType} convertToMixedOptions={convertToMixedOptions}
                                                                             lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode} />)}

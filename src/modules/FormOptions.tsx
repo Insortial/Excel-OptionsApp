@@ -4,7 +4,6 @@ import { Link, useLoaderData } from 'react-router-dom'
 import useFetch from '../hooks/useFetch'
 import { useForm } from 'react-hook-form'
 import OptionsCreatorModal from './OptionsCreatorModal'
-import { FormOptionsObject } from '../types/ModalTypes'
 
 const FormOptions = () => {
     const { tables, identity, nonIdentity } = useLoaderData() as {tables: {[key:number]:string}, identity: {[key:number]:string}, nonIdentity: number[]}
@@ -139,13 +138,20 @@ const FormOptions = () => {
         }
     }   
 
-    const formOptionsObject:FormOptionsObject = {
-        submitDeleteRow: submitDeleteRow
+    const turnOffModal = () => {
+        setModalType("none")
     }
 
     return (
         <>
-            <OptionsCreatorModal modalType={modalType} modalInputValue={modalInputValue} setModalType={setModalType} setModalInputValue={setModalInputValue} formOptionsObject={formOptionsObject}></OptionsCreatorModal>
+            <OptionsCreatorModal modalType={modalType} turnOffModal={turnOffModal}>
+                <h2>Are You Sure You Want To Delete Form Option?</h2>
+                <h3>{modalInputValue}</h3>
+                <div className="modalButtonRow">
+                    <button onClick={() => submitDeleteRow()}>YES</button>
+                    <button onClick={() => turnOffModal()}>NO</button>
+                </div>
+            </OptionsCreatorModal>
             <div id="jobMenuScreen">
                 <header id="jobMenuHeader">
                     <h1>Form Options</h1>
