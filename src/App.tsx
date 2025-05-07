@@ -64,7 +64,7 @@ const App: React.FC = () => {
               element: <PDEditor />,
               loader: async () => {
                 let data = null
-                const response = await fetchHook(`/excelInfo/job?page=1&limit=100`, "GET", undefined, import.meta.env.VITE_EXCELINFO)
+                const response = await fetchHook(`/excelInfo/job?page=1&limit=50`, "GET", undefined, import.meta.env.VITE_EXCELINFO)
                 if (!response.ok) {
                   return null
                 } else {

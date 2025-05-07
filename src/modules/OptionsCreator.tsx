@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import LotTable from "./LotTable";
 import { useLocation, useNavigate, useLoaderData } from "react-router-dom";
 import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, PackageDetails, LotInfo } from '../types/LotTableInterface.ts';
@@ -280,6 +281,7 @@ function OptionsCreator() {
     const addOptionRow = (lotName:string) => {
         if(currentLot) {
             const lotSection:PartOfLot = {
+                ...throughoutLot,
                 roomID: lotName,
                 handleType: "none",
                 drawerFronts: currentLot.partsOfLot[0].drawerFronts ?? "",
@@ -288,20 +290,6 @@ function OptionsCreator() {
                 doorHinges: currentLot.partsOfLot[0].doorHinges ?? "",
                 boxStyle: currentLot.partsOfLot[0].boxStyle ?? "",
                 interiors: currentLot.partsOfLot[0].interiors ?? "",
-                numOfKnobs: 1,
-                numOfPulls: 1,
-                material: "",
-                glassDoors: false,
-                glassShelves: false,
-                color: "",
-                doors: "",
-                fingerpull: "",
-                knobs: "",
-                knobs2: "",
-                pulls: "",
-                pulls2: "",
-                details: "",
-                appliances: ""
             }
 
             const oldPartsOfLot = [...currentLot.partsOfLot]

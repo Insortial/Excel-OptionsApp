@@ -195,7 +195,7 @@ const FormOptions = () => {
                                                 else
                                                     return <input key={`${tableID} ~ ${idx} ~ ${item}`} readOnly={identity[tableID] === item} disabled={idx !== editableRow} className='tableWidth' {...register(`${tableID} ~ ${idx} ~ ${item}`, {value: row[item]})}></input>
                                             })}
-                                            <button /* style={{display: isDirty && sameIDX ? "none" : "block"}} */ className={sameIDX ? "cancelButton" : "editButton"} onClick={() => rowButton(sameIDX, idx)}>{sameIDX ? "Cancel" : "Edit"}</button>
+                                            <button className={sameIDX ? "cancelButton" : "editButton"} onClick={() => rowButton(sameIDX, idx)}>{sameIDX ? "Cancel" : "Edit"}</button>
                                             <button style={{display: isDeleteMode || sameIDX ? "block" : "none"}} className={sameIDX ? "submitButton" : 'deleteRowButton'} onClick={() => secondaryRowButton(sameIDX, idx)}>{sameIDX ? "Submit" : "X"}</button>
                                         </div>
                                     )

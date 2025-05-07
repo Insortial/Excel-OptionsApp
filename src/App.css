@@ -152,10 +152,9 @@ input {
 
 #jobMenuScreen {
     height: auto;
-    width: 100vw;
+    width: 100%;
     display: flex;
     flex-direction: column;
-
 }
 
 #jobMenuHeader {
@@ -209,6 +208,28 @@ input {
     padding: 20px;
     box-sizing: border-box;
     border-radius: 0 0 20px 20px;
+    position: relative;
+}
+
+#headerDropDown {
+    width: 200px;
+    background-color: rgb(250, 250, 250);
+    position: absolute;
+    top: 100%;
+    left: 275px;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 0 0 10px 10px;
+}
+
+#headerDropDown > h4 {
+    margin: 5px 0;
+    font-size: 1.5em;
+}
+
+#headerDropDown > h4:hover {
+    cursor: pointer;
+    color: #EF6565;
 }
 
 .filterSection {
@@ -219,8 +240,15 @@ input {
     box-sizing: border-box;
 }
 
+.filterSection > button {
+    margin-top: 10px;
+    height: 25px;
+    background-color: #dac97e;
+    border-radius: 3px;
+}
+
 #pdHeader > h1 {
-    width: 30%;
+    width: 31%;
     display: inline-block;
     color: #353434;
     margin: 0;
@@ -236,7 +264,7 @@ input {
 }
 
 #lastLetter {
-    font-size: .6em;
+    font-size: .5em;
 }
 
 #pdTableBody {
@@ -279,16 +307,29 @@ input {
 
 .pdRow {
     width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pdRow > button {
+    width: 4%;
+    height: 30px;
+}
+
+.pdCellSection {
+    width: 95%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Makes columns equal width */
 }
 
-.pdRow > h4 {
+.pdCellSection > h4 {
     margin: 20px 0 10px 0;
     font-size: 1.2em;
 }
 
-.pdRow > input {
+.pdCellSection> input {
     outline: 1.5px solid black;
 }
 
