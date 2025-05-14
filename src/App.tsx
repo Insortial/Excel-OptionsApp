@@ -29,21 +29,21 @@ const App: React.FC = () => {
       element: <Login />
     },
     {
-      element: <ProtectedRoute allowedRoles={["ADMIN", "OPT"]}/>,
+      element: <ProtectedRoute allowedRoles={["ADMIN", "OPT", "MEASURE"]}/>,
       children: [
         {
           path: "/creatingJob",
           element: <JobCreator />
         },
         {
-          element: <ProtectedRoute allowedRoles={["ADMIN"]}/>,
+          element: <ProtectedRoute allowedRoles={["ADMIN", "MEASURE"]}/>,
           children: [
             {
-              path: "/formOptions",
-              element: <FormOptions />,
+              path: "/pdEditor",
+              element: <PDEditor />,
               loader: async () => {
                 let data = null
-                const response = await fetchHook(`/formOptions`, "GET")
+                const response = await fetchHook(`/excelInfo/project?page=1&limit=50`, "GET", undefined, import.meta.env.VITE_EXCELINFO)
                 if (!response.ok) {
                   return null
                 } else {
@@ -57,14 +57,14 @@ const App: React.FC = () => {
           ]
         },
         {
-          element: <ProtectedRoute allowedRoles={["ADMIN", "OPT"]}/>,
+          element: <ProtectedRoute allowedRoles={["ADMIN"]}/>,
           children: [
             {
-              path: "/pdEditor",
-              element: <PDEditor />,
+              path: "/formOptions",
+              element: <FormOptions />,
               loader: async () => {
                 let data = null
-                const response = await fetchHook(`/excelInfo/job?page=1&limit=50`, "GET", undefined, import.meta.env.VITE_EXCELINFO)
+                const response = await fetchHook(`/formOptions`, "GET")
                 if (!response.ok) {
                   return null
                 } else {

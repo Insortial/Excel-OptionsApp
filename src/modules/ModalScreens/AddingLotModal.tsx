@@ -1,5 +1,5 @@
 import React from 'react'
-import { OptionsCreatorObject } from '../types/ModalTypes'
+import { OptionsCreatorObject } from '../../types/ModalTypes'
 
 interface AddingLotModal {
     optionsCreatorObject: OptionsCreatorObject,

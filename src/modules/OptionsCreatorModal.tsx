@@ -2,8 +2,7 @@ import React, { ReactNode, } from 'react'
 import { createPortal } from 'react-dom'
 
 type OptionsCreatorModal = {
-    modalType: string, 
-    setModalType?: React.Dispatch<React.SetStateAction<string>>,
+    modalType: string,
     turnOffModal: () => void,
     children: ReactNode
 }

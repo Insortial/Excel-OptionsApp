@@ -4,6 +4,8 @@ import { AuthUpdate, LoggedInUpdate } from '../context/AuthContext';
 import Header from './Header';
 import { FormOptionsContextType } from '../types/FormOptions';
 import { FormOptionsContext } from '../context/OptionsTemplateContext';
+import { jwtDecode } from 'jwt-decode';
+import { DecodedToken } from '../types/AuthContextTypes';
 
 
 const Login = () => {
@@ -40,8 +42,10 @@ const Login = () => {
     saveAccessToken(data.accessToken)
 
     if(data.success) {
+      const decodedToken:DecodedToken = jwtDecode(data.accessToken)
+      const isMeasure = decodedToken !== undefined && decodedToken.roles.find(role => role === "MEASURE")
       updateDropDowns(data.accessToken)
-      navigate("/jobMenu", {replace: true})
+      navigate(isMeasure ? "/pdEditor" : "/jobMenu", {replace: true})
       saveLogInState(true)
     }
   }
