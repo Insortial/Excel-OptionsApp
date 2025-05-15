@@ -100,8 +100,6 @@ const PDEditor = () => {
       setModalValue("address", getTableValues(`${index}.Address`))
       setModalValue("city", getTableValues(`${index}.City`))
       setModalValue("zipCode", getTableValues(`${index}.zipCode`))
-
-      console.log(getTableValues(`${index}`))
     }
 
     const resetTableFilters = () => {
