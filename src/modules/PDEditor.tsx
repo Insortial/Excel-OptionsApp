@@ -29,7 +29,6 @@ const PDEditor = () => {
     const [selectedItem, setSelectedItem] = useState(-1)
     const { register: registerFilters, reset: resetFilters, getValues: getFilterValues, formState: {isDirty: filterIsDirty} } = useForm()
     const { register: registerTableValues, reset: resetTableValues, getValues: getTableValues } = useForm()
-    const { register: registerModal, reset: resetModal, getValues: getModalValues, setValue: setModalValue } = useForm()
     const buttonTitle = {job: "Edit", project: "Location", customer: "Edit", lot: "Edit"}
     const decodedToken:DecodedToken|undefined = accessToken !== "token" ? jwtDecode(accessToken) : undefined
     const isMeasure = decodedToken !== undefined && decodedToken.roles.find(role => role === "MEASURE")
@@ -89,17 +88,11 @@ const PDEditor = () => {
     const turnOffModal = () => {
       setModalType("none")
       retrieveData(currentPage, false)
-      resetModal()
     }
 
     const openLocationModal = (index: number) => {
       setSelectedItem(index)
       setModalType("location")
-      setModalValue("latitude", getTableValues(`${index}.latitude`))
-      setModalValue("longitude", getTableValues(`${index}.longitude`))
-      setModalValue("address", getTableValues(`${index}.Address`))
-      setModalValue("city", getTableValues(`${index}.City`))
-      setModalValue("zipCode", getTableValues(`${index}.zipCode`))
     }
 
     const resetTableFilters = () => {
@@ -121,7 +114,7 @@ const PDEditor = () => {
     return (
       <>
         <OptionsCreatorModal modalType={modalType} turnOffModal={turnOffModal}>
-          <ProjectLocationScreen getTableValues={getTableValues} selectedItem={selectedItem} setModalType={setModalType} getModalValues={getModalValues} registerModal={registerModal} turnOffModal={turnOffModal}/>
+          {selectedItem !== -1 && <ProjectLocationScreen getTableValues={getTableValues} selectedItem={selectedItem} locationValues={getTableValues(`${selectedItem}`)} turnOffModal={turnOffModal}/>}
         </OptionsCreatorModal>
         <div id="jobMenuScreen" style={{backgroundColor: "#f0f0f0"}}>
             <header id="jobMenuHeader" style={{justifyContent: "flex-end", minHeight: "80px"}}>
