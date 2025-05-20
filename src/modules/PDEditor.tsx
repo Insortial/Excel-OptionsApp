@@ -114,7 +114,7 @@ const PDEditor = () => {
     return (
       <>
         <OptionsCreatorModal modalType={modalType} turnOffModal={turnOffModal}>
-          {selectedItem !== -1 && <ProjectLocationScreen getTableValues={getTableValues} selectedItem={selectedItem} locationValues={getTableValues(`${selectedItem}`)} turnOffModal={turnOffModal}/>}
+          {selectedItem !== -1 && <ProjectLocationScreen getTableValues={getTableValues} selectedItem={selectedItem} turnOffModal={turnOffModal}/>}
         </OptionsCreatorModal>
         <div id="jobMenuScreen" style={{backgroundColor: "#f0f0f0"}}>
             <header id="jobMenuHeader" style={{justifyContent: "flex-end", minHeight: "80px"}}>

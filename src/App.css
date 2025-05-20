@@ -346,19 +346,26 @@ input {
 }
 
 #locationButtons {
-    width: 85%;
+    width: 90%;
     display: flex;
     justify-content: flex-start;
     margin-top: 10px;
 }
 
 #locationButtons > button {
-    padding: 4px;
+    padding: 5px;
     margin-right: 10px;
+    background-color: #b7d3c2;
+    font-weight: bold;
+    color: rgb(68, 68, 68);
+}
+
+.selectedButton {
+    background-color: #8ca093 !important;
 }
 
 #locationForm {
-    width: 85%;
+    width: 90%;
 }
 
 #coordDiv {
@@ -373,6 +380,15 @@ input {
 #coordDiv > p {
     margin: 0;
     color: red;
+    font-size: 0.8em;
+}
+
+.addressError {
+    grid-column: 1 / -1;
+    margin: 0;
+    text-align: right;
+    color: red;
+    font-size: 0.8em;
 }
 
 #addressDiv {
