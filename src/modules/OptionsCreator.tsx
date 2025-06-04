@@ -398,7 +398,7 @@ function OptionsCreator() {
                 setJobDetails(loadedData.jobDetails)
                 sortListOfLots(loadedData.listOfLots, undefined, loadedData.jobDetails.lotNums)
                 setCurrentLot(loadedData.listOfLots[0])
-                setCurrentLotNum(loadedData.listOfLots[0].lot)
+                setCurrentLotNum(loadedData.listOfLots[0]?.lot ?? "")
                 if(loadedData.hasPackage) {
                     setHasPackage(true)
                     setPackageDetails(loadedData.packageDetails)

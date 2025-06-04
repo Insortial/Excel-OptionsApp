@@ -1,18 +1,15 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useContext, useEffect, useState } from 'react'
 import JobDocument from './JobDocument.tsx';
-import { Link, useNavigate } from 'react-router-dom';
 import { JobDocumentInterface, FilterObject } from '../types//LotTableInterface.ts';
 import { FormOptionsContext } from '../context/OptionsTemplateContext.tsx';
 import { FormOptionsContextType } from '../types/FormOptions.ts';
 import useFetch from '../hooks/useFetch.ts';
 import OptionsCreatorModal from './OptionsCreatorModal.tsx';
 import { JobMenuObject } from '../types/ModalTypes.ts';
-import { AuthInfo, LoggedInUpdate } from '../context/AuthContext.tsx';
 import InputSearch from './InputSearch.tsx';
-import { DecodedToken } from '../types/AuthContextTypes.ts';
-import { jwtDecode } from 'jwt-decode';
 import DeleteOptionModal from './ModalScreens/DeleteOptionModal.tsx';
+import Header from './Header.tsx';
 
 
 const JobMenu = () => {
@@ -22,11 +19,7 @@ const JobMenu = () => {
     const [filterObject, setFilterObject] = useState<FilterObject>({jobID: '', builder: '', project: ''})
     const [isDeleteMode, setDeleteMode] = useState<boolean>(false)
     const { setIsCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
-    const { saveLogInState } = LoggedInUpdate()
-    const { accessToken } = AuthInfo()
-    const decodedToken:DecodedToken|undefined = accessToken !== "token" ? jwtDecode(accessToken) : undefined
     const fetchHook = useFetch()
-    const navigate = useNavigate()
 
     
     useEffect(() => {
@@ -59,16 +52,6 @@ const JobMenu = () => {
         setDeleteMode: setDeleteMode
     }
 
-    const logOut = async () => {
-        const config:RequestInit = {
-            method: 'DELETE',
-            credentials: "include"
-        }
-        await fetch(`${import.meta.env.VITE_AUTH_URL}/logout`, config)
-        saveLogInState(false)
-        navigate("/login", { replace: true })
-    }
-
     const filterJobDocuments = (jobDocument:JobDocumentInterface):boolean =>{
         const jobID = jobDocument.jobID.toString()
         return (jobDocument.customerName === filterObject.builder || filterObject.builder === "")
@@ -88,16 +71,7 @@ const JobMenu = () => {
                 <></>}
             </OptionsCreatorModal>
             <div id="jobMenuScreen">
-                <header id="jobMenuHeader">
-                    <h1>Job Menu</h1>
-                    <h4 id="logOutButton" onClick={logOut}>Logout</h4>
-                    <nav>
-                        <Link to="/creatingJob" className='jobMenuButtons'>Create Job Document</Link>
-                        <Link to="/creatingJobPackage" className='jobMenuButtons'>Edit/Create Job Package</Link>
-                        {(decodedToken !== undefined && decodedToken.roles.includes("ADMIN")) && <Link to="/formOptions" className='jobMenuButtons'>Edit Form Options</Link>}
-                        {(decodedToken !== undefined && decodedToken.roles.includes("ADMIN")) && <Link to="/pdEditor" className='jobMenuButtons'>P&D Editor</Link>}
-                    </nav>
-                </header>
+                <Header currentPage='jobMenu'/>
                 <div id="jobMenuBody">
                     <section className='jobMenuSection'>
                         <nav id="menuSettings">

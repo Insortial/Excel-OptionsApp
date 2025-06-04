@@ -29,32 +29,32 @@ const App: React.FC = () => {
       element: <Login />
     },
     {
-      element: <ProtectedRoute allowedRoles={["ADMIN", "OPT", "MEASURE"]}/>,
+      element: <ProtectedRoute allowedRoles={["ADMIN", "MEASURE"]}/>,
+      children: [
+        {
+          path: "/pdEditor",
+          element: <PDEditor />,
+          loader: async () => {
+            let data = null
+            const response = await fetchHook(`/excelInfo/project?page=1&limit=50`, "GET", undefined, import.meta.env.VITE_EXCELINFO)
+            if (!response.ok) {
+              return null
+            } else {
+              data = await response.json()
+              console.log(data)
+            }
+            
+            return data
+          }
+        }
+      ]
+    },
+    {
+      element: <ProtectedRoute allowedRoles={["ADMIN", "OPT"]}/>,
       children: [
         {
           path: "/creatingJob",
           element: <JobCreator />
-        },
-        {
-          element: <ProtectedRoute allowedRoles={["ADMIN", "MEASURE"]}/>,
-          children: [
-            {
-              path: "/pdEditor",
-              element: <PDEditor />,
-              loader: async () => {
-                let data = null
-                const response = await fetchHook(`/excelInfo/project?page=1&limit=50`, "GET", undefined, import.meta.env.VITE_EXCELINFO)
-                if (!response.ok) {
-                  return null
-                } else {
-                  data = await response.json()
-                  console.log(data)
-                }
-                
-                return data
-              }
-            }
-          ]
         },
         {
           element: <ProtectedRoute allowedRoles={["ADMIN"]}/>,

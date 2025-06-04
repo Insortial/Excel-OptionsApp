@@ -52,7 +52,7 @@ const Login = () => {
   
   return (
     <div id="loginPage">
-        <Header />
+        <Header currentPage='loggedOut'/>
         <form id="loginDiv" onSubmit={submitLogin}>
             <h2>Login</h2>
             <label htmlFor="loginEmail">Email</label>

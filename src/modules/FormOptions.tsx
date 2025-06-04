@@ -1,9 +1,10 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useState } from 'react'
-import { Link, useLoaderData } from 'react-router-dom'
+import { useLoaderData } from 'react-router-dom'
 import useFetch from '../hooks/useFetch'
 import { useForm } from 'react-hook-form'
 import OptionsCreatorModal from './OptionsCreatorModal'
+import Header from './Header'
 
 const FormOptions = () => {
     const { tables, identity, nonIdentity } = useLoaderData() as {tables: {[key:number]:string}, identity: {[key:number]:string}, nonIdentity: number[]}
@@ -153,15 +154,7 @@ const FormOptions = () => {
                 </div>
             </OptionsCreatorModal>
             <div id="jobMenuScreen">
-                <header id="jobMenuHeader">
-                    <h1>Form Options</h1>
-                    <h4 id="logOutButton" onClick={() => console.log()}>Logout</h4>
-                    <nav>
-                        <Link to="/creatingJob" className='jobMenuButtons'>Create Job Document</Link>
-                        <Link to="/creatingJobPackage" className='jobMenuButtons'>Edit/Create Job Package</Link>
-                        <Link to="/jobMenu" className='jobMenuButtons'>View Job Menu</Link>
-                    </nav>
-                </header>
+                <Header currentPage='formOptions'/>
                 <div id="formOptionsBody">
                     <div id="formChoiceSelector">
                         <h2>Form Choices</h2>

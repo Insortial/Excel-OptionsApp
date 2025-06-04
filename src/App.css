@@ -157,7 +157,7 @@ input {
     flex-direction: column;
 }
 
-#jobMenuHeader {
+.jobMenuHeader {
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -172,7 +172,7 @@ input {
     z-index: 20;
 }
 
-#jobMenuHeader > button {
+.jobMenuHeader > button {
     height: 40px;
 }
 
@@ -703,7 +703,7 @@ input {
     text-align: center;
 }
 
-#jobMenuHeader > h1 {
+.jobMenuHeader > h1 {
     margin: 0;
 }
 
@@ -1194,6 +1194,11 @@ a:visited {
     justify-self: flex-end;
     margin-left: auto;
     flex-direction: row-reverse;
+}
+
+#pdTopHeader {
+    justify-content: flex-end;
+    min-height: 80px;
 }
 
 table {

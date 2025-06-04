@@ -1,23 +1,22 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useContext, useState } from 'react'
-import { Link, useLoaderData, useNavigate } from 'react-router-dom'
+import { useLoaderData } from 'react-router-dom'
 import useFetch from '../hooks/useFetch'
 import { useForm } from 'react-hook-form'
 import OptionsCreatorModal from './OptionsCreatorModal'
 import ProjectLocationScreen from './ModalScreens/ProjectLocationScreen'
 import { FormOptionsContext } from '../context/OptionsTemplateContext'
 import { FormOptionsContextType } from '../types/FormOptions'
-import { AuthInfo, LoggedInUpdate } from '../context/AuthContext'
+import Header from './Header'
+import { AuthInfo } from '../context/AuthContext'
 import { DecodedToken } from '../types/AuthContextTypes'
 import { jwtDecode } from 'jwt-decode'
 
 const PDEditor = () => {
     const fetchHook = useFetch()
-    const navigate = useNavigate()
-    const { accessToken } = AuthInfo()
-    const { saveLogInState } = LoggedInUpdate()
     const { items, pageNum, totalPages, limit } = useLoaderData() as {items: {[key:string]:string}[], pageNum: number, totalPages: number, limit: number}
     const { retrieveDropDown } = useContext(FormOptionsContext) as FormOptionsContextType
+    const { accessToken } = AuthInfo()
     const [itemList, setItemList] = useState(items)
     const [modalType, setModalType] = useState("none")
     const [currentLevel, setCurrentLevel] = useState<"job"|"customer"|"project"|"lot">("project")
@@ -32,7 +31,6 @@ const PDEditor = () => {
     const buttonTitle = {job: "Edit", project: "Location", customer: "Edit", lot: "Edit"}
     const decodedToken:DecodedToken|undefined = accessToken !== "token" ? jwtDecode(accessToken) : undefined
     const isMeasure = decodedToken !== undefined && decodedToken.roles.find(role => role === "MEASURE")
-
 
     const retrieveData = async (selectedPage: number, updatedFilters: boolean, selectedLevel=currentLevel, lotDate=false) => {
         if (selectedPage < 1 || (selectedPage > numOfPages && numOfPages != 0)) 
@@ -100,16 +98,6 @@ const PDEditor = () => {
       retrieveData(1, true)
     }
 
-    const logOut = async () => {
-      const config:RequestInit = {
-          method: 'DELETE',
-          credentials: "include"
-      }
-      await fetch(`${import.meta.env.VITE_AUTH_URL}/logout`, config)
-      saveLogInState(false)
-      navigate("/login", { replace: true })
-    }
-
 
     return (
       <>
@@ -117,14 +105,7 @@ const PDEditor = () => {
           {selectedItem !== -1 && <ProjectLocationScreen getTableValues={getTableValues} selectedItem={selectedItem} turnOffModal={turnOffModal}/>}
         </OptionsCreatorModal>
         <div id="jobMenuScreen" style={{backgroundColor: "#f0f0f0"}}>
-            <header id="jobMenuHeader" style={{justifyContent: "flex-end", minHeight: "80px"}}>
-                <h4 id="logOutButtonHeader" onClick={() => logOut()}>Logout</h4>
-                {!isMeasure && <nav>
-                    <Link to="/creatingJob" className='jobMenuButtons'>Create Job Document</Link>
-                    <Link to="/creatingJobPackage" className='jobMenuButtons'>Edit/Create Job Package</Link>
-                    <Link to="/jobMenu" className='jobMenuButtons'>View Job Menu</Link>
-                </nav>}
-            </header>
+            <Header currentPage="pdEditor"/>
             <div id="pdBody">
               <header id="pdHeader">
                 <h1>Excel Production & Delivery <span onClick={() => setLevelMenu(!levelMenu)}>{capitalizeString(currentLevel)}<span id="lastLetter">▼</span></span></h1>
