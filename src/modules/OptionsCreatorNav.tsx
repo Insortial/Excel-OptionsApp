@@ -54,6 +54,8 @@ const OptionsCreatorNav: React.FC<OptionsCreatorNav> = ({ isOptionsMode, jobDeta
                 <>
                     <h2 style={{display: jobDetails.prodReady ? "block" : "none", color: '#ffb96e'}}>PRODUCTION APPROVED</h2>
                     <h2>Current Lot: {currentLotNum}</h2>
+                    {jobDetails.dateUpdated && <h2>Last Updated: {jobDetails.dateUpdated}</h2>}
+                    {jobDetails.lastUpdatedBy && <h2>Updated By: {jobDetails.lastUpdatedBy}</h2>}
                     <section id="classRow">
                         {isChangingDate ? <input type="date" value={jobDetails.date} onChange={handleDateChange}></input>: <h2>Date: {jobDetails.date}</h2>}
                         {isChangingDate ? <button onClick={() => setIsChangingDate(false)}>Submit Change</button> : <button onClick={() => setIsChangingDate(true)}>Change Date</button>}

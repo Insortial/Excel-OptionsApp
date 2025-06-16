@@ -39,7 +39,9 @@ export interface JobDetails {
     superintendent: string,
     phone: string,
     lotNums: LotInfo[],
-    prodReady: boolean
+    prodReady: boolean,
+    dateUpdated: string,
+    lastUpdatedBy: string
 }
 
 export interface LotInfo {
@@ -99,6 +101,7 @@ export interface JobDetailsSQL {
     phone: string,
     lots: LotTableSQL[],
     date: string,
+    userID: number
 }
 
 export type PackageInfo = {
@@ -186,5 +189,7 @@ export interface JobDocumentInterface {
     prodReady: boolean,
     optionCoordinator: string,
     phase: string,
-    projectName: string
+    projectName: string,
+    projectIDFK: number,
+    dateUpdated: string
 }

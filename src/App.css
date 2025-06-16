@@ -75,6 +75,27 @@ input {
     display: none;
 }
 
+#menuType {
+    display: flex;
+    flex-direction: row;
+    margin: 15px 0;
+}
+
+#menuType > button {
+    padding: 9px 15px;
+    width: 150px;
+    font-size: .9em;
+    margin-right: 15px;
+    background-color: #8b6767;
+    font-weight: bold;
+    color: white;
+    border-radius: 5px;
+}
+
+#selectedType {
+    background-color: #503b3b !important;
+}
+
 #menuSettings {
     display: flex;
     flex-direction: row;
@@ -99,6 +120,9 @@ input {
 
 #filterOptions > label {
     margin-right: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #4d4d4d;
 }
 
 .notification {
@@ -601,7 +625,6 @@ input {
     align-self: center;
     padding: 10px;
     width: 90%;
-    margin-bottom: 2em;
 }
 
 #classRow {
@@ -639,7 +662,6 @@ input {
     place-self: center;
     height: 100%;
     box-sizing: border-box;
-    width: 95%;
     border-radius: 11px;
     background-color: rgb(248, 248, 248);
     z-index: 1;
@@ -690,17 +712,22 @@ input {
 }
 
 .jobDocumentBody {
-    height: 65%;
+    height: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 20px;
+    justify-content: center;
 }
 
 .jobDocumentBody > h4 {
     margin: 0;
     margin-top: 8px;
     text-align: center;
+    color: rgb(104, 104, 104);
+}
+
+.jobDocumentBody > h4 > span {
+    color: #000000;
 }
 
 .jobMenuHeader > h1 {
@@ -1387,7 +1414,7 @@ tr {
 .hardwareModifier > label {
     margin-right: 10px;
     font-weight: bold;
-    color: rgb(83, 82, 82);
+    color: rgb(100, 100, 100);
 }
 
 h1 {

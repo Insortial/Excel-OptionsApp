@@ -4,35 +4,12 @@ import { FormOptionsContext } from "../context/OptionsTemplateContext"
 import { FormOptionsContextType } from "../types/FormOptions"
 import useFetch from "./useFetch"
 import { JobOptionLoaderResponse } from "../loader/JobOptionLoader"
+import { AuthInfo } from "../context/AuthContext"
 
 const useSQLJobDetailsPost = () => {
     const fetchHook = useFetch()
     const { getFormIDs } = useContext(FormOptionsContext) as FormOptionsContextType
-    
-    /* const decipherMixedOptions = (throughoutLot:PartOfLot|undefined, currentLot:PartOfLot, propName: string):number => {
-        const {roomID} = currentLot
-        const mixedOptionKey: {[key:string]:string} = {
-            "Dovetail - Kitchen Only, STD - Balance of House": "Dovetail", 
-            "APA Dovetail - Kitchen Only, STD - Balance of House": "APA Dovetail",
-            "Soft Closing - Kitchen Only, STD - Balance of House": "Soft Closing", 
-            "APA Soft Closing - Kitchen Only, STD - Balance of House": "APA Soft Closing"
-        }
-    
-        const value = throughoutLot ? throughoutLot[propName as keyof PartOfLot] : ""
-        
-        if(typeof value === "string" && Object.prototype.hasOwnProperty.call(mixedOptionKey, value)) {
-            const lowerRoomID = roomID.toLowerCase()
-            if(lowerRoomID.includes("balance of house") || lowerRoomID.includes("throughout")) {
-                return getFormIDs("Standard", propName)
-            } else if(lowerRoomID.includes("kitchen")) {
-                return getFormIDs(mixedOptionKey[value], propName)
-            } else {
-                return getFormIDs("Standard", propName)
-            }
-        } else {
-            return getFormIDs(value as string, propName)
-        }
-    } */
+    const { userID } = AuthInfo()
 
     const decipherMixedOptions = (editingPartsOfLot:boolean, throughoutLot:PartOfLot|undefined, currentLot:PartOfLot, propName: string):number => {
         const currentLotProperty = currentLot[propName as keyof PartOfLot] as string
@@ -141,7 +118,8 @@ const useSQLJobDetailsPost = () => {
             date: jobDetails.date,
             superintendent: jobDetails.superintendent,
             phone: jobDetails.phone,
-            prodReady: prodReady
+            prodReady: prodReady,
+            userID: userID
         }
 
         let packageDetailsSQL:PackageDetailsSQL

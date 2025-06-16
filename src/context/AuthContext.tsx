@@ -38,6 +38,7 @@ export function AuthUpdate() {
 
 const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
     const [loggedIn, setLoggedIn] = useState<boolean>(false)
+    const [userID, setUserID] = useState<number>(-1)
     const [email, setEmail] = useState<string>("")
     const [name, setName] = useState<string>("")
     const [phone, setPhone] = useState<string>("")
@@ -46,6 +47,7 @@ const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
 
     const saveAccessToken = (token: string) => {
         const decodedToken:DecodedToken = jwtDecode(token)
+        setUserID(decodedToken.userID)
         setEmail(decodedToken.email)
         setName(decodedToken.name)
         setPhone(decodedToken.phone)
@@ -82,7 +84,7 @@ const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
     
 
     return (
-        <AuthInfoContext.Provider value={{ accessToken, loggedIn, email, name, phone }}>
+        <AuthInfoContext.Provider value={{ accessToken, loggedIn, email, name, phone, userID }}>
             <AuthUpdateContext.Provider value={{ saveAccessToken }}>
                 <LoggedInUpdateContext.Provider value={{ saveLogInState }}>
                     {tokenLoaded && children}

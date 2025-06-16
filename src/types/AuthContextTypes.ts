@@ -3,7 +3,8 @@ export type AuthInfoContextType = {
     loggedIn: boolean,
     email: string,
     name: string,
-    phone: string
+    phone: string,
+    userID: number
 }
 
 export type AuthUpdateContextType = {
@@ -18,5 +19,6 @@ export type DecodedToken = {
     email: string,
     name: string,
     phone: string,
+    userID: number,
     roles: string[]
 }

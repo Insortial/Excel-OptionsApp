@@ -9,7 +9,7 @@ type JobDocument = {
 }
 
 const JobDocument: React.FC<JobDocument> = ({JobDocumentDetails, isDeleteMode, turnOnDeleteModal}) => {
-    const { customerName, jobOptionID, jobID, optionCoordinator, phase, projectName } = JobDocumentDetails
+    const { customerName, jobOptionID, jobID, optionCoordinator, phase, projectName, dateUpdated } = JobDocumentDetails
 
     return (
         <div className="jobDocumentContainer">
@@ -17,8 +17,9 @@ const JobDocument: React.FC<JobDocument> = ({JobDocumentDetails, isDeleteMode, t
             <Link className='jobDocument' to={"/optionCreator/jobOption/" + jobOptionID} >
                 <header>{customerName} - {projectName}<br />Job ID: {jobID}</header>
                 <div className='jobDocumentBody'>
-                    <h4>Phase: {phase}</h4>
-                    <h4>Coordinator: {optionCoordinator}</h4>
+                    <h4><span>Phase:</span> {phase}</h4>
+                    <h4><span>Coordinator:</span> {optionCoordinator}</h4>
+                    {dateUpdated && <h4><span>Last Updated:</span> {dateUpdated}</h4>}
                 </div>
             </Link>
         </div>

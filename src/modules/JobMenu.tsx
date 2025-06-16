@@ -14,13 +14,13 @@ import Header from './Header.tsx';
 
 const JobMenu = () => {
     const [jobDocuments, setJobDocuments] = useState<JobDocumentInterface[]>([])
+    const [menuType/*, setMenuType*/] = useState<"job"|"project">("job")
     const [modalType, setModalType] = useState<string>("none")
     const [jobDocument, setJobDocument] = useState<JobDocumentInterface|null>(null)
     const [filterObject, setFilterObject] = useState<FilterObject>({jobID: '', builder: '', project: ''})
     const [isDeleteMode, setDeleteMode] = useState<boolean>(false)
     const { setIsCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const fetchHook = useFetch()
-
     
     useEffect(() => {
         setIsCheckingError(false) 
@@ -32,7 +32,13 @@ const JobMenu = () => {
         .then((response) => response.text())
         .then((result) => {
             const listOfJobDocuments:JobDocumentInterface[] = JSON.parse(result)
-            setJobDocuments(listOfJobDocuments)
+            const sortedJobDocuments = listOfJobDocuments.sort((a, b) => {
+                if(!a.dateUpdated) return 1
+                if(!b.dateUpdated) return -1
+                return b.dateUpdated.localeCompare(a.dateUpdated)
+            })
+
+            setJobDocuments(sortedJobDocuments)
         })
         .catch((error) => console.error(error));
     }
@@ -74,6 +80,10 @@ const JobMenu = () => {
                 <Header currentPage='jobMenu'/>
                 <div id="jobMenuBody">
                     <section className='jobMenuSection'>
+                       {/*  <nav id="menuType">
+                            <button id={menuType === "job" ? "selectedType" : ""} onClick={() => setMenuType("job")}>By Job</button>
+                            <button id={menuType === "project" ? "selectedType" : ""} onClick={() => setMenuType("project")}>By Project</button>
+                        </nav> */}
                         <nav id="menuSettings">
                             <div id="filterOptions">
                                 <label>Job ID:</label>
@@ -84,9 +94,11 @@ const JobMenu = () => {
                                 <InputSearch isDropDown={true} formState={filterObject} onFormChange={onFilterChange} inputName={'project'} />
                                 <button onClick={() => setFilterObject({jobID: '', builder: '', project: ''})}>Reset Filters</button>
                             </div>
-
                             <button onClick={() => setDeleteMode(!isDeleteMode)}>Delete Jobs</button>
                         </nav>
+                    </section>
+                    {menuType === "job" ? <>
+                    <section className='jobMenuSection'>
                         <h2>Draft Jobs</h2>
                         <section className="jobList">
                             {jobDocuments.map((jobDocument:JobDocumentInterface, index:number) => {
@@ -100,10 +112,11 @@ const JobMenu = () => {
                         <section className="jobList">
                             {jobDocuments.map((jobDocument:JobDocumentInterface, index:number) => {
                                 if(jobDocument.prodReady && filterJobDocuments(jobDocument))
-                                return <JobDocument key={index} JobDocumentDetails={jobDocument} isDeleteMode={isDeleteMode} turnOnDeleteModal={turnOnDeleteModal}/>
+                                    return <JobDocument key={index} JobDocumentDetails={jobDocument} isDeleteMode={isDeleteMode} turnOnDeleteModal={turnOnDeleteModal}/>
                             })}
                         </section>
                     </section>
+                    </> : <></>}
                 </div>
             </div>
         </>
