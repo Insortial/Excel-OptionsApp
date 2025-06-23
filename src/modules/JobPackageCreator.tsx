@@ -23,6 +23,8 @@ const defaultJobDetails:JobDetails = {
   phase: "",
   jobID: "",
   date: "",
+  dateUpdated: "",
+  lastUpdatedBy: "",
   prodReady: false
 }
 
