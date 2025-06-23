@@ -31,6 +31,7 @@ export interface JobDetails {
     builder: string,
     project: string | string[],
     optionCoordinator: string,
+    coordinatorIDFK?: number,
     foreman: string,
     jobNotes: string,
     phase: string,
@@ -88,13 +89,14 @@ export interface FilterObject {
     jobID: string;
     builder: string;
     project: string;
+    user: string;
 }
 
 export interface JobDetailsSQL {
     jobID: number,
     doorBuyOut: boolean,
     drawerBoxBuyOut: boolean,
-    optionCoordinator: string,
+    coordinatorIDFK: number|undefined,
     jobNotes: string,
     superintendent: string,
     prodReady: boolean,

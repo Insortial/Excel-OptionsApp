@@ -16,12 +16,15 @@ type lotJobResponse = {
 }
 
 function JobCreator() {
-  const { name } = AuthInfo()
+  const { userID } = AuthInfo()
   const defaultJobDetails:JobDetails = {
     builder: "",
     project: "",
     superintendent: "",
-    optionCoordinator: name,
+    optionCoordinator: "",
+    coordinatorIDFK: userID,
+    dateUpdated: "",
+    lastUpdatedBy: "",
     jobNotes: "",
     phone: "",
     lotNums: [],

@@ -26,6 +26,8 @@ function OptionsCreator() {
         foreman: "",
         date: "",
         lotNums: [],
+        lastUpdatedBy: "",
+        dateUpdated: "",
         jobID: "",
         prodReady: false
     }
@@ -418,6 +420,8 @@ function OptionsCreator() {
                     phase: "",
                     jobID: "",
                     date: "",
+                    lastUpdatedBy: "",
+                    dateUpdated: "",
                     prodReady: false
                 })
                 setListOfLots(loadedData.listOfLots)

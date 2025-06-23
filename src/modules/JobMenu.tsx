@@ -17,9 +17,9 @@ const JobMenu = () => {
     const [menuType/*, setMenuType*/] = useState<"job"|"project">("job")
     const [modalType, setModalType] = useState<string>("none")
     const [jobDocument, setJobDocument] = useState<JobDocumentInterface|null>(null)
-    const [filterObject, setFilterObject] = useState<FilterObject>({jobID: '', builder: '', project: ''})
+    const [filterObject, setFilterObject] = useState<FilterObject>({jobID: '', builder: '', project: '', user: ''})
     const [isDeleteMode, setDeleteMode] = useState<boolean>(false)
-    const { setIsCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
+    const { setIsCheckingError, getFormIDs } = useContext(FormOptionsContext) as FormOptionsContextType
     const fetchHook = useFetch()
     
     useEffect(() => {
@@ -49,6 +49,7 @@ const JobMenu = () => {
     }
 
     const onFilterChange = (value: string, key: string) => {
+        console.log(getFormIDs(value, "user"))
         setFilterObject({...filterObject, [key]: value})
     }
 
@@ -63,6 +64,7 @@ const JobMenu = () => {
         return (jobDocument.customerName === filterObject.builder || filterObject.builder === "")
                 && (jobDocument.projectName === filterObject.project || filterObject.project === "")
                 && (jobID.includes(filterObject.jobID) || jobID === "")
+                && (jobDocument.optionCoordinator === filterObject.user || filterObject.user === "")
     }
 
     const turnOffModal = () => {
@@ -84,18 +86,20 @@ const JobMenu = () => {
                             <button id={menuType === "job" ? "selectedType" : ""} onClick={() => setMenuType("job")}>By Job</button>
                             <button id={menuType === "project" ? "selectedType" : ""} onClick={() => setMenuType("project")}>By Project</button>
                         </nav> */}
-                        <nav id="menuSettings">
-                            <div id="filterOptions">
-                                <label>Job ID:</label>
-                                <InputSearch isDropDown={false} formState={filterObject} onFormChange={onFilterChange} inputName={'jobID'} />
-                                <label>Builder:</label>
-                                <InputSearch isDropDown={true} formState={filterObject} onFormChange={onFilterChange} inputName={'builder'} />
-                                <label>Project:</label>
-                                <InputSearch isDropDown={true} formState={filterObject} onFormChange={onFilterChange} inputName={'project'} />
-                                <button onClick={() => setFilterObject({jobID: '', builder: '', project: ''})}>Reset Filters</button>
-                            </div>
-                            <button onClick={() => setDeleteMode(!isDeleteMode)}>Delete Jobs</button>
-                        </nav>
+                        <div id="filterButtons">
+                            <button className='deleteOption' onClick={() => setDeleteMode(!isDeleteMode)}>Delete Job</button>
+                            <button className='resetFilters' onClick={() => setFilterObject({jobID: '', builder: '', project: '', user: ''})}>Reset Filters</button>
+                        </div>
+                        <div id="filterOptions">
+                            <label>Job ID:</label>
+                            <InputSearch isDropDown={false} formState={filterObject} onFormChange={onFilterChange} inputName={'jobID'} />
+                            <label>Builder:</label>
+                            <InputSearch isDropDown={true} formState={filterObject} onFormChange={onFilterChange} inputName={'builder'} />
+                            <label>Project:</label>
+                            <InputSearch isDropDown={true} formState={filterObject} onFormChange={onFilterChange} inputName={'project'} />
+                            <label>User:</label>
+                            <InputSearch isDropDown={true} formState={filterObject} onFormChange={onFilterChange} inputName={'user'} />
+                        </div>
                     </section>
                     {menuType === "job" ? <>
                     <section className='jobMenuSection'>

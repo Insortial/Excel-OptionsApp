@@ -113,7 +113,7 @@ const useSQLJobDetailsPost = () => {
             doorBuyOut: false,
             drawerBoxBuyOut: false,
             jobNotes: jobDetails.jobNotes,
-            optionCoordinator: jobDetails.optionCoordinator,
+            coordinatorIDFK: jobDetails.coordinatorIDFK,
             lots: listOfSQLLots,
             date: jobDetails.date,
             superintendent: jobDetails.superintendent,

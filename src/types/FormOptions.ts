@@ -13,6 +13,7 @@ export interface FormOptionsInterface {
     doorHinges: [number, string][], 
     material: [number, string][], 
     color: [number, string, string][],
+    user: [number, string][],
     knobs: string[],
     doors: string[], 
     pulls: string[],

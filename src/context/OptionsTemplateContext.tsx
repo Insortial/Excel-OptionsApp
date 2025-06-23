@@ -21,13 +21,13 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
         color: [],
         doors: [], 
         pulls: [],
-        knobs: []
+        knobs: [],
+        user: []
     })
-    
     const [errors, setErrors] = useState<ErrorObject>({})
-    const [isCheckingError, setIsCheckingError] = useState<boolean>(false);
+    const [isCheckingError, setIsCheckingError] = useState<boolean>(false)
     const [columnPropMax, setColumnPropMax] = useState<{[key:string]:number}>({})
-    const [loaded, setLoaded] = useState<boolean>(false);
+    const [loaded, setLoaded] = useState<boolean>(false)
     const { accessToken } = AuthInfo()
     
     useEffect(() => {
@@ -103,7 +103,6 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
                 break
             default:
         }
-        
         return formOptions.color.filter((colorTuple:[number, string, string]) => filterWords.includes(colorTuple[2])).map((colorTuple:[number, string, string]) => colorTuple[1])
     }
 
