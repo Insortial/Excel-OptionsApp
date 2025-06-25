@@ -25,6 +25,7 @@ export interface PartOfLot {
     pulls2: string,
     details: string,
     appliances: string, //remove in the future
+    checklist?: string[]
 }
 
 export interface JobDetails {
@@ -82,7 +83,7 @@ export interface LotTableInterface {
     appliances: string,
     footerNotes: string,
     lotNotes: string,
-    partsOfLot: PartOfLot[],
+    partsOfLot: PartOfLot[]
 }
 
 export interface FilterObject {

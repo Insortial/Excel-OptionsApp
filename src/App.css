@@ -1349,6 +1349,12 @@ textarea {
     margin-top: 2em;
 }
 
+.checklistButton {
+    margin: 10px 0;
+    width: 25%;
+    height: 30px;
+}
+
 th {
     border: 2px solid black;
     padding: 5px;

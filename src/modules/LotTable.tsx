@@ -12,9 +12,10 @@ type LotTable = {
     setCurrentLotNum: (lotNum: string) => void; 
     convertToMixedOptions: (lot: LotTableInterface) => LotTableInterface;
     setModalType: React.Dispatch<React.SetStateAction<string>>,
+    addCheckListItem: (index: number, checkListIndex: number, addedString: string) => void
 }
 
-const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetails, convertToMixedOptions, saveLotTable, onJobDetailsChange, setCurrentLotNum, setModalType}) => {
+const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetails, convertToMixedOptions, saveLotTable, onJobDetailsChange, setCurrentLotNum, setModalType, addCheckListItem}) => {
     const deleteLotSection = (lotSectionIndex:number) => {
         let updatedTable:LotTableInterface = {...lotTableDetails}
 
@@ -378,6 +379,15 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
                                     }
                                     <label>Details: </label>
                                     <ControlledTextArea inputName={"details"} optionSectionNum={currentRow} formState={lotTableDetails} onFormChange={onFormChange}></ControlledTextArea>
+                                    { lotTableDetails.partsOfLot[currentRow].checklist && <>
+                                        <h4>Checklist:</h4>
+                                        <ul className='checklist'>
+                                            {lotTableDetails.partsOfLot[currentRow].checklist.map((item:string, index:number) => {
+                                                return <li key={index} className='checklistItem'>{item}</li>
+                                            })}
+                                        </ul>
+                                    </>}
+                                    <button className='checklistButton' onClick={() => addCheckListItem(currentRow, lotTableDetails.partsOfLot[currentRow].checklist ? lotTableDetails.partsOfLot[currentRow].checklist.length : 0, "Hello")}>Add Checklist</button>
                                     <button style={{display: currentRow === (lotTableDetails.partsOfLot?.length - 1) ? "block" : "none"}} onClick={() => setModalType("partOfLot")} className='newPartOfLotButton'>Add Part Of Lot</button>
                                 </td>
                             </tr>

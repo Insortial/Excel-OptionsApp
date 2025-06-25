@@ -114,13 +114,14 @@ function OptionsCreator() {
     }
 
     const convertToMixedOptions = (lot:LotTableInterface) => {
+        //Find better solution to handle return types
         type mixedOptionsType = {
-            drawerFronts: Array<[string, string|number|boolean]>;
-            drawerBoxes: Array<[string, string|number|boolean]>;
-            drawerGuides: Array<[string, string|number|boolean]>;
-            doorHinges: Array<[string, string|number|boolean]>;
-            boxStyle: Array<[string, string|number|boolean]>;
-            interiors: Array<[string, string|number|boolean]>;
+            drawerFronts: Array<[string, string|number|boolean|string[]|undefined]>;
+            drawerBoxes: Array<[string, string|number|boolean|string[]|undefined]>;
+            drawerGuides: Array<[string, string|number|boolean|string[]|undefined]>;
+            doorHinges: Array<[string, string|number|boolean|string[]|undefined]>;
+            boxStyle: Array<[string, string|number|boolean|string[]|undefined]>;
+            interiors: Array<[string, string|number|boolean|string[]|undefined]>;
         }
 
         const mixedOptions:mixedOptionsType = {drawerFronts: [], drawerBoxes: [], drawerGuides: [], doorHinges: [], boxStyle: [], interiors: []};
@@ -199,7 +200,6 @@ function OptionsCreator() {
     const saveLotTable = (lotTableData: LotTableInterface, lotInputValue: string) => {
         const filteredTableList = listOfLots.filter((lotDetails:LotTableInterface) => (isOptionsMode && lotDetails.lot !== lotInputValue) ||
                                                                                          (!isOptionsMode && lotDetails.plan !== lotInputValue))
-        //console.log(lotTableData)
         setCurrentLot(lotTableData)
         sortListOfLots(filteredTableList, lotTableData)
     }
@@ -279,6 +279,29 @@ function OptionsCreator() {
                 onJobDetailsChange(prodReady, "prodReady")
         }
         setModalType("none")
+    }
+
+    const addCheckListItem = (index: number, checkListIndex: number, addedString: string) => {
+        if(currentLot) {
+            const oldPartsOfLot = [...currentLot.partsOfLot]
+            const modifiedPartOfLot = oldPartsOfLot.splice(index, 1)[0]
+
+            const lotCheckList = modifiedPartOfLot.checklist || [];
+            lotCheckList[checkListIndex] = addedString;
+
+            const updatedPartOfLot = {
+                ...modifiedPartOfLot,
+                checklist: lotCheckList
+            }
+
+            oldPartsOfLot.splice(index, 0, updatedPartOfLot)
+
+            const updatedLot = {...currentLot,
+                partsOfLot: oldPartsOfLot
+            }
+
+            saveLotTable(updatedLot, (optionsCreatorObject.isOptionsMode ? updatedLot.lot : updatedLot.plan))
+        }
     }
 
     const addOptionRow = (lotName:string) => {
@@ -470,7 +493,7 @@ function OptionsCreator() {
                 setIsLotCopy={setIsLotCopy} setCurrentLotNum={setCurrentLotNum} setCurrentLot={setCurrentLot} sortListOfLots={sortListOfLots} changeLotTable={changeLotTable} />
             <div id="optionsEditor">
                 {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} onJobDetailsChange={onJobDetailsChange} jobDetails={jobDetails} setModalType={setModalType} convertToMixedOptions={convertToMixedOptions}
-                                                                            lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode} />)}
+                                                                            lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode} addCheckListItem={addCheckListItem}/>)}
             </div>
             <Notification submissionValid={submissionValid}/>
         </>
