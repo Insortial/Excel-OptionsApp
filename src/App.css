@@ -1349,6 +1349,32 @@ textarea {
     margin-top: 2em;
 }
 
+.checkListTitle {
+    margin: 10px 0;
+}
+
+.checklist {
+    border: none !important;
+}
+
+.checkListItem {
+    display: flex;
+    flex-direction: row;
+}
+
+.checkListItem > button {
+    width: 40px;
+    font-weight: bold;
+    background-color: #da6955;
+    color: white;
+}
+
+.checklist > div {
+    height: 35px;
+    margin-bottom: 2px;
+    border: 1px solid black;
+}
+
 .checklistButton {
     margin: 10px 0;
     width: 25%;

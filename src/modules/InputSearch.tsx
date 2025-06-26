@@ -97,12 +97,10 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
         if((inputType === "color") && ("partsOfLot" in formState && optionSectionNum !== undefined)) {
             const materialSelection = formState.partsOfLot[optionSectionNum].material
             const filteredColors = filterColors(materialSelection)
-            console.log(filteredColors)
             setDropDownOptions(filteredColors)
             setSuggestion(filteredColors)
         } else if (Array.isArray(formState) && typeof filterValue === "string" && inputType === "project") {
             const filteredProjects = filterProjects(filterValue)
-            console.log(filteredProjects)
             setDropDownOptions(filteredProjects)
             setSuggestion(filteredProjects)
         } else {

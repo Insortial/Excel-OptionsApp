@@ -13,6 +13,7 @@ import validate from "../hooks/validate.tsx";
 import useSQLJobDetailsPost from "../hooks/useSQLJobDetailsPost.tsx";
 import Notification from "./Notification.tsx";
 import OptionsCreatorModalScreens from "./ModalScreens/OptionsCreatorModalScreens.tsx";
+import { useForm } from "react-hook-form";
   
 function OptionsCreator() {
     const initialJobDetails:JobDetails = {
@@ -70,6 +71,7 @@ function OptionsCreator() {
     //Option States
     const [listOfLots, setListOfLots] = useState<LotTableInterface[]>([])
     const [jobDetails, setJobDetails] = useState<JobDetails>(initialJobDetails)
+    /* const { reset: resetJob, getValues: getJobValues, setValue: setJobValue } = useForm<JobDetails>() */
     const [hasPackage, setHasPackage] = useState<boolean>(false)
     const [packageDetails, setPackageDetails] = useState<PackageDetails>(initialPackageDetails)
     const [currentLotNum, setCurrentLotNum] = useState<string>("")
@@ -84,7 +86,6 @@ function OptionsCreator() {
     const [isOptionsMode, setIsOptionsMode] = useState<boolean>(true)
 
     const loaderData = useLoaderData() as JobOptionLoaderResponse;
-    //const revalidator = useRevalidator();
     const location = useLocation();
     const postSQLDetails = useSQLJobDetailsPost();
     const navigate = useNavigate();
@@ -107,7 +108,6 @@ function OptionsCreator() {
         updatedListOfLots.forEach((lot, index, listOfLots) => {
             listOfLots[index] = convertToMixedOptions(lot)
         })
-        console.log(updatedListOfLots)
 
         setListOfLots(updatedListOfLots.sort((a, b) => lotNums.findIndex(lot => lot.lotNum === a.lot) - lotNums.findIndex(lot => lot.lotNum === b.lot)))
     }
@@ -122,7 +122,6 @@ function OptionsCreator() {
             boxStyle: Array<[string, string|number|boolean|string[]|undefined]>;
             interiors: Array<[string, string|number|boolean|string[]|undefined]>;
         }
-        console.log(lot)
 
         const mixedOptions:mixedOptionsType = {drawerFronts: [], drawerBoxes: [], drawerGuides: [], doorHinges: [], boxStyle: [], interiors: []};
         const obj: Record<string, string> = {};
@@ -139,8 +138,6 @@ function OptionsCreator() {
             const filteredOptionArray = optionArray.filter((array) => array[1] !== optionArray[0][1] || optionArray[0][0] === array[0])
             obj[key] = filteredOptionArray.length === 1 ? String(filteredOptionArray[0][1]) : filteredOptionArray.map(pair => `${pair[0]} - ${pair[1]}`).join(", ");
         })
-
-        console.log(obj)
 
         const newObj = {...lot, ...obj}
         return newObj
@@ -270,7 +267,6 @@ function OptionsCreator() {
         }
 
         if(!hasError) {
-            //revalidator.revalidate() 
             const validJob = await postSQLDetails(listOfLots, jobDetails, isOptionsMode, packageProjects, requestedJobDetails, loaderData, prodReady)
             const responseBody = await validJob.json()
             if(validJob.ok && location.pathname === '/optionCreator/')
@@ -281,29 +277,6 @@ function OptionsCreator() {
                 onJobDetailsChange(prodReady, "prodReady")
         }
         setModalType("none")
-    }
-
-    const addCheckListItem = (index: number, checkListIndex: number, addedString: string) => {
-        if(currentLot) {
-            const oldPartsOfLot = [...currentLot.partsOfLot]
-            const modifiedPartOfLot = oldPartsOfLot.splice(index, 1)[0]
-
-            const lotCheckList = modifiedPartOfLot.checklist || [];
-            lotCheckList[checkListIndex] = addedString;
-
-            const updatedPartOfLot = {
-                ...modifiedPartOfLot,
-                checklist: lotCheckList
-            }
-
-            oldPartsOfLot.splice(index, 0, updatedPartOfLot)
-
-            const updatedLot = {...currentLot,
-                partsOfLot: oldPartsOfLot
-            }
-
-            saveLotTable(updatedLot, (optionsCreatorObject.isOptionsMode ? updatedLot.lot : updatedLot.plan))
-        }
     }
 
     const addOptionRow = (lotName:string) => {
@@ -495,7 +468,7 @@ function OptionsCreator() {
                 setIsLotCopy={setIsLotCopy} setCurrentLotNum={setCurrentLotNum} setCurrentLot={setCurrentLot} sortListOfLots={sortListOfLots} changeLotTable={changeLotTable} />
             <div id="optionsEditor">
                 {!currentLot ? (<div style={{height: "100vh"}}></div>): (<LotTable saveLotTable={saveLotTable} onJobDetailsChange={onJobDetailsChange} jobDetails={jobDetails} setModalType={setModalType} convertToMixedOptions={convertToMixedOptions}
-                                                                            lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode} addCheckListItem={addCheckListItem}/>)}
+                                                                            lotTableDetails={currentLot} setCurrentLotNum={changeLotNumFromTable} isOptionsMode={isOptionsMode} /* addCheckListItem={addCheckListItem} *//>)}
             </div>
             <Notification submissionValid={submissionValid}/>
         </>
