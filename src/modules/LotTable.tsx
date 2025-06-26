@@ -66,20 +66,14 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, jobDetails, lotTableDetail
     }
 
     const onFormChange = (value: string | boolean | number, key: string, optionSectionNum: number=-1) => {
-        let updatedTable:LotTableInterface;
+        let updatedTable:LotTableInterface = lotTableDetails;
         const hardware = ["boxStyle", "drawerFronts", "drawerHinges", "drawerGuides", "drawerBoxes", "doorHinges", "interiors"]
         const example = {[key]: value}
 
         if(key === "doors")
             example.fingerpull = findFingerpull(value as string)
 
-        if(optionSectionNum === -1) {
-            updatedTable = {
-                ...lotTableDetails,
-                ...example
-            }
-        } else {
-            updatedTable = {...lotTableDetails}
+        if(optionSectionNum !== -1) {
             updatedTable.partsOfLot = updatedTable.partsOfLot.map((partOfLot:PartOfLot, index:number) => (index === optionSectionNum ? { ...partOfLot, ...example } : partOfLot))
         }
 
