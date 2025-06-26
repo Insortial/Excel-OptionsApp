@@ -94,7 +94,6 @@ function OptionsCreator() {
         let updatedListOfLots:LotTableInterface[] = []
         let lotNums;
 
-        console.log(listOfLots)
         if(typeof newLot === "undefined")
             updatedListOfLots = listOfLots
         else
@@ -123,6 +122,7 @@ function OptionsCreator() {
             boxStyle: Array<[string, string|number|boolean|string[]|undefined]>;
             interiors: Array<[string, string|number|boolean|string[]|undefined]>;
         }
+        console.log(lot)
 
         const mixedOptions:mixedOptionsType = {drawerFronts: [], drawerBoxes: [], drawerGuides: [], doorHinges: [], boxStyle: [], interiors: []};
         const obj: Record<string, string> = {};
@@ -139,6 +139,8 @@ function OptionsCreator() {
             const filteredOptionArray = optionArray.filter((array) => array[1] !== optionArray[0][1] || optionArray[0][0] === array[0])
             obj[key] = filteredOptionArray.length === 1 ? String(filteredOptionArray[0][1]) : filteredOptionArray.map(pair => `${pair[0]} - ${pair[1]}`).join(", ");
         })
+
+        console.log(obj)
 
         const newObj = {...lot, ...obj}
         return newObj

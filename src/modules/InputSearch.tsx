@@ -1,22 +1,23 @@
 import { useState, useEffect, useCallback, useContext, useRef } from "react"
 import React from 'react'
-import { LotTableInterface, PartOfLot, JobDetails, ErrorObject, FilterObject } from "../types/LotTableInterface";
+import { LotTableInterface, JobDetails, ErrorObject, FilterObject } from "../types/LotTableInterface";
 import { FormOptionsContext } from "../context/OptionsTemplateContext";
 import { FormOptionsContextType } from "../types/FormOptions"
 import { useClickOutside } from "../hooks/useClickOutside";
+import { FieldValues, UseFormGetValues } from "react-hook-form";
 
 type inputOptions = {
     isDropDown: boolean;
     formState: FilterObject | LotTableInterface | JobDetails | string[];
-    postfix?: string,
     optionSectionNum?: number;
     onFormChange?: (value: string, key: string, optSectionNum?: number) => void;
     inputName: string;
-    filterValue?: string | number
-    locked?: boolean
+    filterValue?: string | number;
+    locked?: boolean;
+    getFormValues: UseFormGetValues<FieldValues>;
 }
 
-const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, onFormChange, inputName, optionSectionNum, filterValue, locked}) => {
+const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChange, inputName, optionSectionNum, filterValue, locked, getFormValues}) => {
     const [suggestion, setSuggestion] = useState<string[]>([])
     const [dropDownOptions, setDropDownOptions] = useState<string[]>([])
     const [inFocus, setInFocus] = useState<boolean | boolean>(false)
@@ -27,7 +28,8 @@ const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, on
     const { loaded, errors, retrieveDropDown, isCheckingError, filterColors, filterProjects, retrieveCharMax } = useContext(FormOptionsContext) as FormOptionsContextType
     const inputRef = useRef<HTMLInputElement>(null)
     const dropDownRef = useRef<HTMLDivElement>(null)
-    const charMax = retrieveCharMax(inputName)
+    const inputType = inputName.split('.').pop()
+    const charMax = retrieveCharMax(inputType ?? "")
 
     const handleClickOutside = () => {
         if(isDropDown)
@@ -37,23 +39,11 @@ const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, on
 
     useClickOutside(inputRef, dropDownRef, handleClickOutside)
 
-    const getPartOfLotValue = () => {
-        if((optionSectionNum !== undefined) && ("partsOfLot" in formState)) {
-            //Represents a PartOfLot Value
-            return formState.partsOfLot[optionSectionNum][inputName as keyof (LotTableInterface | JobDetails | PartOfLot)] ?? ""
-        } else if ((optionSectionNum !== undefined) && Array.isArray(formState)) {
-            return formState[optionSectionNum] ?? ""
-        } else {
-            //Represents all other interfaces values
-            return formState[inputName as keyof (LotTableInterface | JobDetails | PartOfLot)] ?? ""
-        }
-    }
-
     const updateDropDowns = async () => {
-        let updatedInput = inputName
-        if(inputName.includes("pulls") || inputName.includes("knobs"))
-            updatedInput = inputName.replace(/\d+$/, "")
-        const retrievedOptions = retrieveDropDown(updatedInput)
+        let updatedInput = inputType || ""
+        if(updatedInput.includes("pulls") || updatedInput.includes("knobs"))
+            updatedInput = updatedInput.replace(/\d+$/, "")
+        const retrievedOptions = retrieveDropDown(updatedInput ?? "")
         setDropDownOptions(retrievedOptions)
         setSuggestion(retrievedOptions.slice(0, 50))
     }
@@ -63,7 +53,7 @@ const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, on
     }, [loaded])
 
     useEffect(() => {
-        setError(errors[(`${inputName}${(typeof optionSectionNum === 'undefined' || optionSectionNum === 0) ? "" : optionSectionNum}`) as keyof ErrorObject] != null)
+        setError(errors[(`${inputType}${(typeof optionSectionNum === 'undefined' || optionSectionNum === 0) ? "" : optionSectionNum}`) as keyof ErrorObject] != null)
     }, [isCheckingError, errors])
 
     const resetSearchComplete = useCallback(() => {
@@ -104,13 +94,13 @@ const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, on
         if(suggestion.length === 0)
             updateDropDowns()
 
-        if((inputName === "color") && ("partsOfLot" in formState && optionSectionNum !== undefined)) {
+        if((inputType === "color") && ("partsOfLot" in formState && optionSectionNum !== undefined)) {
             const materialSelection = formState.partsOfLot[optionSectionNum].material
             const filteredColors = filterColors(materialSelection)
             console.log(filteredColors)
             setDropDownOptions(filteredColors)
             setSuggestion(filteredColors)
-        } else if (Array.isArray(formState) && typeof filterValue === "string" && inputName === "project") {
+        } else if (Array.isArray(formState) && typeof filterValue === "string" && inputType === "project") {
             const filteredProjects = filterProjects(filterValue)
             console.log(filteredProjects)
             setDropDownOptions(filteredProjects)
@@ -125,7 +115,8 @@ const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, on
         const selectedItem = suggestion[selectedIndex];
         if (!selectedItem) return resetSearchComplete();
         resetSearchComplete();
-        onFormChange?.(selectedItem, inputName, optionSectionNum)
+
+        onFormChange?.(inputName, selectedItem)
 
         if(isDropDown)
             setValue("")
@@ -142,7 +133,7 @@ const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, on
         }
 
         if(!isDropDown)
-            onFormChange?.(input.target.value, inputName, optionSectionNum)
+            onFormChange?.(inputName, input.target.value)
 
         if(suggestion != undefined) {
             const prefix = input.target.value.toLowerCase()
@@ -154,18 +145,18 @@ const InputSearch: React.FC<inputOptions> = ({postfix, isDropDown, formState, on
     return (
         <div className="optionSearchContainer" tabIndex={1} onKeyDown={handleKeyDown}>
             <input 
-                    type={inputName === "date" ? "date" : "text"} 
-                    className="optionSearch" 
-                    style={{border: (hasError && isCheckingError) || isTextLimit ? "1px solid red" : inFocus ? "1px solid #ffb74a" :"black"}}
-                    {...(charMax ? {maxLength: charMax ?? 0} : {})}
-                    value={!isDropDown && !locked ? getPartOfLotValue() : value}
-                    placeholder={postfix ? getPartOfLotValue() + " - " + postfix :  getPartOfLotValue()} 
-                    ref={inputRef}
-                    id={inputName + `${(typeof optionSectionNum === 'undefined' || optionSectionNum === 0) ? "" : optionSectionNum}`}
-                    onChange={readInput}
-                    onFocus={handleOnFocus}
-                    readOnly={inputName === "roomID" && getPartOfLotValue() === "Throughout" || getPartOfLotValue() === "Balance of House" || locked}
-                />
+                type={inputType === "date" ? "date" : "text"} 
+                className="optionSearch" 
+                style={{border: (hasError && isCheckingError) || isTextLimit ? "1px solid red" : inFocus ? "1px solid #ffb74a" :"black"}}
+                {...(charMax ? {maxLength: charMax ?? 0} : {})}
+                value={!isDropDown && !locked ? getFormValues(inputName) : value}
+                placeholder={getFormValues(inputName)} 
+                ref={inputRef}
+                id={inputType + `${(typeof optionSectionNum === 'undefined' || optionSectionNum === 0) ? "" : optionSectionNum}`}
+                onChange={readInput}
+                onFocus={handleOnFocus}
+                readOnly={inputType === "roomID" && getFormValues(inputName) === "Throughout" || getFormValues(inputName) === "Balance of House" || locked}
+            />
             <div className="optionResults" ref={dropDownRef} style={{display: inFocus ? "block" : "none", border: suggestion.length === 0 ? "none" : "1px solid black"}}>
                 {suggestion.map((x: string, index: number) => {
                     return <div key={index} onMouseDown={() => handleOptionClick(index)}
