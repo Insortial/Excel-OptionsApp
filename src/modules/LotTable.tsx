@@ -238,7 +238,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, lotTableDetails, convertTo
                     </tr>
                     <tr>
                         <th>Job Specific Notes</th>
-                        <td><ControlledTextArea inputName={"jobNotes"} formState={getJobValues()} onFormChange={onFormJobChange}></ControlledTextArea></td>
+                        <td><ControlledTextArea inputName={"jobNotes"} getFormValues={getJobValues} onFormChange={onFormJobChange}></ControlledTextArea></td>
                     </tr>
                 </tbody>
             </table>
@@ -250,10 +250,10 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, lotTableDetails, convertTo
                     </tr>
                     <tr>
                         <td className='noteColumn'>
-                            <ControlledTextArea inputName={"lotNotes"} formState={getLotValues()} onFormChange={onFormChange}></ControlledTextArea>
+                            <ControlledTextArea inputName={"lotNotes"} getFormValues={getLotValues} onFormChange={onFormChange}></ControlledTextArea>
                         </td>
                         <td className='applianceColumn'>
-                            <ControlledTextArea inputName={"appliances"} formState={getLotValues()} onFormChange={onFormChange}></ControlledTextArea>
+                            <ControlledTextArea inputName={"appliances"} getFormValues={getLotValues} onFormChange={onFormChange}></ControlledTextArea>
                         </td>
                     </tr>
                 </tbody>
@@ -414,7 +414,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, lotTableDetails, convertTo
                                         </section>
                                     }
                                     <label>Details: </label>
-                                    <ControlledTextArea inputName={"details"} formState={getLotValues()}  onFormChange={onFormChange}></ControlledTextArea>
+                                    <ControlledTextArea inputName={`partsOfLot.${index}.details`} getFormValues={getLotValues} onFormChange={onFormChange}></ControlledTextArea>
                                     {lotTableDetails.partsOfLot[currentRow].checklist && <>
                                         <h4 className='checkListTitle'>Checklist:</h4>
                                         <div className='checklist'>
@@ -457,7 +457,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, lotTableDetails, convertTo
                         <td><InputSearch inputName={"bath4"}  onFormChange={onFormChange} isDropDown={true} getFormValues={getLotValues}/></td>
                         <td><InputSearch inputName={"powder"}  onFormChange={onFormChange} isDropDown={true} getFormValues={getLotValues}/></td>
                         <td><InputSearch inputName={"laundry"}  onFormChange={onFormChange} isDropDown={true} getFormValues={getLotValues}/></td>
-                        <td style={{width: "25%"}}><ControlledTextArea inputName={"footerNotes"} formState={getLotValues()} onFormChange={onFormChange}/></td>
+                        <td style={{width: "25%"}}><ControlledTextArea inputName={"footerNotes"} getFormValues={getLotValues} onFormChange={onFormChange}/></td>
                     </tr>
                 </tbody>
             </table>

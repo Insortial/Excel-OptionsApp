@@ -70,7 +70,8 @@ function OptionsCreator() {
     const { setErrors, setIsCheckingError, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     //Option States
     const [listOfLots, setListOfLots] = useState<LotTableInterface[]>([])
-    const { reset: resetJob, getValues: getJobValues, /* watch: watchJob,  */setValue: setJobValue } = useForm<JobDetails>({defaultValues: initialJobDetails})
+    const {getValues: getLotListValues, setValue: setLotListValue, reset: resetLotList} = useForm<LotTableInterface[]>({defaultValues: []})
+    const { reset: resetJob, getValues: getJobValues, setValue: setJobValue } = useForm<JobDetails>({defaultValues: initialJobDetails})
     /* const watchedJobDetails = watchJob(); */
     const [hasPackage, setHasPackage] = useState<boolean>(false)
     const [packageDetails, setPackageDetails] = useState<PackageDetails>(initialPackageDetails)
@@ -91,8 +92,8 @@ function OptionsCreator() {
     const navigate = useNavigate();
     const requestedJobDetails = location.state;
 
-    const onFormJobChange = (value: string, key: string) => {
-        setJobValue(key as keyof JobDetails, value);
+    const onFormJobChange = (key: string, value: string) => {
+        resetJob({...getJobValues(), [key]: value});
     }
 
     const sortListOfLots = (listOfLots: LotTableInterface[], newLot?: LotTableInterface, jobLotList?:LotInfo[]) => {

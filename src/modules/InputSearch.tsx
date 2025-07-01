@@ -148,7 +148,7 @@ const InputSearch = <T extends FieldValues>({isDropDown, onFormChange, inputName
                 className="optionSearch" 
                 style={{border: (hasError && isCheckingError) || isTextLimit ? "1px solid red" : inFocus ? "1px solid #ffb74a" :"black"}}
                 {...(charMax ? {maxLength: charMax ?? 0} : {})}
-                value={!isDropDown && !locked ? getFormValues(inputName) : value}
+                value={!isDropDown && !locked ? getFormValues(inputName) ?? "" : value}
                 placeholder={getFormValues(inputName)} 
                 ref={inputRef}
                 id={inputType + `${(typeof optionSectionNum === 'undefined' || optionSectionNum === 0) ? "" : optionSectionNum}`}
