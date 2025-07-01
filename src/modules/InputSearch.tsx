@@ -1,23 +1,21 @@
 import { useState, useEffect, useCallback, useContext, useRef } from "react"
 import React from 'react'
-import { LotTableInterface, JobDetails, ErrorObject, FilterObject } from "../types/LotTableInterface";
+import { ErrorObject } from "../types/LotTableInterface";
 import { FormOptionsContext } from "../context/OptionsTemplateContext";
 import { FormOptionsContextType } from "../types/FormOptions"
 import { useClickOutside } from "../hooks/useClickOutside";
-import { FieldValues, UseFormGetValues } from "react-hook-form";
+import { FieldValues, Path, UseFormGetValues } from "react-hook-form";
 
-type inputOptions = {
+type inputOptions<T extends FieldValues> = {
     isDropDown: boolean;
-    formState: FilterObject | LotTableInterface | JobDetails | string[];
-    optionSectionNum?: number;
-    onFormChange?: (value: string, key: string, optSectionNum?: number) => void;
-    inputName: string;
+    onFormChange?: ((value: string, key: string) => void);
+    inputName: Path<T>;
     filterValue?: string | number;
     locked?: boolean;
-    getFormValues: UseFormGetValues<FieldValues>;
+    getFormValues: UseFormGetValues<T>;
 }
 
-const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChange, inputName, optionSectionNum, filterValue, locked, getFormValues}) => {
+const InputSearch = <T extends FieldValues>({isDropDown, onFormChange, inputName, filterValue, locked, getFormValues}: inputOptions<T>) => {
     const [suggestion, setSuggestion] = useState<string[]>([])
     const [dropDownOptions, setDropDownOptions] = useState<string[]>([])
     const [inFocus, setInFocus] = useState<boolean | boolean>(false)
@@ -28,7 +26,10 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
     const { loaded, errors, retrieveDropDown, isCheckingError, filterColors, filterProjects, retrieveCharMax } = useContext(FormOptionsContext) as FormOptionsContextType
     const inputRef = useRef<HTMLInputElement>(null)
     const dropDownRef = useRef<HTMLDivElement>(null)
-    const inputType = inputName.split('.').pop()
+
+    const keyParts = inputName.split(".")
+    const optionSectionNum = keyParts.length > 1 ? parseInt(keyParts[1]) : undefined
+    const inputType = keyParts.pop() || ""
     const charMax = retrieveCharMax(inputType ?? "")
 
     const handleClickOutside = () => {
@@ -93,13 +94,13 @@ const InputSearch: React.FC<inputOptions> = ({isDropDown, formState, onFormChang
 
         if(suggestion.length === 0)
             updateDropDowns()
-
-        if((inputType === "color") && ("partsOfLot" in formState && optionSectionNum !== undefined)) {
-            const materialSelection = formState.partsOfLot[optionSectionNum].material
+        
+        if((inputType === "color") && ("partsOfLot" in getFormValues())) {
+            const materialSelection = getFormValues("partsOfLot" as Path<T>)[optionSectionNum ?? 0].material
             const filteredColors = filterColors(materialSelection)
             setDropDownOptions(filteredColors)
             setSuggestion(filteredColors)
-        } else if (Array.isArray(formState) && typeof filterValue === "string" && inputType === "project") {
+        } else if (Array.isArray(getFormValues()) && typeof filterValue === "string" && inputType === "project") {
             const filteredProjects = filterProjects(filterValue)
             setDropDownOptions(filteredProjects)
             setSuggestion(filteredProjects)

@@ -11,12 +11,11 @@ interface OptionsCreatorModalScreens {
     modalInputValue: string,
     setModalType: React.Dispatch<React.SetStateAction<string>>,
     setModalInputValue: React.Dispatch<React.SetStateAction<string>>,
-    onJobDetailsChange: (value: string | boolean, key: string) => void,
     turnOffModal: () => void
 }
 
-const OptionsCreatorModalScreens:React.FC<OptionsCreatorModalScreens> = ({optionsCreatorObject, modalType, modalInputValue, setModalType, setModalInputValue, onJobDetailsChange, turnOffModal}) => {
-    const { currentLot, addOptionRow } = optionsCreatorObject
+const OptionsCreatorModalScreens:React.FC<OptionsCreatorModalScreens> = ({optionsCreatorObject, modalType, modalInputValue, setModalType, setModalInputValue, turnOffModal}) => {
+    const { currentLot, addOptionRow, setJobValue } = optionsCreatorObject
     const [errors, setErrors] = useState<ErrorObject>({})
     const [availableLots, setAvailableLots] = useState<LotInfo[]>([])
     
@@ -55,7 +54,7 @@ const OptionsCreatorModalScreens:React.FC<OptionsCreatorModalScreens> = ({option
     
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         event.preventDefault()
-        onJobDetailsChange?.(event.target.value, "date")
+        setJobValue("date", event.target.value)
     }
   
     return <>

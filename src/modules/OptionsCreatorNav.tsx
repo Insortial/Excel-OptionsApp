@@ -5,28 +5,29 @@ import InputError from './InputError'
 import docxConverter from '../hooks/docxConverter'
 import { FormOptionsContext } from '../context/OptionsTemplateContext'
 import { FormOptionsContextType } from '../types/FormOptions'
+import { UseFormGetValues } from 'react-hook-form'
 
 type OptionsCreatorNav = {
     isOptionsMode: boolean,
-    jobDetails: JobDetails,
     currentLotNum: string,
     listOfLots: LotTableInterface[],
-    onJobDetailsChange: (value: string | boolean, key: string) => void,
     setModalType: React.Dispatch<React.SetStateAction<string>>,
     setIsLotCopy: React.Dispatch<React.SetStateAction<boolean>>,
+    onFormJobChange: ((value: string, key: string) => void),
     setCurrentLotNum: React.Dispatch<React.SetStateAction<string>>,
     setCurrentLot: React.Dispatch<React.SetStateAction<LotTableInterface | undefined>>,
-    sortListOfLots: (listOfLots: LotTableInterface[], newLot?: LotTableInterface) => void
-    changeLotTable:(lotInputValue: string) => void
+    sortListOfLots: (listOfLots: LotTableInterface[], newLot?: LotTableInterface) => void,
+    changeLotTable:(lotInputValue: string) => void,
+    getJobValues: UseFormGetValues<JobDetails>
 }
 
-const OptionsCreatorNav: React.FC<OptionsCreatorNav> = ({ isOptionsMode, jobDetails, currentLotNum, listOfLots, onJobDetailsChange, setModalType, setIsLotCopy, setCurrentLotNum, setCurrentLot, sortListOfLots, changeLotTable}) => {
+const OptionsCreatorNav: React.FC<OptionsCreatorNav> = ({ isOptionsMode, currentLotNum, listOfLots, getJobValues, setModalType, setIsLotCopy, setCurrentLotNum, setCurrentLot, sortListOfLots, changeLotTable, onFormJobChange}) => {
     const { errors, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
     const [isChangingDate, setIsChangingDate] = useState<boolean>(false)
-
+    const jobDetails = getJobValues() 
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         event.preventDefault()
-        onJobDetailsChange(event.target.value, "date")
+        onFormJobChange("date", event.target.value)
     }
 
     const deleteLotTable = (lotInputValue: string) => {

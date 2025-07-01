@@ -10,6 +10,7 @@ import { JobMenuObject } from '../types/ModalTypes.ts';
 import InputSearch from './InputSearch.tsx';
 import DeleteOptionModal from './ModalScreens/DeleteOptionModal.tsx';
 import Header from './Header.tsx';
+import { useForm } from 'react-hook-form';
 
 
 const JobMenu = () => {
@@ -17,7 +18,8 @@ const JobMenu = () => {
     const [menuType/*, setMenuType*/] = useState<"job"|"project">("job")
     const [modalType, setModalType] = useState<string>("none")
     const [jobDocument, setJobDocument] = useState<JobDocumentInterface|null>(null)
-    const [filterObject, setFilterObject] = useState<FilterObject>({jobID: '', builder: '', project: '', user: ''})
+    //const [filterObject, setFilterObject] = useState<FilterObject>({jobID: '', builder: '', project: '', user: ''})
+    const {getValues, setValue, reset} = useForm<FilterObject>({defaultValues: {jobID: '', builder: '', project: '', user: ''}})
     const [isDeleteMode, setDeleteMode] = useState<boolean>(false)
     const { setIsCheckingError, getFormIDs } = useContext(FormOptionsContext) as FormOptionsContextType
     const fetchHook = useFetch()
@@ -50,7 +52,7 @@ const JobMenu = () => {
 
     const onFilterChange = (value: string, key: string) => {
         console.log(getFormIDs(value, "user"))
-        setFilterObject({...filterObject, [key]: value})
+        setValue(key as keyof FilterObject, value)
     }
 
     const jobMenuObject:JobMenuObject = {
@@ -61,6 +63,7 @@ const JobMenu = () => {
 
     const filterJobDocuments = (jobDocument:JobDocumentInterface):boolean =>{
         const jobID = jobDocument.jobID.toString()
+        const filterObject = getValues()
         return (jobDocument.customerName === filterObject.builder || filterObject.builder === "")
                 && (jobDocument.projectName === filterObject.project || filterObject.project === "")
                 && (jobID.includes(filterObject.jobID) || jobID === "")
@@ -88,17 +91,17 @@ const JobMenu = () => {
                         </nav> */}
                         <div id="filterButtons">
                             <button className='deleteOption' onClick={() => setDeleteMode(!isDeleteMode)}>Delete Job</button>
-                            <button className='resetFilters' onClick={() => setFilterObject({jobID: '', builder: '', project: '', user: ''})}>Reset Filters</button>
+                            <button className='resetFilters' onClick={() => reset({jobID: '', builder: '', project: '', user: ''})}>Reset Filters</button>
                         </div>
                         <div id="filterOptions">
                             <label>Job ID:</label>
-                            <InputSearch isDropDown={false} formState={filterObject} onFormChange={onFilterChange} inputName={'jobID'} />
+                            <InputSearch isDropDown={false} getFormValues={getValues} onFormChange={onFilterChange} inputName={'jobID'} />
                             <label>Builder:</label>
-                            <InputSearch isDropDown={true} formState={filterObject} onFormChange={onFilterChange} inputName={'builder'} />
+                            <InputSearch isDropDown={true} getFormValues={getValues} onFormChange={onFilterChange} inputName={'builder'} />
                             <label>Project:</label>
-                            <InputSearch isDropDown={true} formState={filterObject} onFormChange={onFilterChange} inputName={'project'} />
+                            <InputSearch isDropDown={true} getFormValues={getValues} onFormChange={onFilterChange} inputName={'project'} />
                             <label>User:</label>
-                            <InputSearch isDropDown={true} formState={filterObject} onFormChange={onFilterChange} inputName={'user'} />
+                            <InputSearch isDropDown={true} getFormValues={getValues} onFormChange={onFilterChange} inputName={'user'} />
                         </div>
                     </section>
                     {menuType === "job" ? <>
