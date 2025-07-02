@@ -1,0 +1,225 @@
+import React from 'react'
+import InputSearch from './InputSearch'
+import ControlledTextArea from './ControlledTextArea'
+import { LotTableInterface, PartOfLot } from '../types/LotTableInterface';
+import { UseFormGetValues } from 'react-hook-form';
+
+type OptionsInfoTable = {
+    onFormChange: (key: string, value: string | boolean) => void;
+    onNoneSelect: (currentRow: number) => void;
+    getLotListValues: UseFormGetValues<{lots: LotTableInterface[]}>;
+    deleteLotSection: (currentRow: number) => void;
+    changeLotEditingMode: (editingPartsOfLot: boolean) => void;
+    setModalType: React.Dispatch<React.SetStateAction<string>>;
+    editingPartsOfLot: boolean;
+    currentIDX: number;
+    hasThroughoutLot: boolean;
+    partsOfLot: PartOfLot[];
+    isOptionsMode: boolean;
+    
+}
+
+const OptionsInfoTable: React.FC<OptionsInfoTable> = ({onFormChange, onNoneSelect, getLotListValues, deleteLotSection, changeLotEditingMode, setModalType, editingPartsOfLot, currentIDX, hasThroughoutLot, partsOfLot, isOptionsMode}) => {
+    const addCheckListItem = (index: number, checkListIndex: number, addedString: string) => {
+        const currentLot = getLotListValues(`lots.${currentIDX}`) as LotTableInterface
+        const oldPartsOfLot = [...currentLot.partsOfLot]
+        const modifiedPartOfLot = oldPartsOfLot.splice(index, 1)[0]
+
+        const lotCheckList = modifiedPartOfLot.checklist || [];
+        lotCheckList[checkListIndex] = addedString;
+
+        const updatedPartOfLot = {
+            ...modifiedPartOfLot,
+            checklist: lotCheckList
+        }
+
+        oldPartsOfLot.splice(index, 0, updatedPartOfLot)
+
+        const updatedLot = {...currentLot,
+            partsOfLot: oldPartsOfLot
+        }
+
+        updateLotList(currentIDX, updatedLot)
+    }
+    
+    return (
+        <table className='optionsInfo'>
+            <tbody>
+                <tr>
+                    <th colSpan={2}>Lot Option Contract Value</th>
+                    <td colSpan={3}>
+                        <section id="optionsValueCell">
+                            <span className="valueDiv">$</span>
+                            <InputSearch inputName={`lots.${currentIDX}.lotOptionsValue`}  onFormChange={onFormChange} isDropDown={false} getFormValues={getLotListValues}></InputSearch>
+                            <span id="centsDiv" className="valueDiv">.00</span>
+                        </section>
+                    </td>
+                </tr>
+                <tr>
+                    {isOptionsMode ? <th>LOT</th> : <></>}
+                    <th>PLAN</th>
+                    <th>Material/Color</th>
+                    <th>Option</th>
+                </tr>
+                {partsOfLot.slice(hasThroughoutLot ? 0 : 1).map((lotSection:PartOfLot, index:number) => {
+                    const idNumber = index > 0 ? index : ""
+                    const currentRow = hasThroughoutLot ? index : index + 1
+                    return <tr key={currentRow}>
+                            {isOptionsMode &&
+                                <td>
+                                    {(currentRow === 0 || !hasThroughoutLot && currentRow === 1) &&
+                                        <InputSearch inputName={`lots.${currentIDX}.lot`}  onFormChange={onFormChange} isDropDown={false} locked={true} getFormValues={getLotListValues}></InputSearch>
+                                    }
+                                    <button className="deleteButton" style={{display: currentRow !== 0 ? "block" : "none"}} onClick={() => deleteLotSection(currentRow)}>Delete Row</button>
+                                </td>
+                            }
+                            <td>
+                                {(currentRow === 0 || !hasThroughoutLot && currentRow === 1) &&
+                                    <InputSearch inputName={`lots.${currentIDX}.plan`}  onFormChange={onFormChange} isDropDown={false} locked={true} getFormValues={getLotListValues}></InputSearch>
+                                }
+                                {!isOptionsMode && <button className="deleteButton" style={{display: currentRow !== 0 ? "block" : "none"}} onClick={() => deleteLotSection(currentRow)}>Delete Row</button>}
+                            </td>
+                            <td>
+                                {(partsOfLot.length > 1 && (hasThroughoutLot && currentRow === 0 || !hasThroughoutLot && currentRow === 1)) && 
+                                    <>
+                                        <button className="editPartsOfLotButton" onClick={() => changeLotEditingMode(!editingPartsOfLot)}>{editingPartsOfLot ? `Set Options to Balance of House` : "Edit By Part of Lot"}</button>
+                                        <button onClick={() => {
+                                            onFormChange("hasThroughoutLot", !hasThroughoutLot)
+                                            }}>{hasThroughoutLot ? "Remove Balance of House" : "Reveal Balance of House"}
+                                        </button>
+                                    </>}
+                                <label htmlFor={`material${idNumber}`}>Material:</label>
+                                <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.material`} onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                                <label htmlFor={`color${idNumber}`}>Color:</label>
+                                <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.color`} onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                            </td>
+                            <td className="optionCell">
+                                <label htmlFor={`roomID${idNumber}`}>Room ID: </label>
+                                <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.roomID`} onFormChange={onFormChange} isDropDown={false} getFormValues={getLotListValues}></InputSearch>
+                                <section className='hardwareHeader'>
+                                    <div className='hardwareEditor'>
+                                        <h3>Hardware</h3>
+                                        <div className='hardwareCheckboxes'>
+                                            <label htmlFor={`pullsButton${idNumber}`}>Pulls</label>
+                                            <input id={`pullsButton${idNumber}`} type="checkbox" onChange={() => onFormChange(`lots.${currentIDX}.partsOfLot.${index}.handleType`, "pulls")} checked={lotSection.handleType == "pulls" ? true : false}/>
+                                            <label htmlFor={`knobsButton${idNumber}`}>Knobs</label>
+                                            <input id={`knobsButton${idNumber}`} type="checkbox" onChange={() => onFormChange(`lots.${currentIDX}.partsOfLot.${index}.handleType`, "knobs")} checked={lotSection.handleType == "knobs" ? true : false}/>
+                                            <label htmlFor={`bothButton${idNumber}`}>Both</label>
+                                            <input id={`bothButton${idNumber}`} type="checkbox" onChange={() => onFormChange(`lots.${currentIDX}.partsOfLot.${index}.handleType`, "both")} checked={lotSection.handleType == "both" ? true : false}/>
+                                            <label htmlFor={`noneButton${idNumber}`}>None</label>
+                                            <input id={`noneButton${idNumber}`} type="checkbox" onChange={() => onNoneSelect(currentRow)} checked={lotSection.handleType == "none" ? true : false}/>
+                                        </div>    
+                                    </div>
+                                    <div className='glassSection'>
+                                        <div>
+                                            <h5>Glass Doors</h5>
+                                            <div className='hardwareCheckboxes'>
+                                                <label htmlFor={`doorsYes${idNumber}`}>Yes</label>
+                                                <input id={`doorsYes${idNumber}`} type="checkbox" onChange={() => onFormChange(`lots.${currentIDX}.partsOfLot.${index}.glassDoors`, true)} checked={lotSection.glassDoors}/>
+                                                <label htmlFor={`doorsNo${idNumber}`}>No</label>
+                                                <input id={`doorsNo${idNumber}`} type="checkbox" onChange={() => onFormChange(`lots.${currentIDX}.partsOfLot.${index}.glassDoors`, false)} checked={!lotSection.glassDoors}/>
+                                            </div>     
+                                        </div>
+                                        <div>
+                                            <h5>Glass Shelves</h5>
+                                            <div className='hardwareCheckboxes'>
+                                                <label htmlFor={`shelvesYes${idNumber}`}>Yes</label>
+                                                <input id={`shelvesYes${idNumber}`} type="checkbox" onChange={() => onFormChange(`lots.${currentIDX}.partsOfLot.${index}.glassShelves`, true)} checked={lotSection.glassShelves}/>
+                                                <label htmlFor={`shelvesNo${idNumber}`}>No</label>
+                                                <input id={`shelvesNo${idNumber}`} type="checkbox" onChange={() => onFormChange(`lots.${currentIDX}.partsOfLot.${index}.glassShelves`, false)} checked={!lotSection.glassShelves}/>
+                                            </div> 
+                                        </div>
+                                    </div>
+                                </section>
+                                <section className='modifierSection'>
+                                    <div className='hardwareModifier' style={{display: ["both", "pulls"].includes(lotSection.handleType ?? "") && lotSection.handleType !== "none" ? "block" : "none"}}>
+                                        <label>No. of Pulls:</label>
+                                        <select value={lotSection.numOfPulls} onChange={(e) => onFormChange(`lots.${currentIDX}.partsOfLot.${index}.numOfPulls`, e.target.value)}>
+                                            <option value={1}>1</option>
+                                            <option value={2}>2</option>
+                                        </select>
+                                    </div>
+                                    <div className='hardwareModifier' style={{display: ["both", "knobs"].includes(lotSection.handleType ?? "") && lotSection.handleType !== "none" ? "block" : "none"}}>
+                                        <label>No. of Knobs:</label>
+                                        <select value={lotSection.numOfKnobs} onChange={(e) => onFormChange(`lots.${currentIDX}.partsOfLot.${index}.numOfKnobs`, e.target.value)}>
+                                            <option value={1}>1</option>
+                                            <option value={2}>2</option>
+                                        </select>    
+                                    </div>
+                                </section>
+                                <section className="optionParts">
+                                    <div className={"doorList"}>
+                                        <label htmlFor={`doors${idNumber}`}>Door:</label>
+                                        <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.doors`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                                    </div>
+                                    <div className={"fingerPullList"}>
+                                        <label htmlFor={`fingerpull${idNumber}`}>Fingerpull:</label>
+                                        <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.fingerpull`}   onFormChange={onFormChange} isDropDown={true} locked={true} getFormValues={getLotListValues}></InputSearch>
+                                    </div>
+                                    {Array.from({length: lotSection.numOfPulls}, (_, i) => i + 1).map((i) => {
+                                        return <div key={i} className={"pullList"} style={{display: ["both", "pulls"].includes(lotSection.handleType ?? "") && lotSection.handleType !== "none" ? "block" : "none"}}>
+                                                    <label htmlFor={`pulls${idNumber}`}>{`Pull${i === 1 ? "" : " 2"}:`}</label>
+                                                    <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.pulls${i === 1 ? "" : "2"}`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                                                </div>
+                                    })}
+                                    {Array.from({length: lotSection.numOfKnobs}, (_, i) => i + 1).map((i) => {
+                                        return <div key={i} className={"knobList"} style={{display: ["both", "knobs"].includes(lotSection.handleType ?? "") && lotSection.handleType !== "none" ? "block" : "none"}}>
+                                                    <label htmlFor={`knobs${idNumber}`}>{`Knob${i === 1 ? "" : " 2"}:`}</label>
+                                                    <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.knobs${i === 1 ? "" : "2"}`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                                                </div>
+                                    })}
+                                </section>
+                                {editingPartsOfLot &&
+                                    <section id="additionalOptions" className="optionParts">
+                                        <div className={"boxStyleList"}>
+                                            <label htmlFor={`boxStyle${idNumber}`}>Box Style:</label>
+                                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.boxStyle`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                                        </div>
+                                        <div className={"drawerFrontList"}>
+                                            <label htmlFor={`drawerFronts${idNumber}`}>Drawer Front:</label>
+                                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.drawerFronts`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                                        </div>
+                                        <div className={"drawerBoxesList"}>
+                                            <label htmlFor={`drawerBoxes${idNumber}`}>Drawer Boxes:</label>
+                                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.drawerBoxes`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                                        </div>
+                                        <div className={"drawerGuidesList"}>
+                                            <label htmlFor={`drawerGuides${idNumber}`}>Drawer Guides:</label>
+                                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.drawerGuides`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                                        </div>
+                                        <div className={"doorHingesList"}>
+                                            <label htmlFor={`doorHinges${idNumber}`}>Door Hinges:</label>
+                                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.doorHinges`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                                        </div>
+                                        <div className={"interiorsList"}>
+                                            <label htmlFor={`interiors${idNumber}`}>Interiors:</label>
+                                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.interiors`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                                        </div>
+                                    </section>
+                                }
+                                <label>Details: </label>
+                                <ControlledTextArea inputName={`lots.${currentIDX}.partsOfLot.${index}.details`} getFormValues={getLotListValues} onFormChange={onFormChange}></ControlledTextArea>
+                                {partsOfLot[currentRow].checklist && <>
+                                    <h4 className='checkListTitle'>Checklist:</h4>
+                                    <div className='checklist'>
+                                        {partsOfLot[currentRow].checklist.map((_, index:number) => {
+                                            return (
+                                                <div key={index} className='checkListItem'>
+                                                    <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${currentRow}.checklist.${index}`} key={index} onFormChange={onFormChange} isDropDown={false} getFormValues={getLotListValues}/>
+                                                    <button>X</button>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </>}
+                                <button className='checklistButton' onClick={() => addCheckListItem(currentRow, partsOfLot[currentRow].checklist ? partsOfLot[currentRow].checklist.length : 0, "Hello")}>Add Checklist</button>
+                                <button style={{display: currentRow === (partsOfLot?.length - 1) ? "block" : "none"}} onClick={() => setModalType("partOfLot")} className='newPartOfLotButton'>Add Part Of Lot</button>
+                            </td>
+                        </tr>
+                })}
+            </tbody>
+        </table>
+    )
+}
+
+export default OptionsInfoTable

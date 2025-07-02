@@ -13,7 +13,6 @@ const ControlledTextArea = <T extends FieldValues>({onFormChange, inputName, get
     const [isTextLimit, setIsTextLimit] = useState<boolean>(false)
     const { retrieveCharMax } = useContext(FormOptionsContext) as FormOptionsContextType
     const keyParts = inputName.split(".")
-    /* const optionSectionNum = keyParts.length > 1 ? parseInt(keyParts[1]) : undefined */
     const inputType = keyParts.pop() || ""
     const charMax = retrieveCharMax(inputType)
 

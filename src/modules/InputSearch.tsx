@@ -28,7 +28,7 @@ const InputSearch = <T extends FieldValues>({isDropDown, onFormChange, inputName
     const dropDownRef = useRef<HTMLDivElement>(null)
 
     const keyParts = inputName.split(".")
-    const optionSectionNum = keyParts.length > 1 ? parseInt(keyParts[1]) : undefined
+    const optionSectionNum = keyParts.length > 3 ? parseInt(keyParts[3]) : undefined
     const inputType = keyParts.pop() || ""
     const charMax = retrieveCharMax(inputType ?? "")
 
@@ -89,14 +89,15 @@ const InputSearch = <T extends FieldValues>({isDropDown, onFormChange, inputName
       };
 
     function handleOnFocus():void {
+        const currentLot = `lots.${keyParts[1] ?? 0}` as Path<T>
         if(locked)
             return
 
         if(suggestion.length === 0)
             updateDropDowns()
         
-        if((inputType === "color") && ("partsOfLot" in getFormValues())) {
-            const materialSelection = getFormValues("partsOfLot" as Path<T>)[optionSectionNum ?? 0].material
+        if((inputType === "color") && ("partsOfLot" in getFormValues(currentLot))) {
+            const materialSelection = getFormValues(`${currentLot}.partsOfLot` as Path<T>)[optionSectionNum ?? 0].material
             const filteredColors = filterColors(materialSelection)
             setDropDownOptions(filteredColors)
             setSuggestion(filteredColors)
