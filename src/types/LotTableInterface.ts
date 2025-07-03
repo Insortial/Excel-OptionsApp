@@ -2,6 +2,11 @@ export interface ErrorObject {
     [index: string]: string 
 }
 
+export interface CheckListItem {
+    value: string,
+    checked: boolean
+}
+
 export interface PartOfLot {
     roomID: string, //ex. Throughout, Balance of the House, etc.
     material: string, 
@@ -25,7 +30,7 @@ export interface PartOfLot {
     pulls2: string,
     details: string,
     appliances: string, //remove in the future
-    checklist?: string[]
+    checklist: CheckListItem[]
 }
 
 export interface JobDetails {

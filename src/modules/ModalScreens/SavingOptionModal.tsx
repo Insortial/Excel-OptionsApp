@@ -11,7 +11,7 @@ interface SavingOptionModal {
 
 const SavingOptionModal:React.FC<SavingOptionModal> = ({optionsCreatorObject, setModalType, setAvailableLots}) => {
     const [modalProdReady, setModalProdReady] = useState<boolean>(false)
-    const { packageProjects, setPackageProjects, saveLotTablesSQL, listOfLots, jobDetails: {lotNums}} = optionsCreatorObject
+    const { getPackageProjects, resetPackageProjects, onProjectsChange, saveLotTablesSQL, isOptionsMode, listOfLots, jobDetails: {lotNums}} = optionsCreatorObject
 
 
     const findAvailableLots = ():LotInfo[]|undefined => {
@@ -32,7 +32,7 @@ const SavingOptionModal:React.FC<SavingOptionModal> = ({optionsCreatorObject, se
     }
 
     return (
-        optionsCreatorObject?.isOptionsMode ?
+        isOptionsMode ?
         <>
             <h2>Is This Production Schedule Final?</h2>
             <div className="modalCheckboxRow">
@@ -46,13 +46,13 @@ const SavingOptionModal:React.FC<SavingOptionModal> = ({optionsCreatorObject, se
         : <>
             <h2>Select Projects</h2>
             <div className="modalProjectDiv">
-                {packageProjects.map((_, index:number) => {
-                    return  <div className="modalInputRow" key={index}>
-                                <InputSearch inputName={"project"} formState={optionsCreatorObject.packageProjects} onFormChange={optionsCreatorObject.onProjectsChange} isDropDown={true} optionSectionNum={index} filterValue={optionsCreatorObject.jobDetails.builder}></InputSearch>
-                                <button onClick={() => optionsCreatorObject.setPackageProjects((prevState: string[]) => prevState.filter((_, idx) => idx !== index))}>Delete</button>
-                            </div>
+                {getPackageProjects("projects").map((_, index:number) => {
+                    return <div className="modalInputRow" key={index}>
+                                <InputSearch inputName={`projects.${index}`} getFormValues={getPackageProjects} onFormChange={(key: string, value: string) => onProjectsChange(key as "projects" | `projects.${number}`, value)} isDropDown={true} optionSectionNum={index} filterValue={optionsCreatorObject.jobDetails.builder}></InputSearch>
+                                <button onClick={() => resetPackageProjects({projects: getPackageProjects("projects").filter((_, idx) => idx !== index)})}>Delete</button>
+                           </div>
                 })}
-                <button className="addProject" onClick={() => setPackageProjects([...optionsCreatorObject.packageProjects, ""])}>Add Project</button>
+                <button className="addProject" onClick={() => resetPackageProjects({projects: [...getPackageProjects("projects"), ""]})}>Add Project</button>
                 <button className="modalSubmit" onClick={() => saveLotTablesSQL(true)}>Submit</button>
             </div>
         </>

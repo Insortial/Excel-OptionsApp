@@ -8,7 +8,7 @@ interface AddingLotModal {
 }
 
 const AddingLotModal:React.FC<AddingLotModal> = ({ optionsCreatorObject, modalInputValue, handleInputChange }) => {
-    const { handlePackageDetailsChange, addLotTable, listOfLots, isOptionsMode, hasPackage, 
+    const { handlePackageDetailsChange, addLotTable, listOfLots, isOptionsMode, hasPackage, isLotCopy,
             packageDetails: {packageName, planName, packages, plans}, 
             jobDetails: {lotNums} } = optionsCreatorObject
 
@@ -28,7 +28,7 @@ const AddingLotModal:React.FC<AddingLotModal> = ({ optionsCreatorObject, modalIn
                 )}
                 <button onClick={addLotTable}>Submit</button>
             </div>
-            {hasPackage && <>
+            {(hasPackage && !isLotCopy) && <>
                 <div className="modalPlanRow">
                     <label>Package:</label>
                     <select value={packageName} onChange={e => handlePackageDetailsChange(e.target.value, "packageName")}>

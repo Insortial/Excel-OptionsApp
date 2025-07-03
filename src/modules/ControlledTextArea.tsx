@@ -1,19 +1,20 @@
 import React, { useContext, useState } from 'react'
-import { JobDetails, LotTableInterface, PartOfLot } from '../types/LotTableInterface'
 import { FormOptionsContext } from '../context/OptionsTemplateContext';
 import { FormOptionsContextType } from '../types/FormOptions';
+import { FieldValues, Path, UseFormGetValues } from 'react-hook-form';
 
-type inputOptions = {
-    formState: LotTableInterface | PartOfLot | JobDetails;
-    optionSectionNum?: number;
-    onFormChange: (value: string, key: string, optSectionNum?: number) => void;
-    inputName: string;
+type inputOptions<T extends FieldValues> = {
+    onFormChange: (key: string, value: string) => void;
+    inputName: Path<T>;
+    getFormValues: UseFormGetValues<T>;
 }
 
-const ControlledTextArea: React.FC<inputOptions> = ({formState, onFormChange, inputName, optionSectionNum}) => {
+const ControlledTextArea = <T extends FieldValues>({onFormChange, inputName, getFormValues}: inputOptions<T>) => {
     const [isTextLimit, setIsTextLimit] = useState<boolean>(false)
     const { retrieveCharMax } = useContext(FormOptionsContext) as FormOptionsContextType
-    const charMax = retrieveCharMax(inputName)
+    const keyParts = inputName.split(".")
+    const inputType = keyParts.pop() || ""
+    const charMax = retrieveCharMax(inputType)
 
     function readInput(input: React.ChangeEvent<HTMLTextAreaElement>): void {
         if(charMax && input.target.value.length === charMax) {
@@ -23,20 +24,13 @@ const ControlledTextArea: React.FC<inputOptions> = ({formState, onFormChange, in
             }, 2000)
         }
 
-        onFormChange?.(input.target.value, inputName, optionSectionNum)
+        onFormChange?.(inputName, input.target.value)
     }
 
-
     return (
-        (optionSectionNum !== undefined) && ("partsOfLot" in formState) ? <textarea
-            value={(formState.partsOfLot[optionSectionNum][inputName as keyof (LotTableInterface | PartOfLot)] as string) ?? ""}
-            className={isTextLimit ? "errorTextArea" : ""}
-            onChange={readInput}
-            {...(charMax ? {maxLength: charMax ?? 0} : {})}> 
-        </textarea> :
         <textarea 
-            value={(formState[inputName as keyof (LotTableInterface | PartOfLot | JobDetails)] as string) ?? ""}
-            className={isTextLimit ? "errorTextArea" : "cellTextArea"}
+            value={getFormValues(inputName) ?? ""}
+            className={isTextLimit ? "errorTextArea" : ""}
             onChange={readInput}
             {...(charMax ? {maxLength: charMax ?? 0} : {})}>
         </textarea>

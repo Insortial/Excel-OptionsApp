@@ -1,21 +1,23 @@
+import { UseFormGetValues, UseFormReset, UseFormSetValue } from 'react-hook-form';
 import { JobDetails, JobDocumentInterface, LotTableInterface, PackageDetails, PackageInfo } from './LotTableInterface.ts'
 
 
 export interface OptionsCreatorObject {
     isOptionsMode: boolean, 
+    isLotCopy: boolean,
     currentLot: LotTableInterface | undefined,
     listOfLots: LotTableInterface[], 
     jobDetails: JobDetails, 
     packageDetails: PackageDetails, 
     hasPackage: boolean, 
-    packageProjects: string[],
+    getPackageProjects: UseFormGetValues<{projects: string[]}>,
     addLotTable: () => void, 
     saveLotTable: (lotTableDetails: LotTableInterface, lotNumber: string) => void;
     handlePackageDetailsChange: (value:string, propName:string) => void,  
-    onJobDetailsChange: (value: string | boolean, key: string) => void, 
-    setPackageProjects: React.Dispatch<React.SetStateAction<string[]>>, 
+    setJobValue: UseFormSetValue<JobDetails>,
+    resetPackageProjects: UseFormReset<{projects: string[]}>
     saveLotTablesSQL: (prodReady:boolean) => void,
-    onProjectsChange?: (value: string, key: string, optSectionNum?:number) => void,
+    onProjectsChange: (key: "projects" | `projects.${number}`, value: string) => void,
     addOptionRow: (lotName:string) => void
 }
 

@@ -1,0 +1,105 @@
+import { JobDetails, LotTableInterface, PackageDetails, PartOfLot } from "../types/LotTableInterface"
+
+export const initialJobDetails:JobDetails = {
+    builder: "",
+    project: "",
+    phase: "",
+    superintendent: "",
+    jobNotes: "",
+    optionCoordinator: "",
+    phone: "",
+    foreman: "",
+    date: "",
+    lotNums: [],
+    lastUpdatedBy: "",
+    dateUpdated: "",
+    jobID: "",
+    prodReady: false
+}
+
+export const initialPackageDetails:PackageDetails = {
+    builder: "",
+    packages: [],
+    projects: [],
+    plans: [],
+    packageName: "",
+    planName: "",
+}
+
+export const throughoutLot:PartOfLot = {
+    roomID: "Throughout",
+    material: "",
+    color: "",
+    doors: "",
+    fingerpull: "",
+    boxStyle: "",
+    interiors: "",
+    drawerFronts: "",
+    numOfKnobs: 1,
+    numOfPulls: 1,
+    knobs: "",
+    knobs2: "",
+    drawerBoxes: "",
+    drawerGuides: "",
+    doorHinges: "",
+    pulls: "",
+    pulls2: "",
+    glassDoors: false,
+    glassShelves: false,
+    handleType: "pulls",
+    details: "",
+    appliances: "",
+    checklist: []
+}
+
+export const initialLotDetails:LotTableInterface = {
+    jobID: -1,
+    lot: "",
+    boxStyle: "",
+    drawerFronts: "",
+    drawerBoxes: "", 
+    drawerGuides: "", 
+    doorHinges: "",
+    packageName: "",
+    interiors: "",
+    upperHeight: "",
+    islands: "",
+    supports: "",
+    crown: "",
+    lightRail: "",
+    baseShoe: "",
+    editingPartsOfLot: false,
+    hasThroughoutLot: true,
+    lotOptionsValue: "",
+    recyclingBins: "",
+    hasError: false,
+    plan: "",
+    partsOfLot: [throughoutLot],
+    appliances: "",
+    kitchen: "",
+    master: "",
+    bath2: "",
+    bath3: "",
+    bath4: "",
+    powder: "",
+    laundry: "",
+    lotNotes: "",
+    footerNotes: ""
+}
+
+export const defaultJobDetails:JobDetails = {
+  builder: "",
+  project: "",
+  superintendent: "",
+  optionCoordinator: "",
+  jobNotes: "",
+  phone: "",
+  lotNums: [],
+  foreman: "",
+  phase: "",
+  jobID: "",
+  date: "",
+  dateUpdated: "",
+  lastUpdatedBy: "",
+  prodReady: false
+}
