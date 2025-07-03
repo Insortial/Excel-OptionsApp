@@ -8,14 +8,15 @@ import { FieldValues, Path, UseFormGetValues } from "react-hook-form";
 
 type inputOptions<T extends FieldValues> = {
     isDropDown: boolean;
-    onFormChange?: ((value: string, key: string) => void);
+    onFormChange?: ((key: string, value: string) => void);
     inputName: Path<T>;
     filterValue?: string | number;
     locked?: boolean;
+    optionSectionNum?: number;
     getFormValues: UseFormGetValues<T>;
 }
 
-const InputSearch = <T extends FieldValues>({isDropDown, onFormChange, inputName, filterValue, locked, getFormValues}: inputOptions<T>) => {
+const InputSearch = <T extends FieldValues>({isDropDown, onFormChange, inputName, filterValue, locked, optionSectionNum, getFormValues}: inputOptions<T>) => {
     const [suggestion, setSuggestion] = useState<string[]>([])
     const [dropDownOptions, setDropDownOptions] = useState<string[]>([])
     const [inFocus, setInFocus] = useState<boolean | boolean>(false)
@@ -28,7 +29,7 @@ const InputSearch = <T extends FieldValues>({isDropDown, onFormChange, inputName
     const dropDownRef = useRef<HTMLDivElement>(null)
 
     const keyParts = inputName.split(".")
-    const optionSectionNum = keyParts.length > 3 ? parseInt(keyParts[3]) : undefined
+    /* const optionSectionNum = keyParts.length > 3 ? parseInt(keyParts[3]) : undefined */
     const inputType = keyParts.pop() || ""
     const charMax = retrieveCharMax(inputType ?? "")
 
@@ -101,7 +102,7 @@ const InputSearch = <T extends FieldValues>({isDropDown, onFormChange, inputName
             const filteredColors = filterColors(materialSelection)
             setDropDownOptions(filteredColors)
             setSuggestion(filteredColors)
-        } else if (Array.isArray(getFormValues()) && typeof filterValue === "string" && inputType === "project") {
+        } else if (Array.isArray(getFormValues("projects" as Path<T>)) && typeof filterValue === "string") {
             const filteredProjects = filterProjects(filterValue)
             setDropDownOptions(filteredProjects)
             setSuggestion(filteredProjects)

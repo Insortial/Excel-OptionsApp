@@ -31,9 +31,9 @@ function OptionsCreator() {
     const [submissionValid, setSubmissionValid] = useState<boolean|null>(null)
 
     //Package States
-    const [packageProjects, setPackageProjects] = useState<string[]>([""])
+    /* const [packageProjects, setPackageProjects] = useState<string[]>([""]) */
+    const { getValues: getPackageProjects, setValue: setPackageProjects, reset: resetPackageProjects } = useForm<{projects: string[]}>({defaultValues: {projects: [""]}})
     const [isOptionsMode, setIsOptionsMode] = useState<boolean>(true)
-
     const loaderData = useLoaderData() as JobOptionLoaderResponse;
     const location = useLocation();
     const postSQLDetails = useSQLJobDetailsPost();
@@ -114,10 +114,8 @@ function OptionsCreator() {
         return lotDetails;
     }
 
-    const onProjectsChange  = (value: string, _key: string, optSectionNum:number=-1) => {
-        const modifiedProjects = [...packageProjects]
-        modifiedProjects[optSectionNum] = value
-        setPackageProjects(modifiedProjects)
+    const onProjectsChange  = (key: "projects" | `projects.${number}`, value: string) => {
+        setPackageProjects(key, value)
     }
 
     const saveLotTable = (lotTableData: LotTableInterface, lotInputValue: string) => {
@@ -177,7 +175,7 @@ function OptionsCreator() {
         }
 
         if(!hasError) {
-            const validJob = await postSQLDetails(getLotListValues("lots"), getJobValues(), isOptionsMode, packageProjects, requestedJobDetails, loaderData, prodReady)
+            const validJob = await postSQLDetails(getLotListValues("lots"), getJobValues(), isOptionsMode, getPackageProjects("projects"), requestedJobDetails, loaderData, prodReady)
             const responseBody = await validJob.json()
             if(validJob.ok && location.pathname === '/optionCreator/')
                 navigate(`/optionCreator/jobOption/${responseBody.jobDocumentID}`)
@@ -335,7 +333,7 @@ function OptionsCreator() {
                 })
                 resetLotList({lots: loadedData.listOfLots})
                 setCurrentLotNum(loadedData.listOfLots[0].plan)
-                setPackageProjects(loadedData.packageDetails.projects)
+                resetPackageProjects({projects: loadedData.packageDetails.projects})
             }
         } else {
             navigate("/jobMenu")
@@ -351,12 +349,12 @@ function OptionsCreator() {
         jobDetails: getJobValues(), 
         packageDetails: packageDetails, 
         hasPackage: hasPackage, 
-        packageProjects: packageProjects,
+        getPackageProjects: getPackageProjects,
         addLotTable: addLotTable, 
         saveLotTable: saveLotTable,
         handlePackageDetailsChange: handlePackageDetailsChange,  
         setJobValue: setJobValue, 
-        setPackageProjects: setPackageProjects, 
+        resetPackageProjects: resetPackageProjects, 
         saveLotTablesSQL: saveLotTablesSQL,
         onProjectsChange: onProjectsChange,
         addOptionRow: addOptionRow

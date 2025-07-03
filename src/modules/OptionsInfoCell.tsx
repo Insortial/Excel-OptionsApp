@@ -22,31 +22,9 @@ type OptionsInfoCell = {
 }
 
 const OptionsInfoCell:React.FC<OptionsInfoCell> = ({index, hasThroughoutLot, isOptionsMode, currentIDX, partsOfLot, lotSection, editingPartsOfLot, controlLotList, onFormChange, onNoneSelect, getLotListValues, deleteLotSection, changeLotEditingMode, setModalType}) => {
-    const {fields, append, remove} = useFieldArray({control: controlLotList, name: `lots.${currentIDX}.partsOfLot.${index}.checklist`})
+    const {fields, /* append, */ remove} = useFieldArray({control: controlLotList, name: `lots.${currentIDX}.partsOfLot.${index}.checklist`})
     const idNumber = index > 0 ? index : ""
     const currentRow = hasThroughoutLot ? index : index + 1
-
-    /* const addCheckListItem = (index: number, checkListIndex: number, addedString: string) => {
-        const currentLot = getLotListValues(`lots.${currentIDX}`) as LotTableInterface
-        const oldPartsOfLot = [...currentLot.partsOfLot]
-        const modifiedPartOfLot = oldPartsOfLot.splice(index, 1)[0]
-
-        const lotCheckList = modifiedPartOfLot.checklist || [];
-        lotCheckList[checkListIndex] = addedString;
-
-        const updatedPartOfLot = {
-            ...modifiedPartOfLot,
-            checklist: lotCheckList
-        }
-
-        oldPartsOfLot.splice(index, 0, updatedPartOfLot)
-
-        const updatedLot = {...currentLot,
-            partsOfLot: oldPartsOfLot
-        }
-
-        updateLotList(currentIDX, updatedLot)
-    } */
 
     return (
         <tr key={currentRow}>
@@ -74,13 +52,13 @@ const OptionsInfoCell:React.FC<OptionsInfoCell> = ({index, hasThroughoutLot, isO
                         </button>
                     </>}
                 <label htmlFor={`material${idNumber}`}>Material:</label>
-                <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.material`} onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.material`} optionSectionNum={index} onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
                 <label htmlFor={`color${idNumber}`}>Color:</label>
-                <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.color`} onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.color`} optionSectionNum={index} onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
             </td>
             <td className="optionCell">
                 <label htmlFor={`roomID${idNumber}`}>Room ID: </label>
-                <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.roomID`} onFormChange={onFormChange} isDropDown={false} getFormValues={getLotListValues}></InputSearch>
+                <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.roomID`} optionSectionNum={index} onFormChange={onFormChange} isDropDown={false} getFormValues={getLotListValues}></InputSearch>
                 <section className='hardwareHeader'>
                     <div className='hardwareEditor'>
                         <h3>Hardware</h3>
@@ -135,22 +113,22 @@ const OptionsInfoCell:React.FC<OptionsInfoCell> = ({index, hasThroughoutLot, isO
                 <section className="optionParts">
                     <div className={"doorList"}>
                         <label htmlFor={`doors${idNumber}`}>Door:</label>
-                        <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.doors`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                        <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.doors`} optionSectionNum={index}  onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
                     </div>
                     <div className={"fingerPullList"}>
                         <label htmlFor={`fingerpull${idNumber}`}>Fingerpull:</label>
-                        <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.fingerpull`}   onFormChange={onFormChange} isDropDown={true} locked={true} getFormValues={getLotListValues}></InputSearch>
+                        <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.fingerpull`} optionSectionNum={index} onFormChange={onFormChange} isDropDown={true} locked={true} getFormValues={getLotListValues}></InputSearch>
                     </div>
                     {Array.from({length: lotSection.numOfPulls}, (_, i) => i + 1).map((i) => {
                         return <div key={i} className={"pullList"} style={{display: ["both", "pulls"].includes(lotSection.handleType ?? "") && lotSection.handleType !== "none" ? "block" : "none"}}>
                                     <label htmlFor={`pulls${idNumber}`}>{`Pull${i === 1 ? "" : " 2"}:`}</label>
-                                    <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.pulls${i === 1 ? "" : "2"}`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                                    <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.pulls${i === 1 ? "" : "2"}`} optionSectionNum={index} onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
                                 </div>
                     })}
                     {Array.from({length: lotSection.numOfKnobs}, (_, i) => i + 1).map((i) => {
                         return <div key={i} className={"knobList"} style={{display: ["both", "knobs"].includes(lotSection.handleType ?? "") && lotSection.handleType !== "none" ? "block" : "none"}}>
                                     <label htmlFor={`knobs${idNumber}`}>{`Knob${i === 1 ? "" : " 2"}:`}</label>
-                                    <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.knobs${i === 1 ? "" : "2"}`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                                    <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.knobs${i === 1 ? "" : "2"}`} optionSectionNum={index} onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
                                 </div>
                     })}
                 </section>
@@ -158,33 +136,33 @@ const OptionsInfoCell:React.FC<OptionsInfoCell> = ({index, hasThroughoutLot, isO
                     <section id="additionalOptions" className="optionParts">
                         <div className={"boxStyleList"}>
                             <label htmlFor={`boxStyle${idNumber}`}>Box Style:</label>
-                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.boxStyle`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.boxStyle`} optionSectionNum={index} onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
                         </div>
                         <div className={"drawerFrontList"}>
                             <label htmlFor={`drawerFronts${idNumber}`}>Drawer Front:</label>
-                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.drawerFronts`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.drawerFronts`} optionSectionNum={index} onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
                         </div>
                         <div className={"drawerBoxesList"}>
                             <label htmlFor={`drawerBoxes${idNumber}`}>Drawer Boxes:</label>
-                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.drawerBoxes`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.drawerBoxes`} optionSectionNum={index} onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
                         </div>
                         <div className={"drawerGuidesList"}>
                             <label htmlFor={`drawerGuides${idNumber}`}>Drawer Guides:</label>
-                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.drawerGuides`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.drawerGuides`} optionSectionNum={index} onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
                         </div>
                         <div className={"doorHingesList"}>
                             <label htmlFor={`doorHinges${idNumber}`}>Door Hinges:</label>
-                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.doorHinges`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.doorHinges`} optionSectionNum={index} onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
                         </div>
                         <div className={"interiorsList"}>
                             <label htmlFor={`interiors${idNumber}`}>Interiors:</label>
-                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.interiors`}   onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
+                            <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.interiors`} optionSectionNum={index} onFormChange={onFormChange} isDropDown={true} getFormValues={getLotListValues}></InputSearch>
                         </div>
                     </section>
                 }
                 <label>Details: </label>
                 <ControlledTextArea inputName={`lots.${currentIDX}.partsOfLot.${index}.details`} getFormValues={getLotListValues} onFormChange={onFormChange}></ControlledTextArea>
-                {partsOfLot[currentRow].checklist && <>
+                {(partsOfLot[currentRow].checklist && partsOfLot[currentRow].checklist.length) > 0 && <>
                     <h4 className='checkListTitle'>Checklist:</h4>
                     <div className='checklist'>
                         {fields.map((_, index:number) => {
@@ -197,7 +175,7 @@ const OptionsInfoCell:React.FC<OptionsInfoCell> = ({index, hasThroughoutLot, isO
                         })}
                     </div>
                 </>}
-                <button className='checklistButton' onClick={() => append({value: "", checked: false})}>Add Checklist</button>
+                {/* <button className='checklistButton' onClick={() => append({value: "", checked: false})}>Add Checklist</button> */}
                 <button style={{display: currentRow === (partsOfLot?.length - 1) ? "block" : "none"}} onClick={() => setModalType("partOfLot")} className='newPartOfLotButton'>Add Part Of Lot</button>
             </td>
         </tr>
