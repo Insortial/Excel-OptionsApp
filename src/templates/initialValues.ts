@@ -48,7 +48,8 @@ export const throughoutLot:PartOfLot = {
     glassShelves: false,
     handleType: "pulls",
     details: "",
-    appliances: ""
+    appliances: "",
+    checklist: []
 }
 
 export const initialLotDetails:LotTableInterface = {
@@ -84,4 +85,21 @@ export const initialLotDetails:LotTableInterface = {
     laundry: "",
     lotNotes: "",
     footerNotes: ""
+}
+
+export const defaultJobDetails:JobDetails = {
+  builder: "",
+  project: "",
+  superintendent: "",
+  optionCoordinator: "",
+  jobNotes: "",
+  phone: "",
+  lotNums: [],
+  foreman: "",
+  phase: "",
+  jobID: "",
+  date: "",
+  dateUpdated: "",
+  lastUpdatedBy: "",
+  prodReady: false
 }

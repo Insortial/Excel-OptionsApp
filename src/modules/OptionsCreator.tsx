@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 import LotTable from "./LotTable";
 import { useLocation, useNavigate, useLoaderData } from "react-router-dom";
-import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, PackageDetails, LotInfo } from '../types/LotTableInterface.ts';
+import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, PackageDetails, LotInfo, CheckListItem } from '../types/LotTableInterface.ts';
 import { useContext, useEffect, useState } from "react";
 import { FormOptionsContext } from "../context/OptionsTemplateContext.tsx";
 import { FormOptionsContextType } from '../types/FormOptions.ts'
@@ -75,12 +75,12 @@ function OptionsCreator() {
     const convertToMixedOptions = (lot:LotTableInterface) => {
         //Find better solution to handle return types
         type mixedOptionsType = {
-            drawerFronts: Array<[string, string|number|boolean|string[]|undefined]>;
-            drawerBoxes: Array<[string, string|number|boolean|string[]|undefined]>;
-            drawerGuides: Array<[string, string|number|boolean|string[]|undefined]>;
-            doorHinges: Array<[string, string|number|boolean|string[]|undefined]>;
-            boxStyle: Array<[string, string|number|boolean|string[]|undefined]>;
-            interiors: Array<[string, string|number|boolean|string[]|undefined]>;
+            drawerFronts: Array<[string, string|number|boolean|CheckListItem[]|undefined]>;
+            drawerBoxes: Array<[string, string|number|boolean|CheckListItem[]|undefined]>;
+            drawerGuides: Array<[string, string|number|boolean|CheckListItem[]|undefined]>;
+            doorHinges: Array<[string, string|number|boolean|CheckListItem[]|undefined]>;
+            boxStyle: Array<[string, string|number|boolean|CheckListItem[]|undefined]>;
+            interiors: Array<[string, string|number|boolean|CheckListItem[]|undefined]>;
         }
 
         const mixedOptions:mixedOptionsType = {drawerFronts: [], drawerBoxes: [], drawerGuides: [], doorHinges: [], boxStyle: [], interiors: []};
@@ -129,9 +129,10 @@ function OptionsCreator() {
     const addLotTable = () => {
         console.log(getLotListValues("lots"))
         let table:LotTableInterface;
+        console.log(packageDetails)
         if(modalInputValue !== "") {
             if(!isLotCopy) {
-                if(["", "None"].includes(packageDetails.packageName))
+                if(["", "None"].includes(packageDetails.packageName) || packageDetails.planName === "None")
                     table = createLotTable(modalInputValue)
                 else {
                     //Runs if package option is selected
@@ -140,7 +141,6 @@ function OptionsCreator() {
                     table.partsOfLot = Object.assign([], table.partsOfLot)
                 }
             } else {
-                console.log("COPYING")
                 table = Object.assign({}, getLotListValues("lots").find((lotDetails:LotTableInterface) => {return (isOptionsMode ? lotDetails.lot : lotDetails.plan) === currentLotNum}))
                 table.plan = getJobValues("lotNums").find(lotInfo => lotInfo.lotNum === modalInputValue)?.plan ?? ""
                 table.partsOfLot = Object.assign([], table.partsOfLot)
@@ -345,6 +345,7 @@ function OptionsCreator() {
     //Modal object and functions
     const optionsCreatorObject:OptionsCreatorObject = {
         isOptionsMode: isOptionsMode, 
+        isLotCopy: isLotCopy,
         currentLot: currentLot,
         listOfLots: getLotListValues("lots"), 
         jobDetails: getJobValues(), 

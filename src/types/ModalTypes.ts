@@ -4,6 +4,7 @@ import { JobDetails, JobDocumentInterface, LotTableInterface, PackageDetails, Pa
 
 export interface OptionsCreatorObject {
     isOptionsMode: boolean, 
+    isLotCopy: boolean,
     currentLot: LotTableInterface | undefined,
     listOfLots: LotTableInterface[], 
     jobDetails: JobDetails, 

@@ -10,28 +10,12 @@ import useFetch from '../hooks/useFetch.ts';
 import OptionsCreatorModal from './OptionsCreatorModal.tsx';
 import { PackageObject } from '../types/ModalTypes.ts';
 import DeleteOptionModal from './ModalScreens/DeleteOptionModal.tsx';
-
-const defaultJobDetails:JobDetails = {
-  builder: "",
-  project: "",
-  superintendent: "",
-  optionCoordinator: "",
-  jobNotes: "",
-  phone: "",
-  lotNums: [],
-  foreman: "",
-  phase: "",
-  jobID: "",
-  date: "",
-  dateUpdated: "",
-  lastUpdatedBy: "",
-  prodReady: false
-}
-
+import { useForm } from 'react-hook-form';
+import { defaultJobDetails } from '../templates/initialValues.ts';
 
 function JobPackageCreator() {
-  const [packages, setPackages] = useState<PackageInfo[]>([]);
-  const [jobDetails, setJobDetails] = useState<JobDetails>(defaultJobDetails);
+  const [packages, setPackages] = useState<PackageInfo[]>([])
+  const { getValues, setValue, watch } = useForm<JobDetails>({defaultValues: defaultJobDetails})
   const [modalType, setModalType] = useState<string>("none")
   const [packageToDelete, setPackageToDelete] = useState<PackageInfo | null>(null)
   const [errors, setErrors] = useState<ErrorObject>({})
@@ -39,6 +23,7 @@ function JobPackageCreator() {
   const navigate = useNavigate();
   const fetchHook = useFetch()
   const packageNameRef = useRef<HTMLInputElement>(null)
+  const watchBuilder = watch("builder")
 
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -59,7 +44,7 @@ function JobPackageCreator() {
   }
 
   useEffect(() => {
-    fetchHook(`/getPackages/?project=${jobDetails.builder}`, "GET")
+    fetchHook(`/getPackages/?project=${getValues("builder")}`, "GET")
     .then((response) => response.status === 200 ? response.json() : undefined)
     .then((result) => {
       console.log(result)
@@ -70,13 +55,10 @@ function JobPackageCreator() {
     }).catch((error) => {
       console.error(error)
     });
-  }, [jobDetails.builder])
+  }, [watchBuilder])
 
-  const onFormChange = (value: string, key: string) => {
-    setJobDetails(prevJobDetails => ({
-        ...prevJobDetails,
-        [key]: value
-    }));
+  const onFormChange = (key: string, value: string) => {
+    setValue(key as keyof JobDetails, value)
   }
 
   const validate = async () => {
@@ -84,7 +66,7 @@ function JobPackageCreator() {
     if(packageNameRef.current?.value === "")
       newErrors["package"] = "Invalid package name"
 
-    if(!jobDetails.builder) 
+    if(!getValues("builder")) 
       newErrors["builder"] = "Field is required, please fill out"
     
     setErrors(newErrors)
@@ -95,7 +77,7 @@ function JobPackageCreator() {
   const goToPackageCreator = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if(await validate())
-      navigate("/optionCreator/", {state: {packageName: packageNameRef.current?.value, packageDetails: jobDetails}})
+      navigate("/optionCreator/", {state: {packageName: packageNameRef.current?.value, packageDetails: getValues()}})
   }
 
   const turnOnDeleteModal = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>, packageDetails:PackageInfo) => {
@@ -149,7 +131,7 @@ function JobPackageCreator() {
               </div>
               <div className="formRow">
                   <label htmlFor={"builder"}>Builder Name</label>
-                  <InputSearch inputName={"builder"} formState={jobDetails} onFormChange={onFormChange} isDropDown={true}></InputSearch>
+                  <InputSearch inputName={"builder"} getFormValues={getValues} onFormChange={onFormChange} isDropDown={true}></InputSearch>
                   <InputError errorKey={"builder"} errorState={errors}></InputError>
               </div>
               <div className="formRow">

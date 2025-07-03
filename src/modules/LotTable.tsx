@@ -20,7 +20,7 @@ type LotTable = {
     updateLotList: UseFieldArrayUpdate<{lots: LotTableInterface[]}, "lots">
 }
 
-const LotTable: React.FC<LotTable> = ({isOptionsMode, currentLotNum, setLotListValue, getLotListValues, convertToMixedOptions, setCurrentLotNum, setModalType, getJobValues, onFormJobChange, updateLotList }) => {
+const LotTable: React.FC<LotTable> = ({isOptionsMode, currentLotNum, controlLotList, setLotListValue, getLotListValues, convertToMixedOptions, setCurrentLotNum, setModalType, getJobValues, onFormJobChange, updateLotList }) => {
     const currentIDX = getLotListValues("lots").findIndex((lot: LotTableInterface) => (isOptionsMode ? lot.lot === currentLotNum : lot.plan === currentLotNum))
     const editingPartsOfLot = getLotListValues(`lots.${currentIDX}.editingPartsOfLot`) as boolean
     const hasThroughoutLot = getLotListValues(`lots.${currentIDX}.hasThroughoutLot`) as boolean
@@ -137,7 +137,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, currentLotNum, setLotListV
                 </tbody>
             </table>) : <></>}
             <OptionsLotInfo isOptionsMode={isOptionsMode} currentIDX={currentIDX} editingPartsOfLot={editingPartsOfLot} onFormChange={onFormChange} onFormJobChange={onFormJobChange} getJobValues={getJobValues} getLotListValues={getLotListValues} />
-            <OptionsInfoTable onFormChange={onFormChange} onNoneSelect={onNoneSelect} getLotListValues={getLotListValues} deleteLotSection={deleteLotSection} changeLotEditingMode={changeLotEditingMode} 
+            <OptionsInfoTable onFormChange={onFormChange} onNoneSelect={onNoneSelect} getLotListValues={getLotListValues} deleteLotSection={deleteLotSection} changeLotEditingMode={changeLotEditingMode} controlLotList={controlLotList}
                 setModalType={setModalType} editingPartsOfLot={editingPartsOfLot} isOptionsMode={isOptionsMode} currentIDX={currentIDX} hasThroughoutLot={hasThroughoutLot} partsOfLot={partsOfLot} />
             <table className="lotFooter">
                 <tbody>

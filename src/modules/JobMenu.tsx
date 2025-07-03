@@ -19,7 +19,7 @@ const JobMenu = () => {
     const [modalType, setModalType] = useState<string>("none")
     const [jobDocument, setJobDocument] = useState<JobDocumentInterface|null>(null)
     //const [filterObject, setFilterObject] = useState<FilterObject>({jobID: '', builder: '', project: '', user: ''})
-    const {getValues, setValue, reset} = useForm<FilterObject>({defaultValues: {jobID: '', builder: '', project: '', user: ''}})
+    const { getValues, setValue, reset, watch } = useForm<FilterObject>({defaultValues: {jobID: '', builder: '', project: '', user: ''}})
     const [isDeleteMode, setDeleteMode] = useState<boolean>(false)
     const { setIsCheckingError, getFormIDs } = useContext(FormOptionsContext) as FormOptionsContextType
     const fetchHook = useFetch()
@@ -50,7 +50,7 @@ const JobMenu = () => {
         setJobDocument(jobDocDetails)
     }
 
-    const onFilterChange = (value: string, key: string) => {
+    const onFilterChange = (key: string, value: string) => {
         console.log(getFormIDs(value, "user"))
         setValue(key as keyof FilterObject, value)
     }
@@ -63,7 +63,7 @@ const JobMenu = () => {
 
     const filterJobDocuments = (jobDocument:JobDocumentInterface):boolean =>{
         const jobID = jobDocument.jobID.toString()
-        const filterObject = getValues()
+        const filterObject = watch()
         return (jobDocument.customerName === filterObject.builder || filterObject.builder === "")
                 && (jobDocument.projectName === filterObject.project || filterObject.project === "")
                 && (jobID.includes(filterObject.jobID) || jobID === "")
