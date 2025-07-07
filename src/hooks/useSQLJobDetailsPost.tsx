@@ -24,10 +24,10 @@ const useSQLJobDetailsPost = () => {
         const endChar = parseInt(returnType[returnType.length - 1])
         if (currentLot.roomID !== "Throughout" && throughOutLot !== undefined && currentLot.handleType === "none") {
             const throughoutLotValue = throughOutLot[returnType as keyof PartOfLot]
-            partName = throughoutLotValue === "" ? "1" : throughoutLotValue 
+            partName = (throughoutLotValue === "" || typeof throughoutLotValue !== "string") ? "1" : throughoutLotValue
         } else {
             const currentLotValue = currentLot[returnType as keyof PartOfLot]
-            partName = currentLotValue === "" ? "1" : currentLotValue
+            partName = (currentLotValue === "" || typeof currentLotValue !== "string") ? "1" : currentLotValue
         }
 
         if(handleType !== currentLot.handleType && currentLot.handleType !== "both" || !isNaN(endChar) && endChar > Number(currentLot[`numOf${capitalizedHandle}` as keyof PartOfLot]))
