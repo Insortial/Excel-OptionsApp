@@ -103,7 +103,7 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
                 break
             default:
         }
-        return formOptions.color.filter((colorTuple:[number, string, string]) => filterWords.includes(colorTuple[2])).map((colorTuple:[number, string, string]) => colorTuple[1])
+        return [...formOptions.color.filter((colorTuple:[number, string, string]) => filterWords.includes(colorTuple[2])).map((colorTuple:[number, string, string]) => colorTuple[1]),"Unfinished"]
     }
 
     const filterProjects = (builderName:string):string[] => {
