@@ -104,7 +104,6 @@ const App: React.FC = () => {
               element: <OptionsCreator  key="optionID"/>,
               path: "/optionCreator/jobOption/:optionID",
               loader: async ({params}) => {
-                //await timeout(1500)
                 return await jobOptionLoader(params.optionID, fetchHook)
               }
             },

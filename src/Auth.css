@@ -17,6 +17,48 @@
   align-items: center;
 }
 
+#loginOptions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  flex-direction: row;
+  align-items: flex-start;
+  vertical-align: top;
+}
+
+#showPasswordDiv {
+  display: flex;
+  flex-direction: row;
+}
+
+#showPasswordDiv > input {
+  margin-right: 5px;
+  height: 20px;
+}
+
+#showPasswordDiv > label {
+  margin: 0;
+  font-size: 0.9em;
+}
+
+#loginLinks {
+  display: flex;
+  flex-direction: column;
+}
+
+.changePasswordTxt {
+  font-size: 0.9em;
+  font-weight: bold;
+  color: rgb(49, 49, 49);
+}
+
+.changePasswordTxt:hover {
+  cursor: pointer;
+  color: rgb(136, 136, 136);
+}
+
+
 #excelLogo {
   height: 30px;
 }
