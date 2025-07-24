@@ -1,9 +1,13 @@
 /* eslint-disable react/react-in-jsx-scope */
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { AuthUpdate, LoggedInUpdate } from '../context/AuthContext';
 import {  SubmitHandler, useForm } from 'react-hook-form';
 import Header from './Header';
+import { DecodedToken } from '../types/AuthContextTypes';
+import { jwtDecode } from 'jwt-decode';
+import { FormOptionsContext } from '../context/OptionsTemplateContext';
+import { FormOptionsContextType } from '../types/FormOptions';
 
 type LoginForm = {
   email: string;
@@ -15,6 +19,7 @@ const Login = () => {
   const { register, handleSubmit, setError, formState: { errors }, watch } = useForm<LoginForm>()
   const { saveAccessToken } = AuthUpdate()
   const { saveLogInState } = LoggedInUpdate()
+  const { updateDropDowns } = useContext(FormOptionsContext) as FormOptionsContextType
   const [changePassword, setChangePassword] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
   const myHeaders = new Headers();
@@ -41,9 +46,13 @@ const Login = () => {
     saveAccessToken(data.accessToken)
 
     if(data.success) {
-      navigate("/jobMenu", {replace: true})
+      const decodedToken:DecodedToken = jwtDecode(data.accessToken)
+      const isMeasure = decodedToken !== undefined && decodedToken.roles.find(role => role === "MEASURE")
+      updateDropDowns(data.accessToken)
+      navigate(isMeasure ? "/pdEditor" : "/jobMenu", {replace: true})
       saveLogInState(true)
-    } 
+    }
+
   }
 
   const onPasswordResetSubmit:SubmitHandler<LoginForm> = async (body) => {
