@@ -346,11 +346,11 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
             text: partOfLot.doors !== "" ? `Doors: ${partOfLot.doors} ${partOfLot.fingerpull}` : ""
         }),
         new TextRun({
-            text: ["pulls", "both"].includes(partOfLot.handleType) ? (partOfLot.pulls !== "" && partOfLot.pulls !== "1" ? `Pulls: ${partOfLot.pulls} ${partOfLot.pulls2 !== "" && partOfLot.pulls2 !== "1" ? `& ${partOfLot.pulls2}`: ""}` : "") : "",
+            text: ["pulls", "both"].includes(partOfLot.handleType) ? (partOfLot.pulls !== "" && partOfLot.pulls !== "1" ? `Pulls${partOfLot.handleType === "both" ? " On Drawers" : ""}: ${partOfLot.pulls} ${partOfLot.pulls2 !== "" && partOfLot.pulls2 !== "1" ? `& ${partOfLot.pulls2}`: ""}` : "") : "",
             break: partOfLot.doors !== "" ? 1 : 0
         }),
         new TextRun({
-            text: ["knobs", "both"].includes(partOfLot.handleType) ? (partOfLot.knobs !== "" && partOfLot.knobs !== "1" ? `Knobs: ${partOfLot.knobs} ${partOfLot.knobs2 !== "" && partOfLot.knobs2 !== "1" ? `& ${partOfLot.knobs2}`: ""}` : "") : "",
+            text: ["knobs", "both"].includes(partOfLot.handleType) ? (partOfLot.knobs !== "" && partOfLot.knobs !== "1" ? `Knobs${partOfLot.handleType === "both" ? " On Doors" : ""}: ${partOfLot.knobs} ${partOfLot.knobs2 !== "" && partOfLot.knobs2 !== "1" ? `& ${partOfLot.knobs2}`: ""}` : "") : "",
             break: partOfLot.pulls !== "" ? 1 : 0
         }),
         new TextRun({
