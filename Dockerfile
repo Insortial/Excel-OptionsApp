@@ -4,6 +4,7 @@ WORKDIR /react-app/
 
 COPY public/ /react-app/public
 COPY src/ /react-app/src
+COPY .npmrc/ /react-app/
 COPY package.json/ /react-app/
 COPY index.html /react-app/
 COPY .env /react-app/

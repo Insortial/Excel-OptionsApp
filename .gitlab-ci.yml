@@ -20,6 +20,8 @@ build_image_test:
     - chmod +x ./setup_env.sh
     - ./setup_env.sh
   script:
+    - echo "@excelcabinets:registry=https://gitlab.com/api/v4/projects/72404214/packages/npm/" > .npmrc
+    - echo "//gitlab.com/api/v4/projects/72404214/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
     - docker build -t $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$TEST_TAG .
     - docker push $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$TEST_TAG
@@ -31,6 +33,8 @@ build_image_prod:
     - chmod +x ./setup_env.sh
     - ./setup_env.sh
   script:
+    - echo "@excelcabinets:registry=https://gitlab.com/api/v4/projects/72404214/packages/npm/" > .npmrc
+    - echo "//gitlab.com/api/v4/projects/72404214/packages/npm/:_authToken=${CI_JOB_TOKEN}" >> .npmrc
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
     - docker build -t $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$PROD_TAG .
     - docker push $CI_REGISTRY/excelcabinets/options-creator/$IMAGE_NAME:$PROD_TAG
