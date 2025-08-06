@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useState } from 'react'
 import '../App.css'
 import { Link, useNavigate } from "react-router-dom";
 import InputSearch from '../modules/InputSearch.tsx';
-import { ErrorObject, JobDetails, JobDocumentInterface, PackageDetails } from "../types/LotTableInterface";
+import { ErrorObject, JobDetails, JobDocumentInterface, PackageDetails } from "@excelcabinets/excel-types/LotTableInterface";
 import InputError from './InputError.tsx';
 import { FormOptionsContext } from '../context/OptionsTemplateContext.tsx';
-import { FormOptionsContextType } from '../types/FormOptions.ts';
+import { FormOptionsContextType } from '@excelcabinets/excel-types/FormOptions';
 import useFetch from '../hooks/useFetch.ts';
 import { AuthInfo } from '../context/AuthContext.tsx';
 import { defaultJobDetails } from '../templates/initialValues.ts';
@@ -18,7 +18,8 @@ type lotJobResponse = {
 }
 
 function JobCreator() {
-  const { userID } = AuthInfo()
+  const { authState } = AuthInfo()
+  const { userID } = authState
   const { getValues, setValue, watch, reset } = useForm<JobDetails>({defaultValues: {...defaultJobDetails, coordinatorIDFK: userID}})
   const [validJobID, setValidJobID] = useState<boolean>(false)
   const [errors, setErrors] = useState<ErrorObject>({})

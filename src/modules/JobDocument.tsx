@@ -1,5 +1,5 @@
 import React from 'react'
-import { JobDocumentInterface } from '../types/LotTableInterface'
+import { JobDocumentInterface } from '@excelcabinets/excel-types/LotTableInterface'
 import { Link, } from "react-router-dom";
 
 type JobDocument = {

@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useContext, useRef } from "react"
 import React from 'react'
-import { ErrorObject } from "../types/LotTableInterface";
+import { ErrorObject } from "@excelcabinets/excel-types/LotTableInterface";
 import { FormOptionsContext } from "../context/OptionsTemplateContext";
-import { FormOptionsContextType } from "../types/FormOptions"
+import { FormOptionsContextType } from "@excelcabinets/excel-types/FormOptions"
 import { useClickOutside } from "../hooks/useClickOutside";
 import { FieldValues, Path, UseFormGetValues } from "react-hook-form";
 

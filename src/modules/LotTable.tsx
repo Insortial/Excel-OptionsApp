@@ -1,6 +1,6 @@
 import React from 'react'
 import InputSearch from "./InputSearch"
-import { LotTableInterface, PartOfLot, JobDetails } from '../types/LotTableInterface';
+import { LotTableInterface, PartOfLot, JobDetails } from '@excelcabinets/excel-types/LotTableInterface';
 import ControlledTextArea from "./ControlledTextArea"
 import { Control, UseFieldArrayUpdate, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 import OptionsInfoTable from './OptionsInfoTable';

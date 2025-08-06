@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { AuthInfoContextType, AuthUpdateContextType, LoggedInUpdateContextType } from '../types/AuthContextTypes';
+import { AuthInfoContextType, AuthState, AuthUpdateContextType, LoggedInUpdateContextType, RefreshContextType, DecodedToken } from '@excelcabinets/excel-types/AuthContextTypes';
 import { jwtDecode } from 'jwt-decode';
-import { DecodedToken } from "../types/AuthContextTypes"
 
 const AuthInfoContext = React.createContext<AuthInfoContextType | null>(null);
 const AuthUpdateContext = React.createContext<AuthUpdateContextType | null>(null);
 const LoggedInUpdateContext = React.createContext<LoggedInUpdateContextType | null>(null)
+const RefreshContext = React.createContext<RefreshContextType | null>(null)
+
 export function AuthInfo() {
     const context = useContext(AuthInfoContext)
 
@@ -26,6 +27,17 @@ export function LoggedInUpdate() {
     return context
 }
 
+export function Refresh() {
+    const context = useContext(RefreshContext)
+
+    if (context === null) {
+        throw Error("Unusable outside of Admin Dashboard")
+    }
+
+    return context
+}
+
+
 export function AuthUpdate() {
     const context = useContext(AuthUpdateContext)
 
@@ -37,30 +49,52 @@ export function AuthUpdate() {
 }
 
 const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
-    const [loggedIn, setLoggedIn] = useState<boolean>(false)
-    const [userID, setUserID] = useState<number>(-1)
-    const [email, setEmail] = useState<string>("")
-    const [name, setName] = useState<string>("")
-    const [phone, setPhone] = useState<string>("")
+    const [authState, setAuthState] = useState<AuthState>({loggedIn: false, email: "", name: "", roles: [], phone: "", accessToken: "token", userID: -1})
     const [tokenLoaded, setTokenLoaded] = useState<boolean>(false)
-    const [accessToken, setAccessToken] = useState<string>("token")
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");    
 
-    const saveAccessToken = (token: string) => {
-        const decodedToken:DecodedToken = jwtDecode(token)
-        setUserID(decodedToken.userID)
-        setEmail(decodedToken.email)
-        setName(decodedToken.name)
-        setPhone(decodedToken.phone)
-        setAccessToken(token)
+    const saveAccessToken = async (token: string) => {
+        const decodedToken:DecodedToken = await jwtDecode(token)
+        const updatedState = setAuthState({
+            accessToken: token,
+            loggedIn: true,
+            email: decodedToken.email,
+            name: decodedToken.name,
+            phone: decodedToken.phone,
+            roles: decodedToken.roles,
+            userID: decodedToken.userID
+        });
+
+        return updatedState
+    }
+
+    const timedSaveAccessToken = (token: string) => {
+        setTimeout(() => saveAccessToken(token), 500)
+    }
+
+    const refreshToken = async ():Promise<string|null> => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_AUTH_URL}/token`, {
+                method: "POST",
+                headers: myHeaders,
+                credentials: "include"
+            });    
+            const data = await response.json();
+            return data.accessToken;
+        } catch(err) {
+            console.log("REFRESH FAILED")
+            console.error(err)
+            //navigate("/login", {replace: true})
+            return null
+        }
     }
 
     const saveLogInState = (loggedIn: boolean) => {
-        setLoggedIn(loggedIn)
+        setAuthState({...authState, loggedIn: loggedIn})
     }
 
     useEffect(() => {
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
         const config:RequestInit = {
             method: "POST",
             headers: myHeaders,
@@ -71,8 +105,8 @@ const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
             try {
                 const response = await fetch(`${import.meta.env.VITE_AUTH_URL}/token`, config)
                 const data = await response.json()
+                /* setAuthState({...authState, loggedIn: true, accessToken: data.accessToken}) */
                 saveAccessToken(data.accessToken)
-                setLoggedIn(true)
             } catch(err)  {
                 console.log(err)
             } 
@@ -84,10 +118,12 @@ const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
     
 
     return (
-        <AuthInfoContext.Provider value={{ accessToken, loggedIn, email, name, phone, userID }}>
-            <AuthUpdateContext.Provider value={{ saveAccessToken }}>
+        <AuthInfoContext.Provider value={{ authState }}>
+            <AuthUpdateContext.Provider value={{ saveAccessToken, timedSaveAccessToken }}>
                 <LoggedInUpdateContext.Provider value={{ saveLogInState }}>
-                    {tokenLoaded && children}
+                    <RefreshContext.Provider value={{ refreshToken }}>
+                        {tokenLoaded && children}
+                    </RefreshContext.Provider>
                 </LoggedInUpdateContext.Provider>
             </AuthUpdateContext.Provider>
         </AuthInfoContext.Provider>

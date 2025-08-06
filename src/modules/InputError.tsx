@@ -1,5 +1,5 @@
 import React from 'react'
-import { ErrorObject } from '../types/LotTableInterface'
+import { ErrorObject } from '@excelcabinets/excel-types/LotTableInterface'
 
 type InputErrorOptions = {
     errorState: ErrorObject;

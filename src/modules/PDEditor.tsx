@@ -6,17 +6,16 @@ import { useForm } from 'react-hook-form'
 import OptionsCreatorModal from './OptionsCreatorModal'
 import ProjectLocationScreen from './ModalScreens/ProjectLocationScreen'
 import { FormOptionsContext } from '../context/OptionsTemplateContext'
-import { FormOptionsContextType } from '../types/FormOptions'
+import { FormOptionsContextType } from '@excelcabinets/excel-types/FormOptions'
 import Header from './Header'
 import { AuthInfo } from '../context/AuthContext'
-import { DecodedToken } from '../types/AuthContextTypes'
-import { jwtDecode } from 'jwt-decode'
 
 const PDEditor = () => {
     const fetchHook = useFetch()
     const { items, pageNum, totalPages, limit } = useLoaderData() as {items: {[key:string]:string}[], pageNum: number, totalPages: number, limit: number}
     const { retrieveDropDown } = useContext(FormOptionsContext) as FormOptionsContextType
-    const { accessToken } = AuthInfo()
+    const { authState } = AuthInfo()
+    const { roles } = authState
     const [itemList, setItemList] = useState(items)
     const [modalType, setModalType] = useState("none")
     const [currentLevel, setCurrentLevel] = useState<"job"|"customer"|"project"|"lot">("project")
@@ -29,8 +28,7 @@ const PDEditor = () => {
     const { register: registerFilters, reset: resetFilters, getValues: getFilterValues, formState: {isDirty: filterIsDirty} } = useForm()
     const { register: registerTableValues, reset: resetTableValues, getValues: getTableValues } = useForm()
     const buttonTitle = {job: "Edit", project: "Location", customer: "Edit", lot: "Edit"}
-    const decodedToken:DecodedToken|undefined = accessToken !== "token" ? jwtDecode(accessToken) : undefined
-    const isMeasure = decodedToken !== undefined && decodedToken.roles.find(role => role === "MEASURE")
+    const isMeasure = roles.find(role => role === "MEASURE")
 
     const retrieveData = async (selectedPage: number, updatedFilters: boolean, selectedLevel=currentLevel, lotDate=false) => {
         if (selectedPage < 1 || (selectedPage > numOfPages && numOfPages != 0)) 

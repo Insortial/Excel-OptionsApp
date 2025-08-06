@@ -1,10 +1,10 @@
 import React, { useContext, useState } from 'react'
-import { JobDetails, LotTableInterface} from '../types/LotTableInterface'
+import { JobDetails, LotTableInterface} from '@excelcabinets/excel-types/LotTableInterface'
 import { Link } from 'react-router-dom'
 import InputError from './InputError'
 import docxConverter from '../hooks/docxConverter'
 import { FormOptionsContext } from '../context/OptionsTemplateContext'
-import { FormOptionsContextType } from '../types/FormOptions'
+import { FormOptionsContextType } from '@excelcabinets/excel-types/FormOptions'
 import { FieldArrayWithId, UseFieldArrayRemove, UseFormGetValues } from 'react-hook-form'
 
 type OptionsCreatorNav = {

@@ -2,7 +2,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthInfo, LoggedInUpdate } from '../context/AuthContext';
-import { DecodedToken } from '../types/AuthContextTypes';
+import { DecodedToken } from '@excelcabinets/excel-types/AuthContextTypes';
 import { jwtDecode } from 'jwt-decode';
 import ExcelLogo from '../assets/excel_logo.svg';
 
@@ -13,7 +13,8 @@ interface HeaderProps {
 
 const Header:React.FC<HeaderProps> = ({currentPage}) => {
     const { saveLogInState } = LoggedInUpdate()
-    const { accessToken } = AuthInfo()
+    const { authState } = AuthInfo()
+    const { accessToken } = authState
     const navigate = useNavigate()
     const decodedToken:DecodedToken = accessToken !== "token" ? jwtDecode(accessToken) : {} as DecodedToken
     const roles = decodedToken.roles ?? []

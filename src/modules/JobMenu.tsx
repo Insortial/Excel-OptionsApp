@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import JobDocument from './JobDocument.tsx';
 import { JobDocumentInterface, FilterObject } from '../types//LotTableInterface.ts';
 import { FormOptionsContext } from '../context/OptionsTemplateContext.tsx';
-import { FormOptionsContextType } from '../types/FormOptions.ts';
+import { FormOptionsContextType } from '@excelcabinets/excel-types/FormOptions';
 import useFetch from '../hooks/useFetch.ts';
 import OptionsCreatorModal from './OptionsCreatorModal.tsx';
 import { JobMenuObject } from '../types/ModalTypes.ts';

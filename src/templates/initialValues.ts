@@ -1,4 +1,4 @@
-import { JobDetails, LotTableInterface, PackageDetails, PartOfLot } from "../types/LotTableInterface"
+import { JobDetails, LotTableInterface, PackageDetails, PartOfLot } from "@excelcabinets/excel-types/LotTableInterface"
 
 export const initialJobDetails:JobDetails = {
     builder: "",

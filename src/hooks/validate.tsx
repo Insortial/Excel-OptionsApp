@@ -1,4 +1,4 @@
-import { ErrorObject, JobDetails, LotTableInterface, PartOfLot } from "../types/LotTableInterface";
+import { ErrorObject, JobDetails, LotTableInterface, PartOfLot } from "@excelcabinets/excel-types/LotTableInterface";
 
 const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], currentLotNum:string) => {
     const isHandleValid = (handleType:string, key:string, value:string, numOfKnobs:number, numOfPulls:number):boolean => {

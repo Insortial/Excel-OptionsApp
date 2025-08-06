@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import '../App.css'
 import { Link, useNavigate } from "react-router-dom";
 import InputSearch from '../modules/InputSearch.tsx';
-import { ErrorObject, JobDetails, PackageInfo } from "../types/LotTableInterface.ts";
+import { ErrorObject, JobDetails, PackageInfo } from "@excelcabinets/excel-types/LotTableInterface";
 import InputError from './InputError.tsx';
 import { FormOptionsContext } from '../context/OptionsTemplateContext.tsx';
-import { FormOptionsContextType } from '../types/FormOptions.ts';
+import { FormOptionsContextType } from '@excelcabinets/excel-types/FormOptions';
 import useFetch from '../hooks/useFetch.ts';
 import OptionsCreatorModal from './OptionsCreatorModal.tsx';
 import { PackageObject } from '../types/ModalTypes.ts';

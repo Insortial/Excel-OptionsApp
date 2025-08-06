@@ -1,7 +1,7 @@
 import { useContext } from "react"
-import { JobDetails, JobDetailsSQL, LotTableInterface, LotTableSQL, PackageDetailsSQL, PartOfLot, PartOfLotSQL } from "../types/LotTableInterface"
+import { JobDetails, JobDetailsSQL, LotTableInterface, LotTableSQL, PackageDetailsSQL, PartOfLot, PartOfLotSQL } from "@excelcabinets/excel-types/LotTableInterface"
 import { FormOptionsContext } from "../context/OptionsTemplateContext"
-import { FormOptionsContextType } from "../types/FormOptions"
+import { FormOptionsContextType } from "@excelcabinets/excel-types/FormOptions"
 import useFetch from "./useFetch"
 import { JobOptionLoaderResponse } from "../loader/JobOptionLoader"
 import { AuthInfo } from "../context/AuthContext"
@@ -9,7 +9,8 @@ import { AuthInfo } from "../context/AuthContext"
 const useSQLJobDetailsPost = () => {
     const fetchHook = useFetch()
     const { getFormIDs } = useContext(FormOptionsContext) as FormOptionsContextType
-    const { userID } = AuthInfo()
+    const { authState } = AuthInfo()
+    const { userID } = authState
 
     const decipherMixedOptions = (editingPartsOfLot:boolean, throughoutLot:PartOfLot|undefined, currentLot:PartOfLot, propName: string):number => {
         const currentLotProperty = currentLot[propName as keyof PartOfLot] as string

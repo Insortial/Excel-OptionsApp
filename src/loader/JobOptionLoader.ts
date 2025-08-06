@@ -1,4 +1,4 @@
-import {LotTableInterface, PartOfLot } from "../types/LotTableInterface";
+import {LotTableInterface, PartOfLot } from "@excelcabinets/excel-types/LotTableInterface";
 
 const getPackageDetails = async (jobID:number, fetchHook:(url: string, requestType: string, body?: BodyInit) => Promise<Response>) => {
     const response = await fetchHook(`/getPackageForJobID/${jobID}`, "GET")
@@ -6,8 +6,7 @@ const getPackageDetails = async (jobID:number, fetchHook:(url: string, requestTy
       return null
     }
 
-    const data = await response.text()
-    const packages = JSON.parse(data)
+    const packages = await response.json()
     return packages
 }
 

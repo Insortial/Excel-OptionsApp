@@ -1,10 +1,10 @@
 /* eslint-disable react/react-in-jsx-scope */
 import LotTable from "./LotTable";
 import { useLocation, useNavigate, useLoaderData } from "react-router-dom";
-import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, PackageDetails, LotInfo, CheckListItem } from '../types/LotTableInterface.ts';
+import { ErrorObject, LotTableInterface, PartOfLot, JobDetails, PackageDetails, LotInfo, CheckListItem } from '@excelcabinets/excel-types/LotTableInterface';
 import { useContext, useEffect, useState } from "react";
 import { FormOptionsContext } from "../context/OptionsTemplateContext.tsx";
-import { FormOptionsContextType } from '../types/FormOptions.ts'
+import { FormOptionsContextType } from '@excelcabinets/excel-types/FormOptions'
 import { JobOptionLoaderResponse } from "../loader/JobOptionLoader.ts";
 import OptionsCreatorModal from "./OptionsCreatorModal.tsx";
 import { OptionsCreatorObject } from "../types/ModalTypes.ts";

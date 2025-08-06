@@ -3,7 +3,7 @@ import { OptionsCreatorObject } from '../../types/ModalTypes'
 import AddingLotModal from './AddingLotModal'
 import SavingOptionModal from './SavingOptionModal'
 import InputError from '../InputError'
-import { ErrorObject, LotInfo } from '../../types/LotTableInterface'
+import { ErrorObject, LotInfo } from '@excelcabinets/excel-types/LotTableInterface'
 
 interface OptionsCreatorModalScreens {
     optionsCreatorObject: OptionsCreatorObject,

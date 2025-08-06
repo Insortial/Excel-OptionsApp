@@ -1,6 +1,9 @@
-import { getToken } from './refreshToken';
+import { AuthInfo, AuthUpdate } from '../context/AuthContext.tsx';
 
 const useFetch = () => {
+    const { authState } = AuthInfo()
+    const { timedSaveAccessToken } = AuthUpdate()
+    //const navigate = useNavigate()
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
@@ -9,15 +12,32 @@ const useFetch = () => {
         credentials: "include"
     }
 
-    const originalRequest = async (url: string, reqConfig:RequestInit) => {
-        url = `${url}`
+    const refreshToken = async () => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_AUTH_URL}/token`, {
+                method: "POST",
+                headers: myHeaders,
+                credentials: "include"
+            });    
+            const data = await response.json();
+            return data.accessToken;
+        } catch(err) {
+            console.error(err)
+            console.log("REFRESH FAILED")
+            //navigate("/login", {replace: true})
+            return null
+        }
+        
+    }
+
+    const originalRequest = async (baseURL:string, url: string, reqConfig:RequestInit) => {
+        url = `${baseURL}${url}`
         const response = await fetch(url, reqConfig)
         return response
     }
 
-    const callFetch = async (route:string, requestType:string, body?:BodyInit, url:string=import.meta.env.VITE_BACKEND_URL) => {
-        const accessToken = await getToken()
-        myHeaders.set("Authorization", `Bearer ${accessToken}`)
+    const callFetch = async (url:string, requestType:string, body?:BodyInit, baseURL:string=import.meta.env.VITE_BACKEND_URL) => {
+        myHeaders.set("Authorization", `Bearer ${authState.accessToken}`)
         config = {
             headers: myHeaders,
             credentials: "include"
@@ -27,7 +47,19 @@ const useFetch = () => {
         if(["POST", "PUT", "PATCH"].includes(requestType))
             config.body = body ?? {} as BodyInit
 
-        const response = await originalRequest(`${url}${route}`, config)
+        let response = await originalRequest(baseURL, url, config)
+
+        if(response.status === 401) {
+            const newToken = await refreshToken()
+            if(!newToken) {
+                console.log("NEW TOKEN FAILED")
+                return response
+            } else {
+                timedSaveAccessToken(newToken)
+                myHeaders.set("Authorization", `Bearer ${newToken}`)
+                response = await originalRequest(baseURL, url, config)
+            }
+        }
         return response
     }
 

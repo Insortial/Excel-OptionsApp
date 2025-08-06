@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { FormOptionsInterface, FormOptionsContextType} from '../types/FormOptions';
-import { ErrorObject } from '../types/LotTableInterface';
+import { FormOptionsInterface, FormOptionsContextType} from '@excelcabinets/excel-types/FormOptions';
+import { ErrorObject } from '@excelcabinets/excel-types/LotTableInterface';
 import { AuthInfo } from '../context/AuthContext';
 
 export const FormOptionsContext = React.createContext<FormOptionsContextType | null>(null);
@@ -28,7 +28,8 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
     const [isCheckingError, setIsCheckingError] = useState<boolean>(false)
     const [columnPropMax, setColumnPropMax] = useState<{[key:string]:number}>({})
     const [loaded, setLoaded] = useState<boolean>(false)
-    const { accessToken } = AuthInfo()
+    const { authState } = AuthInfo()
+    const { accessToken } = authState
     
     useEffect(() => {
         updateDropDowns(accessToken)

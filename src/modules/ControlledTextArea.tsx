@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { FormOptionsContext } from '../context/OptionsTemplateContext';
-import { FormOptionsContextType } from '../types/FormOptions';
+import { FormOptionsContextType } from '@excelcabinets/excel-types/FormOptions';
 import { FieldValues, Path, UseFormGetValues } from 'react-hook-form';
 
 type inputOptions<T extends FieldValues> = {
