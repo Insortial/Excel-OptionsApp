@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { OptionsCreatorObject } from '../../types/ModalTypes'
 import AddingLotModal from './AddingLotModal'
 import SavingOptionModal from './SavingOptionModal'
 import InputError from '../InputError'
 import { ErrorObject, LotInfo } from '@excelcabinets/excel-types/LotTableInterface'
+import { useForm } from 'react-hook-form'
+import docxConverter from '../../hooks/docxConverter'
 
 interface OptionsCreatorModalScreens {
     optionsCreatorObject: OptionsCreatorObject,
@@ -15,10 +17,18 @@ interface OptionsCreatorModalScreens {
 }
 
 const OptionsCreatorModalScreens:React.FC<OptionsCreatorModalScreens> = ({optionsCreatorObject, modalType, modalInputValue, setModalType, setModalInputValue, turnOffModal}) => {
-    const { currentLot, addOptionRow, setJobValue } = optionsCreatorObject
+    const { isOptionsMode, currentLot, addOptionRow, jobDetails: {lotNums}, listOfLots, lotsUpdated, registerJobValues } = optionsCreatorObject
+    const { register, reset, getValues } = useForm({defaultValues: lotsUpdated})
     const [errors, setErrors] = useState<ErrorObject>({})
+    const [selectAllState, setSelectAllState] = useState<boolean>(false)
     const [availableLots, setAvailableLots] = useState<LotInfo[]>([])
     
+    const findAvailableLots = ():LotInfo[]|undefined => {
+        return lotNums.filter(
+            lotNum => !listOfLots.find(lot => lot.lot === lotNum.lotNum)
+        );
+    }
+
     const validate = () => {
         const newErrors:ErrorObject = {}
         if(modalType === "partOfLot" && currentLot) {
@@ -41,54 +51,114 @@ const OptionsCreatorModalScreens:React.FC<OptionsCreatorModalScreens> = ({option
     }
 
     const submitJob = (bypass:boolean) => {
-        if(availableLots.length > 0 && !bypass) {
+        console.log(availableLots)
+        const lotsFound = findAvailableLots() ?? []
+        setAvailableLots(lotsFound)
+        if(lotsFound?.length > 0 && !bypass) {
             setModalType("availableLots")
         } else {
-            optionsCreatorObject?.saveLotTablesSQL(true)
+            optionsCreatorObject?.saveLotTablesSQL(true, getValues())
         }
     }
 
     const handleInputChange = (event: React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLInputElement>) => {
         setModalInputValue(event.target.value)
     }
-    
-    const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        event.preventDefault()
-        setJobValue("date", event.target.value)
+
+    const selectAll = () => {
+        const currentDirtyLots = getValues() 
+
+        Object.keys(currentDirtyLots).forEach(k => {
+            currentDirtyLots[k] = !selectAllState
+        })
+
+        reset(currentDirtyLots)
+        setSelectAllState(!selectAllState)
     }
+
+    const createDocument = async () => {
+        const filteredLots = listOfLots.filter(lot => getValues(isOptionsMode ? lot.lot : lot.plan))
+        docxConverter(optionsCreatorObject.jobDetails, filteredLots)
+    }
+
+    useEffect(() => {
+        reset(lotsUpdated)
+    }, [lotsUpdated, modalType])
   
-    return <>
-        {modalType === "inputValue" ? 
-            <AddingLotModal optionsCreatorObject={optionsCreatorObject} modalInputValue={modalInputValue} handleInputChange={handleInputChange} />
-        : modalType === "prod" ? 
-            <SavingOptionModal optionsCreatorObject={optionsCreatorObject} setModalType={setModalType} setAvailableLots={setAvailableLots}/>
-        : modalType === "partOfLot" ? 
+    return (
         <>
-            <h2>Enter Room ID:</h2>
-            <form className="modalRow" onSubmit={checkAddOptionRow}>
-                <input value={modalInputValue} onChange={handleInputChange}></input>
-                <button>Submit</button>
-            </form>
-            <InputError errorKey='roomID' errorState={errors}/>
+            {(() => {
+                switch(modalType) {
+                    case "inputValue":
+                        return <AddingLotModal optionsCreatorObject={optionsCreatorObject} modalInputValue={modalInputValue} handleInputChange={handleInputChange} />
+                    case "prod":
+                        return <SavingOptionModal optionsCreatorObject={optionsCreatorObject} setModalType={setModalType} submitJob={submitJob} setAvailableLots={setAvailableLots}/>
+                    case "partOfLot":
+                        return (
+                            <>
+                                <h2>Enter Room ID:</h2>
+                                <form className="modalRow" onSubmit={checkAddOptionRow}>
+                                    <input value={modalInputValue} onChange={handleInputChange}></input>
+                                    <button>Submit</button>
+                                </form>
+                                <InputError errorKey='roomID' errorState={errors}/>
+                            </>
+                        )
+                    case "availableLots":
+                        return (
+                            <>
+                                <h2>Lot Selection</h2>
+                                <div className='modalRow'>
+                                    <h3>Enter Production Date: </h3>
+                                    <input type="date" id="prodDateInput" {...registerJobValues("date")}></input>
+                                </div>
+                                <div id="lotSelectionHeader">
+                                    <h3>Select Lots For This Production Date</h3>
+                                    <button id="selectAllButton" onClick={() => selectAll()}>Select All</button>
+                                </div>
+                                <div id="lotSelection">
+                                    {Object.keys(lotsUpdated).map((lotKey, index) => {
+                                        return <div key={index} className='lotCheckboxDiv'>
+                                            <input type="checkbox" {...register(lotKey)} />
+                                            <label>{lotKey}</label>
+                                        </div>
+                                    })}
+                                </div>
+                                {availableLots.length > 0 ? <>
+                                    <h4>Lot(s): {availableLots.map(lots => lots.lotNum).join(", ")} remain. Proceed anyway?</h4>
+                                    <div className="modalButtonRow">
+                                        <button onClick={() => submitJob(true)}>YES</button>
+                                        <button onClick={() => turnOffModal()}>NO</button>
+                                    </div>
+                                </> : <button id="modalSubmit" onClick={() => submitJob(true)} style={{width: '85%', marginTop: '40px'}}>Submit</button>}
+                            </>
+                        )
+                    case "document":
+                        return (
+                            <>
+                                <h2>Select Lots to Print</h2>
+                                <div id="documentModal">
+                                    <div id="documentCheckbox">
+                                        <button id="selectAllButton" onClick={() => selectAll()}>Select All</button>
+                                    </div>
+                                    <div id="lotSelection">
+                                        {Object.keys(lotsUpdated).map((lotKey, index) => {
+                                            return <div key={index} className='lotCheckboxDiv'>
+                                                <input type="checkbox" {...register(lotKey)} />
+                                                <label>{lotKey}</label>
+                                            </div>
+                                        })}
+                                    </div>
+                                    <button id="modalSubmit" onClick={() => createDocument()}>Print Selected Lot(s)</button>
+                                </div>
+                            </>
+                        )
+                    default:
+                        return <></>
+                }
+            })()}
         </>
-        : modalType === "date" ? 
-        <>
-            <h2>Enter Production Date:</h2>
-            <div className='modalRow'>
-                <input type="date" onChange={handleDateChange}></input>
-                <button onClick={() => submitJob(false)}>Submit</button>
-            </div>
-        </>
-        : modalType === "availableLots" ? 
-        <>
-            <h2>Lots remain. Proceed anyway?</h2>
-            <h3>Lot(s): {availableLots.map(lots => lots.lotNum).join(", ")}</h3>
-            <div className="modalButtonRow">
-                <button onClick={() => submitJob(true)}>YES</button>
-                <button onClick={() => turnOffModal()}>NO</button>
-            </div>
-        </> : <></>}
-  </>
+    )
 }
 
 export default OptionsCreatorModalScreens

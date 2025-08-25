@@ -7,9 +7,10 @@ import OptionsInfoTable from './OptionsInfoTable';
 import OptionsLotInfo from './OptionsLotInfo';
 
 type LotTable = {
-    currentLotNum: string;
     isOptionsMode: boolean;
     controlLotList: Control<{lots: LotTableInterface[]}>;
+    currentIDX: number;
+    setLotsUpdated: React.Dispatch<React.SetStateAction<{[key: string]: boolean}>>;
     setCurrentLotNum: (lotNum: string) => void; 
     convertToMixedOptions: (lot: LotTableInterface) => LotTableInterface;
     setModalType: React.Dispatch<React.SetStateAction<string>>;
@@ -20,8 +21,7 @@ type LotTable = {
     updateLotList: UseFieldArrayUpdate<{lots: LotTableInterface[]}, "lots">
 }
 
-const LotTable: React.FC<LotTable> = ({isOptionsMode, currentLotNum, controlLotList, setLotListValue, getLotListValues, convertToMixedOptions, setCurrentLotNum, setModalType, getJobValues, onFormJobChange, updateLotList }) => {
-    const currentIDX = getLotListValues("lots").findIndex((lot: LotTableInterface) => (isOptionsMode ? lot.lot === currentLotNum : lot.plan === currentLotNum))
+const LotTable: React.FC<LotTable> = ({isOptionsMode, controlLotList, currentIDX, setLotsUpdated, setLotListValue, getLotListValues, convertToMixedOptions, setCurrentLotNum, setModalType, getJobValues, onFormJobChange, updateLotList }) => {
     const editingPartsOfLot = getLotListValues(`lots.${currentIDX}.editingPartsOfLot`) as boolean
     const hasThroughoutLot = getLotListValues(`lots.${currentIDX}.hasThroughoutLot`) as boolean
     const partsOfLot = getLotListValues(`lots.${currentIDX}.partsOfLot`) as PartOfLot[]
@@ -78,6 +78,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, currentLotNum, controlLotL
     }
 
     const onFormChange = (key: string, value: string | boolean | number) => {
+        setLotsUpdated(prev => ({...prev, [isOptionsMode ? getLotListValues(`lots.${currentIDX}.lot`) : getLotListValues(`lots.${currentIDX}.plan`)]: true}))
         setLotListValue(key as Parameters<typeof setLotListValue>[0], value)
         let updatedTable:LotTableInterface = getLotListValues(`lots.${currentIDX}`) as LotTableInterface;
         updatedTable = {...updatedTable, [key]: value}

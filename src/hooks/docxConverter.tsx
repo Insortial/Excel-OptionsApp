@@ -11,6 +11,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
         inputString = inputString ?? ""
         return inputString.split("\n").map(line=>new TextRun({break:1,text:line}))
     }
+
     const jobDetailsTable = new Table({
         rows: [
             new TableRow({
@@ -101,6 +102,22 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
             type: WidthType.DXA
         }
     })
+
+    const createPageTitle = (selectedLot: LotTableInterface) => {
+        return new Paragraph({
+            children: [new TextRun({
+                text: `${jobDetails.prodReady ? "" : "NOT "}APPROVED PRODUCTION SCHEDULE ${selectedLot.lotPhaseDate ?? jobDetails.date}`,
+                bold: true,
+                color: "000000",
+            }),
+            new TextRun({
+                text: "",
+                break: 1
+            })],
+            alignment: AlignmentType.CENTER,
+            heading: HeadingLevel.HEADING_1,
+        })
+    } 
 
     const createLotDetailsTable = (selectedLot: LotTableInterface) => {
         return new Table({
@@ -630,21 +647,6 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
         })
     }
 
-
-    const pageTitle = new Paragraph({
-        children: [new TextRun({
-            text: `${jobDetails.prodReady ? "" : "NOT "}APPROVED PRODUCTION SCHEDULE ${jobDetails.date}`,
-            bold: true,
-            color: "000000",
-        }),
-        new TextRun({
-            text: "",
-            break: 1
-        })],
-        alignment: AlignmentType.CENTER,
-        heading: HeadingLevel.HEADING_1,
-    })
-
     const lineBreak = new Paragraph({
         children: [
         new TextRun({
@@ -660,7 +662,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
     const iterateOverTables = () => {
         const newArray = []
         for (let lotIndex = 0; lotIndex < lotCollection.length; lotIndex++) {
-            newArray.push(pageTitle)
+            newArray.push(createPageTitle(lotCollection[lotIndex]))
             newArray.push(jobDetailsTable)
             newArray.push(lineBreak)
             newArray.push(createLotDetailsTable(lotCollection[lotIndex]))

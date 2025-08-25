@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { JobDetails, JobDetailsSQL, LotTableInterface, LotTableSQL, PackageDetailsSQL, PartOfLot, PartOfLotSQL } from "@excelcabinets/excel-types/LotTableInterface"
+import { JobDetails, JobDetailsSQL, LotTableInterface, LotTableSQL, PackageDetails, PackageDetailsSQL, PartOfLot, PartOfLotSQL } from "@excelcabinets/excel-types/LotTableInterface"
 import { FormOptionsContext } from "../context/OptionsTemplateContext"
 import { FormOptionsContextType } from "@excelcabinets/excel-types/FormOptions"
 import useFetch from "./useFetch"
@@ -37,8 +37,9 @@ const useSQLJobDetailsPost = () => {
         return partName as string
     }
 
-    const postSQLJobDetails = async (listOfLots:LotTableInterface[], jobDetails:JobDetails, isOptionsMode:boolean, packageProjects:string[], requestedJobDetails:any, loaderData:JobOptionLoaderResponse, prodReady: boolean) => {
+    const postSQLJobDetails = async (listOfLots:LotTableInterface[], jobDetails:JobDetails, isOptionsMode:boolean, packageProjects:string[], requestedJobDetails:PackageDetails, loaderData:JobOptionLoaderResponse, prodReady: boolean, lotsUpdated: {[key:string]: boolean}) => {
         const listOfSQLLots:LotTableSQL[] = []
+        
         for(const lotTable of listOfLots) {
             const listOfSQLPartsOfLot:PartOfLotSQL[] = []
             const throughOutLot = lotTable.partsOfLot.find((partOfLot:PartOfLot) => partOfLot.roomID === "Throughout" || partOfLot.roomID === "Balance of House")
@@ -88,6 +89,7 @@ const useSQLJobDetailsPost = () => {
                 partsOfLot: listOfSQLPartsOfLot,
                 plan: lotTable.plan,
                 //Start of LotDocument properties
+                lotPhaseDate: lotsUpdated[isOptionsMode ? lotTable.lot : lotTable.plan] ? jobDetails.date : lotTable.lotPhaseDate,
                 upperHeight: lotTable.upperHeight,
                 islands: lotTable.islands,
                 crown: lotTable.crown,
@@ -109,7 +111,8 @@ const useSQLJobDetailsPost = () => {
             }
             listOfSQLLots.push(lotTableSQL)
         }
-        const jobDetailsSQL:JobDetailsSQL = {
+
+        const jobDetailsSQL:JobDetailsSQL|undefined = {
             jobID: parseInt(jobDetails.jobID),
             doorBuyOut: false,
             drawerBoxBuyOut: false,

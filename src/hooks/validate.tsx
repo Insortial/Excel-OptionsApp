@@ -96,7 +96,7 @@ const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], current
 
     console.log(newErrors)
     console.log(listOfLotsHasError)
-    return {errors: newErrors, lotsHaveError: Object.keys(newErrors).length > 0 || listOfLotsHasError}
+    return {errors: newErrors, lotsHaveError: Object.keys(newErrors).length > 0 || listOfLotsHasError, listOfLots}
 }
 
 export default validate;

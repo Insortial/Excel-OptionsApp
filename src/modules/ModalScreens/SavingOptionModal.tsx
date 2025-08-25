@@ -1,18 +1,18 @@
 import React, { useState } from 'react'
 import { OptionsCreatorObject } from '../../types/ModalTypes'
-import { LotInfo } from '@excelcabinets/excel-types/LotTableInterface'
 import InputSearch from '../InputSearch'
+import { LotInfo } from '@excelcabinets/excel-types/LotTableInterface'
 
 interface SavingOptionModal {
     optionsCreatorObject: OptionsCreatorObject,
     setModalType: React.Dispatch<React.SetStateAction<string>>,
+    submitJob: (bypass: boolean) => void,
     setAvailableLots: React.Dispatch<React.SetStateAction<LotInfo[]>>
 }
 
 const SavingOptionModal:React.FC<SavingOptionModal> = ({optionsCreatorObject, setModalType, setAvailableLots}) => {
     const [modalProdReady, setModalProdReady] = useState<boolean>(false)
-    const { getPackageProjects, resetPackageProjects, onProjectsChange, saveLotTablesSQL, isOptionsMode, listOfLots, jobDetails: {lotNums}} = optionsCreatorObject
-
+    const { getPackageProjects, resetPackageProjects, onProjectsChange, saveLotTablesSQL, isOptionsMode, listOfLots, lotsUpdated, jobDetails: {lotNums} } = optionsCreatorObject
 
     const findAvailableLots = ():LotInfo[]|undefined => {
         return lotNums.filter(
@@ -22,12 +22,12 @@ const SavingOptionModal:React.FC<SavingOptionModal> = ({optionsCreatorObject, se
     
     const handleProdChoice = () => {
         if(modalProdReady) {
-            setModalType("date")
+            setModalType("availableLots")
             const lots = findAvailableLots()
             if(lots)
                 setAvailableLots(lots)
         } else {
-            saveLotTablesSQL(modalProdReady)
+            saveLotTablesSQL(modalProdReady, {})
         }
     }
 
@@ -40,7 +40,7 @@ const SavingOptionModal:React.FC<SavingOptionModal> = ({optionsCreatorObject, se
                 <input type="checkbox" checked={modalProdReady} onChange={() => setModalProdReady(true)}></input>
                 <label>No:</label>
                 <input type="checkbox" checked={!modalProdReady} onChange={() => setModalProdReady(false)}></input>
-                <button onClick={() => handleProdChoice()}>Submit</button>
+                <button onClick={() => handleProdChoice()} id={modalProdReady ? "modalContinue" : "modalSubmit"}>{modalProdReady ? "Continue" : "Submit"}</button>
             </div>
         </>
         : <>
@@ -53,7 +53,7 @@ const SavingOptionModal:React.FC<SavingOptionModal> = ({optionsCreatorObject, se
                            </div>
                 })}
                 <button className="addProject" onClick={() => resetPackageProjects({projects: [...getPackageProjects("projects"), ""]})}>Add Project</button>
-                <button className="modalSubmit" onClick={() => saveLotTablesSQL(true)}>Submit</button>
+                <button className="modalSubmit" onClick={() => saveLotTablesSQL(true, lotsUpdated)}>Submit</button>
             </div>
         </>
     )

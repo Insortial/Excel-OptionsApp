@@ -794,6 +794,10 @@ input {
     box-sizing: border-box;
 }
 
+.lotButton > span {
+    font-weight: bold;
+}
+
 .lotDelete {
     width: 10%;
     height: 100%;
@@ -820,19 +824,30 @@ input {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-bottom: 20px;
+    box-sizing: border-box;
 }
 
 .modal > h2 {
     width: 100%;
     height: 50px;
     background-color: #945766;
-    margin: 0;
+    margin: 0 0 20px 0;
     color: white;
     padding: 5px 10px;
     box-sizing: border-box;
 }
 
 .modal > h3 {
+    text-align: center;
+}
+
+.modal > h4 {
+    font-weight: 600;
+    font-size: 1.2em;
+    color: #4d4d4d;
+    margin: 30px 0 0 0;
+    padding: 0 10px;
     text-align: center;
 }
 
@@ -846,6 +861,7 @@ input {
 #optionsValueCell > div {
     border: 1px solid black;
 }
+
 #optionsValueCell > span {
     padding: 1px;
 }
@@ -854,15 +870,109 @@ input {
     text-align: right;
 }
 
+#lotSelectionHeader {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
+    margin: 20px 0;
+}
+
+#lotSelectionHeader > h3 {
+    margin: 0;
+    margin-right: auto;
+}
+
+#selectAllButton {
+    padding: 7px 12px;
+    background-color: #e7af7a;
+    font-weight: 600;
+    color: rgb(68, 67, 67);
+}
+
+#selectAllButton:hover {
+    cursor: pointer;
+}
+
+#lotSelection {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 equal-width columns */
+    gap: 1rem;
+    width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+.lotCheckboxDiv {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.lotCheckboxDiv > input {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.lotCheckboxDiv > label {
+    font-size: 1.2em;
+    color: #4d4d4d;
+}
+
 .modalRow {
     display: flex;
     flex-direction: row;
+    align-items: center;
     width: 100%;
     padding: 0 20px;
     box-sizing: border-box;
     height: 50px;
-    margin-top: 3em;
+    margin-top: 1em;
+    margin-bottom: 1.7em;
     justify-content: space-between;
+}
+
+#documentModal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    height: 150px;
+    justify-content: space-between;
+}
+
+#documentModal > button {
+    padding: 10px 8px;
+}
+
+#documentCheckbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+}
+
+#modalSubmit {
+    height: 50px;
+    background-color: #b4d386;
+    border-radius: 3px;
+    font-size: 1.2em;
+    color: white;
+    font-weight: 500;
+}
+
+#modalContinue {
+    height: 50px;
+    background-color: #d3c186;
+    border-radius: 3px;
+    font-size: 1.2em;
+    color: white;
+    font-weight: 500;
 }
 
 .modalPlanRow {
@@ -894,6 +1004,10 @@ input {
     color: white;
 }
 
+#prodDateInput {
+    width: 60%;
+}
+
 .modalRow > input, .modalRow > select {
     height: 100%;
     width: 75%;
@@ -908,6 +1022,7 @@ input {
     display: flex;
     flex-direction: row;
     align-self: center;
+    justify-content: center;
 }
 
 .modalButtonRow {
