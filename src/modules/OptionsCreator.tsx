@@ -261,18 +261,23 @@ function OptionsCreator() {
         setIsCheckingError(lotsHaveError)
     }
 
-    useEffect(() => {
-        const beforeUnloadListener = (event:BeforeUnloadEvent) => {
-            event.preventDefault();
-            console.log()
+      useEffect(() => {
+        const beforeUnloadListener = (event: BeforeUnloadEvent) => {
+            // Check if *any* value in lotsUpdated is true
+            const hasUnsavedChanges = Object.values(lotsUpdated).some(v => v);
+
+            if (hasUnsavedChanges) {
+                event.preventDefault();
+                return "";
+            }
         };
 
         window.addEventListener("beforeunload", beforeUnloadListener);
 
         return () => {
-            window.removeEventListener("beforeunload", beforeUnloadListener)
-        }
-    }, []);
+            window.removeEventListener("beforeunload", beforeUnloadListener);
+        };
+    }, [lotsUpdated]); 
 
     useEffect(() => {
         const throughoutLot = currentLot?.partsOfLot[0]
