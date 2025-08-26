@@ -68,6 +68,10 @@ function OptionsCreator() {
         else
             lotNums = jobLotList
 
+        updatedListOfLots.forEach((lot, index, listOfLots) => {
+            listOfLots[index] = convertToMixedOptions(lot)
+        })
+
         setLotsUpdated(updatedListOfLots.reduce((acc, lot) => {
             acc[isOptionsMode ? lot.lot : lot.plan] = false
             return acc
@@ -77,7 +81,7 @@ function OptionsCreator() {
     }
 
     const addLotToList = (newLot: LotTableInterface) => {
-         setLotsUpdated({...lotsUpdated, [newLot.lot]: true})
+        setLotsUpdated({...lotsUpdated, [newLot.lot]: true})
         const lotNums = getJobValues("lotNums")
         const sortedLots = [...listOfLots, newLot].sort((a, b) => lotNums.findIndex(lot => lot.lotNum === a.lot) - lotNums.findIndex(lot => lot.lotNum === b.lot))
         const insertedIDX = sortedLots.findIndex((lotInfo) => lotInfo.lot === newLot.lot)
@@ -341,7 +345,6 @@ function OptionsCreator() {
                     foreman: "",
                     phase: "",
                     jobID: "",
-                    date: "",
                     lastUpdatedBy: "",
                     dateUpdated: "",
                     prodReady: false

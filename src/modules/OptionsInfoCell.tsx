@@ -6,9 +6,9 @@ import ControlledTextArea from './ControlledTextArea';
 
 type OptionsInfoCell = {
     onFormChange: (key: string, value: string | boolean) => void;
-    onNoneSelect: (currentRow: number) => void;
+    onNoneSelect: (index: number) => void;
     getLotListValues: UseFormGetValues<{lots: LotTableInterface[]}>;
-    deleteLotSection: (currentRow: number) => void;
+    deleteLotSection: (index: number) => void;
     changeLotEditingMode: (editingPartsOfLot: boolean) => void;
     setModalType: React.Dispatch<React.SetStateAction<string>>;
     controlLotList: Control<{lots: LotTableInterface[]}>;
@@ -24,26 +24,25 @@ type OptionsInfoCell = {
 const OptionsInfoCell:React.FC<OptionsInfoCell> = ({index, hasThroughoutLot, isOptionsMode, currentIDX, partsOfLot, lotSection, editingPartsOfLot, controlLotList, onFormChange, onNoneSelect, getLotListValues, deleteLotSection, changeLotEditingMode, setModalType}) => {
     const {fields, /* append, */ remove} = useFieldArray({control: controlLotList, name: `lots.${currentIDX}.partsOfLot.${index}.checklist`})
     const idNumber = index > 0 ? index : ""
-    const currentRow = hasThroughoutLot ? index : index + 1
 
     return (
-        <tr key={currentRow}>
+        <tr key={index}>
             {isOptionsMode &&
                 <td>
-                    {(currentRow === 0 || !hasThroughoutLot && currentRow === 1) &&
+                    {(index === 0 || !hasThroughoutLot && index === 1) &&
                         <InputSearch inputName={`lots.${currentIDX}.lot`}  onFormChange={onFormChange} isDropDown={false} locked={true} getFormValues={getLotListValues}></InputSearch>
                     }
-                    <button className="deleteButton" style={{display: currentRow !== 0 ? "block" : "none"}} onClick={() => deleteLotSection(currentRow)}>Delete Row</button>
+                    <button className="deleteButton" style={{display: index !== 0 ? "block" : "none"}} onClick={() => deleteLotSection(index)}>Delete Row</button>
                 </td>
             }
             <td>
-                {(currentRow === 0 || !hasThroughoutLot && currentRow === 1) &&
+                {(index === 0 || !hasThroughoutLot && index === 1) &&
                     <InputSearch inputName={`lots.${currentIDX}.plan`}  onFormChange={onFormChange} isDropDown={false} locked={true} getFormValues={getLotListValues}></InputSearch>
                 }
-                {!isOptionsMode && <button className="deleteButton" style={{display: currentRow !== 0 ? "block" : "none"}} onClick={() => deleteLotSection(currentRow)}>Delete Row</button>}
+                {!isOptionsMode && <button className="deleteButton" style={{display: index !== 0 ? "block" : "none"}} onClick={() => deleteLotSection(index)}>Delete Row</button>}
             </td>
             <td>
-                {(partsOfLot.length > 1 && (hasThroughoutLot && currentRow === 0 || !hasThroughoutLot && currentRow === 1)) && 
+                {(partsOfLot.length > 1 && (hasThroughoutLot && index === 0 || !hasThroughoutLot && index === 1)) && 
                     <>
                         <button className="editPartsOfLotButton" onClick={() => changeLotEditingMode(!editingPartsOfLot)}>{editingPartsOfLot ? `Set Options to Balance of House` : "Edit By Part of Lot"}</button>
                         <button onClick={() => {
@@ -70,7 +69,7 @@ const OptionsInfoCell:React.FC<OptionsInfoCell> = ({index, hasThroughoutLot, isO
                             <label htmlFor={`bothButton${idNumber}`}>Both</label>
                             <input id={`bothButton${idNumber}`} type="checkbox" onChange={() => onFormChange(`lots.${currentIDX}.partsOfLot.${index}.handleType`, "both")} checked={lotSection.handleType == "both" ? true : false}/>
                             <label htmlFor={`noneButton${idNumber}`}>None</label>
-                            <input id={`noneButton${idNumber}`} type="checkbox" onChange={() => onNoneSelect(currentRow)} checked={lotSection.handleType == "none" ? true : false}/>
+                            <input id={`noneButton${idNumber}`} type="checkbox" onChange={() => onNoneSelect(index)} checked={lotSection.handleType == "none" ? true : false}/>
                         </div>    
                     </div>
                     <div className='glassSection'>
@@ -162,13 +161,13 @@ const OptionsInfoCell:React.FC<OptionsInfoCell> = ({index, hasThroughoutLot, isO
                 }
                 <label>Details: </label>
                 <ControlledTextArea inputName={`lots.${currentIDX}.partsOfLot.${index}.details`} getFormValues={getLotListValues} onFormChange={onFormChange}></ControlledTextArea>
-                {(partsOfLot[currentRow].checklist && partsOfLot[currentRow].checklist.length) > 0 && <>
+                {(partsOfLot[index].checklist && partsOfLot[index].checklist.length) > 0 && <>
                     <h4 className='checkListTitle'>Checklist:</h4>
                     <div className='checklist'>
                         {fields.map((_, index:number) => {
                             return (
                                 <div key={index} className='checkListItem'>
-                                    <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${currentRow}.checklist.${index}.value`} key={index} onFormChange={onFormChange} isDropDown={false} getFormValues={getLotListValues}/>
+                                    <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.checklist.${index}.value`} key={index} onFormChange={onFormChange} isDropDown={false} getFormValues={getLotListValues}/>
                                     <button onClick={() => remove(index)}>X</button>
                                 </div>
                             )
@@ -176,7 +175,7 @@ const OptionsInfoCell:React.FC<OptionsInfoCell> = ({index, hasThroughoutLot, isO
                     </div>
                 </>}
                 {/* <button className='checklistButton' onClick={() => append({value: "", checked: false})}>Add Checklist</button> */}
-                <button style={{display: currentRow === (partsOfLot?.length - 1) ? "block" : "none"}} onClick={() => setModalType("partOfLot")} className='newPartOfLotButton'>Add Part Of Lot</button>
+                <button style={{display: index === (partsOfLot?.length - 1) ? "block" : "none"}} onClick={() => setModalType("partOfLot")} className='newPartOfLotButton'>Add Part Of Lot</button>
             </td>
         </tr>
     )

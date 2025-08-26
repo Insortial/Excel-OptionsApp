@@ -119,7 +119,6 @@ const useSQLJobDetailsPost = () => {
             jobNotes: jobDetails.jobNotes,
             coordinatorIDFK: jobDetails.coordinatorIDFK,
             lots: listOfSQLLots,
-            date: jobDetails.date,
             superintendent: jobDetails.superintendent,
             phone: jobDetails.phone,
             prodReady: prodReady,

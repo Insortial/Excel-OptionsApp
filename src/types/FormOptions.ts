@@ -1,4 +1,4 @@
-import { ErrorObject } from "./LotTableInterface";
+import { ErrorObject } from "@excelcabinets/excel-types/LotTableInterface";
 
 export interface FormOptionsInterface {
     builder: [number, string][],

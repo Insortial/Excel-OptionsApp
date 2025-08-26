@@ -106,7 +106,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
     const createPageTitle = (selectedLot: LotTableInterface) => {
         return new Paragraph({
             children: [new TextRun({
-                text: `${jobDetails.prodReady ? "" : "NOT "}APPROVED PRODUCTION SCHEDULE ${selectedLot.lotPhaseDate ?? jobDetails.date}`,
+                text: `${jobDetails.prodReady ? "" : "NOT "}APPROVED PRODUCTION SCHEDULE ${selectedLot.lotPhaseDate ?? "N/A"}`,
                 bold: true,
                 color: "000000",
             }),
@@ -710,7 +710,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
     
     // Used to export the file into a .docx file
     Packer.toBlob(doc).then((blob) => {
-       saveAs(blob, `${jobDetails.builder} ${jobDetails.project} ${jobDetails.date}.docx`)
+       saveAs(blob, `${jobDetails.builder} ${jobDetails.project} ${jobDetails.dateUpdated}.docx`)
     }); 
 }
 

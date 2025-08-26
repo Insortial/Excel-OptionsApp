@@ -120,7 +120,7 @@ const OptionsCreatorModalScreens:React.FC<OptionsCreatorModalScreens> = ({option
                                     {Object.keys(lotsUpdated).map((lotKey, index) => {
                                         return <div key={index} className='lotCheckboxDiv'>
                                             <input type="checkbox" {...register(lotKey)} />
-                                            <label>{lotKey}</label>
+                                            <label>{lotKey} {lotsUpdated[lotKey] && <span>(E)</span>}</label>
                                         </div>
                                     })}
                                 </div>

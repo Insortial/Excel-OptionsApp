@@ -1,5 +1,5 @@
 import { UseFormGetValues, UseFormRegister, UseFormReset, UseFormSetValue } from 'react-hook-form';
-import { JobDetails, JobDocumentInterface, LotTableInterface, PackageDetails, PackageInfo } from './LotTableInterface.ts'
+import { JobDetails, JobDocumentInterface, LotTableInterface, PackageDetails, PackageInfo } from '@excelcabinets/excel-types/LotTableInterface'
 
 
 export interface OptionsCreatorObject {

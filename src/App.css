@@ -923,6 +923,10 @@ input {
     color: #4d4d4d;
 }
 
+.lotCheckboxDiv > label > span {
+    font-weight: bold;
+}
+
 .modalRow {
     display: flex;
     flex-direction: row;
