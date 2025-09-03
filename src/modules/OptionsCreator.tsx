@@ -140,9 +140,7 @@ function OptionsCreator() {
     }
 
     const addLotTable = () => {
-        console.log(getLotListValues("lots"))
         let table:LotTableInterface;
-        console.log(packageDetails)
         if(modalInputValue !== "") {
             if(!isLotCopy) {
                 if(["", "None"].includes(packageDetails.packageName) || packageDetails.planName === "None" || !isOptionsMode)
@@ -191,12 +189,11 @@ function OptionsCreator() {
         }
 
         if(!hasError) {
-            const packageName = packageDetails.packageName
-            const validJob = await postSQLDetails(getLotListValues("lots"), getJobValues(), isOptionsMode, getPackageProjects("projects"), packageName, prodReady, updatedLots)
+            const validJob = await postSQLDetails(getLotListValues("lots"), getJobValues(), isOptionsMode, getPackageProjects("projects"), packageDetails, prodReady, updatedLots)
             const responseBody = await validJob.json()
 
             if(validJob.ok && location.pathname === '/optionCreator/')
-                navigate(`/optionCreator/jobOption/${responseBody.jobDocumentID}`)
+                navigate(isOptionsMode ? `/optionCreator/jobOption/${responseBody.jobDocumentID}` : `/optionCreator/package/${responseBody.packageID}`)
             
             setNotification(validJob.ok)
 
@@ -375,6 +372,7 @@ function OptionsCreator() {
         jobDetails: getJobValues(), 
         packageDetails: packageDetails, 
         hasPackage: hasPackage, 
+        setPackageDetails: setPackageDetails,
         registerJobValues: registerJobValues,
         getPackageProjects: getPackageProjects,
         addLotTable: addLotTable, 
@@ -399,9 +397,9 @@ function OptionsCreator() {
             <OptionsCreatorModal modalType={modalType} turnOffModal={turnOffModal}>
                 <OptionsCreatorModalScreens optionsCreatorObject={optionsCreatorObject} modalType={modalType} setModalType={setModalType} modalInputValue={modalInputValue} setModalInputValue={setModalInputValue} turnOffModal={turnOffModal}/>
             </OptionsCreatorModal>
-            <OptionsCreatorNav optionsCreatorObject={optionsCreatorObject} currentLotNum={currentLotNum} getJobValues={getJobValues} onFormJobChange={onFormJobChange} setModalType={setModalType} setIsLotCopy={setIsLotCopy} getCurrentLot={getCurrentLot} setCurrentLotNum={setCurrentLotNum} removeLotList={removeLotList} requestedJobDetails={requestedJobDetails}/>
+            <OptionsCreatorNav optionsCreatorObject={optionsCreatorObject} currentLotNum={currentLotNum} getJobValues={getJobValues} onFormJobChange={onFormJobChange} setModalType={setModalType} setIsLotCopy={setIsLotCopy} getCurrentLot={getCurrentLot} setCurrentLotNum={setCurrentLotNum} removeLotList={removeLotList}/>
             <div id="optionsEditor">
-                {currentIDX ? (<div style={{height: "100vh"}}></div>): (<LotTable onFormJobChange={onFormJobChange} setModalType={setModalType} convertToMixedOptions={convertToMixedOptions} setLotListValue={setLotListValue} setLotsUpdated={setLotsUpdated}
+                {currentLotNum === "" ? (<div style={{height: "100vh"}}></div>): (<LotTable onFormJobChange={onFormJobChange} setModalType={setModalType} convertToMixedOptions={convertToMixedOptions} setLotListValue={setLotListValue} setLotsUpdated={setLotsUpdated}
                                                                                 getLotListValues={getLotListValues} setCurrentLotNum={setCurrentLotNum} isOptionsMode={isOptionsMode} getJobValues={getJobValues} updateLotList={updateLotList} controlLotList={controlLotList} currentIDX={currentIDX}/>)}
             </div>
             <Notification submissionValid={submissionValid}/>

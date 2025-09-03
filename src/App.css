@@ -1186,6 +1186,23 @@ td > input {
     margin: 0;
 }
 
+#navPackage {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#navPackage > h2 > input {
+    font-size: 0.7em;
+    width: 200px;
+}
+
+#navPackage > button {
+    font-size: .9em;
+    padding: 3px 12px;
+}
+
 .newPartOfLotButton {
   width: 100%;
   height: 30px;
@@ -1287,6 +1304,11 @@ a:visited {
     margin-bottom: 1em;
 }
 
+#packageOptions > div {
+    border: 1px solid black;
+    width: 35%;
+}
+
 #packageOptions > label {
     font-size: 1.2em;
     font-weight: bold;
@@ -1295,15 +1317,26 @@ a:visited {
     font-weight: 600;
 }
 
-#packageOptions > button {
+#packageReset {
+    margin-left: 8px;
+    padding: 2px 8px;
+    background-color: rgb(221, 159, 88);
+    font-weight: 600;
+    color: rgb(61, 60, 60);
+}
+
+#packageDelete {
     margin-left: auto;
     padding: 2px 8px;
+    background-color: #d85c4b;
+    color: white;
+    font-weight: bold;
 }
 
 #packageDisplay {
     display: flex;
     flex-direction: column;
-    background-color: #fafafa;
+    background-color: #fdfdfd;
     border: 1px solid rgb(71, 71, 71);
     border-radius: 4px;
     padding: 0;
@@ -1334,11 +1367,18 @@ a:visited {
 }
 
 .packageCard {
-    border: 1px solid black;
+    border: 1px solid rgb(145, 145, 145);
     display: flex;
     flex-direction: row;
     background-color: white;
     margin-bottom: 15px;
+}
+
+.packageCard:hover {
+    cursor: pointer;
+    background-color: rgb(247, 247, 247);
+    transition: .2s;
+    border-color: #000000;
 }
 
 .packageCard > section {

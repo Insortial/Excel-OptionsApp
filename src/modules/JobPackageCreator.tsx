@@ -16,6 +16,7 @@ import { defaultJobDetails, initialPackageDetails } from '../templates/initialVa
 function JobPackageCreator() {
   const [packages, setPackages] = useState<PackageInfo[]>([])
   const { getValues, setValue, watch } = useForm<JobDetails>({defaultValues: defaultJobDetails})
+  const { setValue: setPackageValue, getValues: getPackageValues, watch: watchPackage} = useForm({ defaultValues: { builder: "" } })
   const [modalType, setModalType] = useState<string>("none")
   const [deletePackage, setDeletePackage] = useState<boolean>(false)
   const [packageToDelete, setPackageToDelete] = useState<PackageInfo | null>(null)
@@ -112,14 +113,15 @@ function JobPackageCreator() {
               <h2>View Builder Packages</h2>
               <section id='packageOptions'>
                 <label>Builder</label>
-                <input></input>
-                <button type='button' onClick={() => setDeletePackage(!deletePackage)}>Delete</button>
+                <InputSearch inputName='builder' onFormChange={(key, value) => setPackageValue(key as "builder", value)} isDropDown={true} getFormValues={getPackageValues}></InputSearch>
+                <button type='button' onClick={() => setPackageValue("builder", "")} id="packageReset">Reset</button>
+                <button type='button' onClick={() => setDeletePackage(!deletePackage)} id="packageDelete">Delete</button>
               </section>
               <div id="packageDisplay" style={{display: packages?.length > 0 ? "block" : "none"}}>
                 <div id="packageDisplayHeader">
                 </div>
                 <div id="packageDisplayBody">
-                  {packages?.map((item, index) => {
+                  {packages?.filter((selectedPackage) => watchPackage("builder")?.includes(selectedPackage.builderName) || watchPackage("builder") === "").map((item, index) => {
                       return <div key={index} className='packageCardContainer'>
                         <span className='documentDeleteButton' style={{display: deletePackage ? 'flex' : 'none'}} onClick={() => deletePackageModal(item)}>X</span>
                         <Link key={index} to={`/optionCreator/package/${item.packageID}`}>

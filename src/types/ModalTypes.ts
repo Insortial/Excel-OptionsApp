@@ -11,6 +11,7 @@ export interface OptionsCreatorObject {
     packageDetails: PackageDetails, 
     hasPackage: boolean, 
     lotsUpdated: {[key: string]: boolean},
+    setPackageDetails: React.Dispatch<React.SetStateAction<PackageDetails>>,
     registerJobValues: UseFormRegister<JobDetails>,
     getPackageProjects: UseFormGetValues<{projects: string[]}>,
     addLotTable: () => void, 

@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { JobDetails, JobDetailsSQL, LotTableInterface, LotTableSQL, PackageDetailsSQL, PartOfLot, PartOfLotSQL } from "@excelcabinets/excel-types/LotTableInterface"
+import { JobDetails, JobDetailsSQL, LotTableInterface, LotTableSQL, PackageDetails, PackageDetailsSQL, PartOfLot, PartOfLotSQL } from "@excelcabinets/excel-types/LotTableInterface"
 import { FormOptionsContext } from "../context/OptionsTemplateContext"
 import { FormOptionsContextType } from "@excelcabinets/excel-types/FormOptions"
 import useFetch from "./useFetch"
@@ -36,7 +36,7 @@ const useSQLJobDetailsPost = () => {
         return partName as string
     }
 
-    const postSQLJobDetails = async (listOfLots:LotTableInterface[], jobDetails:JobDetails, isOptionsMode:boolean, packageProjects:string[], packageName: string, prodReady: boolean, lotsUpdated: {[key:string]: boolean}) => {
+    const postSQLJobDetails = async (listOfLots:LotTableInterface[], jobDetails:JobDetails, isOptionsMode:boolean, packageProjects:string[], packageDetails: PackageDetails, prodReady: boolean, lotsUpdated: {[key:string]: boolean}) => {
         const listOfSQLLots:LotTableSQL[] = []
         
         for(const lotTable of listOfLots) {
@@ -128,9 +128,10 @@ const useSQLJobDetailsPost = () => {
         let finalPackageDetails; 
         if(!isOptionsMode) {
             packageDetailsSQL = {
+                packageID: packageDetails.packageID ?? -1,
                 builder: getFormIDs(jobDetails.builder, "builder"),
                 projects: packageProjects.map((project:string) => getFormIDs(project, "project")),
-                packageName: packageName,
+                packageName: packageDetails.packageName,
                 plans: listOfSQLLots
             }
             finalPackageDetails = JSON.stringify(packageDetailsSQL)

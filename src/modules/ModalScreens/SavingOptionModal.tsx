@@ -13,6 +13,7 @@ interface SavingOptionModal {
 const SavingOptionModal:React.FC<SavingOptionModal> = ({optionsCreatorObject, setModalType, setAvailableLots}) => {
     const [modalProdReady, setModalProdReady] = useState<boolean>(false)
     const { getPackageProjects, resetPackageProjects, onProjectsChange, saveLotTablesSQL, isOptionsMode, listOfLots, lotsUpdated, jobDetails: {lotNums} } = optionsCreatorObject
+    const projects = getPackageProjects("projects") ?? [""]
 
     const findAvailableLots = ():LotInfo[]|undefined => {
         return lotNums.filter(
@@ -46,7 +47,7 @@ const SavingOptionModal:React.FC<SavingOptionModal> = ({optionsCreatorObject, se
         : <>
             <h2>Select Projects</h2>
             <div className="modalProjectDiv">
-                {getPackageProjects("projects").map((_, index:number) => {
+                {projects.map((_, index:number) => {
                     return <div className="modalInputRow" key={index}>
                                 <InputSearch inputName={`projects.${index}`} getFormValues={getPackageProjects} onFormChange={(key: string, value: string) => onProjectsChange(key as "projects" | `projects.${number}`, value)} isDropDown={true} optionSectionNum={index} filterValue={optionsCreatorObject.jobDetails.builder}></InputSearch>
                                 <button onClick={() => resetPackageProjects({projects: getPackageProjects("projects").filter((_, idx) => idx !== index)})}>Delete</button>

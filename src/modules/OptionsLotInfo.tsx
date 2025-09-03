@@ -92,10 +92,10 @@ const OptionsLotInfo: React.FC<OptionsLotInfo> = ({isOptionsMode, currentIDX, ed
                     <th>Recycling Bins</th>
                     <td><InputSearch inputName={`lots.${currentIDX}.recyclingBins`}  onFormChange={onFormChange} isDropDown={false} getFormValues={getLotListValues}></InputSearch></td>
                 </tr>
-                <tr>
+                {isOptionsMode && <tr>
                     <th>Job Specific Notes</th>
                     <td><ControlledTextArea inputName={"jobNotes"} getFormValues={getJobValues} onFormChange={onFormJobChange}></ControlledTextArea></td>
-                </tr>
+                </tr>}
             </tbody>
         </table>
         <table className='additionalLotInfo'>
