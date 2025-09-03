@@ -144,15 +144,11 @@ function JobCreator() {
 
   const goToOptionsCreator = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    let state = {}
     const validateValues = await validate()
     const packageDetails:PackageDetails = await getPackageDetails()
 
-    state = {jobDetails: getValues(), packageDetails: packageDetails, hasPackage: packageDetails !== null}
-
-    console.log(state)
     if(Object.keys(validateValues).length === 0) {
-      navigate("/optionCreator/", {state: state})
+      navigate("/optionCreator/", {state: {jobDetails: getValues(), packageDetails: packageDetails, hasPackage: packageDetails !== null}})
       navigate(0)
     } else {
       setErrors(validateValues)

@@ -1,16 +1,16 @@
 import React, { useContext } from 'react'
-import { JobDetails, LotTableInterface} from '@excelcabinets/excel-types/LotTableInterface'
+import { JobDetails, LotTableInterface, PackageDetails} from '@excelcabinets/excel-types/LotTableInterface'
 import { Link } from 'react-router-dom'
 import InputError from './InputError'
 import { FormOptionsContext } from '../context/OptionsTemplateContext'
 import { FormOptionsContextType } from '@excelcabinets/excel-types/FormOptions'
-import { FieldArrayWithId, UseFieldArrayRemove, UseFormGetValues } from 'react-hook-form'
+import { UseFieldArrayRemove, UseFormGetValues } from 'react-hook-form'
+import { OptionsCreatorObject } from '../types/ModalTypes'
 
 type OptionsCreatorNav = {
-    isOptionsMode: boolean,
+    optionsCreatorObject: OptionsCreatorObject,
     currentLotNum: string,
-    listOfLots: FieldArrayWithId<{lots: LotTableInterface[]}, "lots", "id">[],
-    lotsUpdated: {[key: string]: boolean},
+    requestedJobDetails: {packageName?: string, jobDetails: JobDetails, packageDetails: PackageDetails | null, hasPackage?: boolean},
     getCurrentLot: (lotInputValue: string) => LotTableInterface | undefined,
     removeLotList: UseFieldArrayRemove,
     setModalType: React.Dispatch<React.SetStateAction<string>>,
@@ -20,8 +20,9 @@ type OptionsCreatorNav = {
     getJobValues: UseFormGetValues<JobDetails>
 }
 
-const OptionsCreatorNav: React.FC<OptionsCreatorNav> = ({ isOptionsMode, currentLotNum, listOfLots, lotsUpdated, getCurrentLot, removeLotList, getJobValues, setModalType, setIsLotCopy, setCurrentLotNum }) => {
+const OptionsCreatorNav: React.FC<OptionsCreatorNav> = ({ optionsCreatorObject, currentLotNum, requestedJobDetails, getCurrentLot, removeLotList, getJobValues, setModalType, setIsLotCopy, setCurrentLotNum }) => {
     const { errors, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
+    const { isOptionsMode, listOfLots, lotsUpdated, packageDetails } = optionsCreatorObject
     /* const [isChangingDate, setIsChangingDate] = useState<boolean>(false) */
     const jobDetails = getJobValues() 
     
@@ -33,7 +34,10 @@ const OptionsCreatorNav: React.FC<OptionsCreatorNav> = ({ isOptionsMode, current
     const deleteLotTable = (index: number) => {
         const removedListOfLots = listOfLots.filter((_, idx) => idx !== index)
         removeLotList(index)
-        setCurrentLotNum(isOptionsMode ? removedListOfLots[0].lot : removedListOfLots[0].plan)
+        if(removedListOfLots.length > 0)
+            setCurrentLotNum(isOptionsMode ? removedListOfLots[0].lot : removedListOfLots[0].plan)
+        else 
+            setCurrentLotNum("")
     }
 
     const createLotCopy = () => {
@@ -51,7 +55,10 @@ const OptionsCreatorNav: React.FC<OptionsCreatorNav> = ({ isOptionsMode, current
                     {jobDetails.dateUpdated && <h2>Last Updated: {jobDetails.dateUpdated}</h2>}
                     {jobDetails.lastUpdatedBy && <h2>Updated By: {jobDetails.lastUpdatedBy}</h2>}
                     <h2>Lot Date: {getCurrentLot(currentLotNum)?.lotPhaseDate ?? "N/A"}</h2>
-                </>) : <></>
+                </>) : 
+                <>
+                    <h2>Package Name: {requestedJobDetails?.packageName ?? requestedJobDetails?.packageDetails?.packageName ?? packageDetails?.packageName ?? ""}</h2>
+                </>
             }
             <section className="optionsList" id="lotList">
                 <h3>List of {isOptionsMode ? "Lots" : "Plans"}</h3>
@@ -83,7 +90,7 @@ const OptionsCreatorNav: React.FC<OptionsCreatorNav> = ({ isOptionsMode, current
                     )
                 })}
             </section>
-            <Link to="/jobMenu" style={{marginTop: "auto"}}>Back to Job Menu</Link>
+            <Link to={isOptionsMode ? "/jobMenu" : "/creatingJobPackage"} style={{marginTop: "auto"}}>Back to {isOptionsMode ? "Job" : "Package"} Menu</Link>
         </div>
   )
 }

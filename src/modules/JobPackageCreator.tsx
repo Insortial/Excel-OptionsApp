@@ -11,12 +11,13 @@ import OptionsCreatorModal from './OptionsCreatorModal.tsx';
 import { PackageObject } from '../types/ModalTypes.ts';
 import DeleteOptionModal from './ModalScreens/DeleteOptionModal.tsx';
 import { useForm } from 'react-hook-form';
-import { defaultJobDetails } from '../templates/initialValues.ts';
+import { defaultJobDetails, initialPackageDetails } from '../templates/initialValues.ts';
 
 function JobPackageCreator() {
   const [packages, setPackages] = useState<PackageInfo[]>([])
   const { getValues, setValue, watch } = useForm<JobDetails>({defaultValues: defaultJobDetails})
   const [modalType, setModalType] = useState<string>("none")
+  const [deletePackage, setDeletePackage] = useState<boolean>(false)
   const [packageToDelete, setPackageToDelete] = useState<PackageInfo | null>(null)
   const [errors, setErrors] = useState<ErrorObject>({})
   const { setIsCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
@@ -77,11 +78,10 @@ function JobPackageCreator() {
   const goToPackageCreator = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if(await validate())
-      navigate("/optionCreator/", {state: {packageName: packageNameRef.current?.value, packageDetails: getValues()}})
+      navigate("/optionCreator/", {state: {jobDetails: getValues(), packageDetails: {...initialPackageDetails, packageName: packageNameRef.current?.value}}})
   }
 
-  const turnOnDeleteModal = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>, packageDetails:PackageInfo) => {
-    e.preventDefault()
+  const deletePackageModal = (packageDetails:PackageInfo) => {
     setModalType("delete")
     setPackageToDelete(packageDetails)
   }
@@ -110,25 +110,32 @@ function JobPackageCreator() {
         <section id="formSection">
           <form onSubmit={goToPackageCreator}>
               <h2>View Builder Packages</h2>
-              <div id="packageDisplay" className="creatorDisplay" style={{display: packages?.length > 0 ? "block" : "none"}}>
-                <div>
-                  <h5>Packages</h5>
-                  <h5>Names</h5>
+              <section id='packageOptions'>
+                <label>Builder</label>
+                <input></input>
+                <button type='button' onClick={() => setDeletePackage(!deletePackage)}>Delete</button>
+              </section>
+              <div id="packageDisplay" style={{display: packages?.length > 0 ? "block" : "none"}}>
+                <div id="packageDisplayHeader">
                 </div>
-                {packages?.map((item, index) => {
-                    return <div key={index}>
-                              <h5>{item.packageName}</h5>
+                <div id="packageDisplayBody">
+                  {packages?.map((item, index) => {
+                      return <div key={index} className='packageCardContainer'>
+                        <span className='documentDeleteButton' style={{display: deletePackage ? 'flex' : 'none'}} onClick={() => deletePackageModal(item)}>X</span>
+                        <Link key={index} to={`/optionCreator/package/${item.packageID}`}>
+                          <div key={index} className='packageCard'>
                               <section>
-                                <h5>{item.projectName.join(", ")}</h5> 
-                                <section className='packageButtons'>
-                                  <Link className="editPackage" to={"/optionCreator/package/" + item.packageID}>Edit</Link>
-                                  <button className='deletePackage' onClick={e => turnOnDeleteModal(e, item)}>Delete</button>
-                                </section>
-                                
+                                <h5>Name: {item.packageName}</h5>
+                                <h5 className='projectBuilder'>Builder: {item.builderName}</h5>
+                                <h6>Projects: {item.projectName.join(", ")}</h6> 
                               </section>
                           </div>
+                        </Link> 
+                      </div>
                   })}
+                </div>
               </div>
+              <h2>Create Builder Package</h2>
               <div className="formRow">
                   <label htmlFor={"builder"}>Builder Name</label>
                   <InputSearch inputName={"builder"} getFormValues={getValues} onFormChange={onFormChange} isDropDown={true}></InputSearch>

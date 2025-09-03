@@ -945,7 +945,6 @@ input {
     flex-direction: column;
     align-items: center;
     width: 80%;
-    height: 150px;
     justify-content: space-between;
 }
 
@@ -1153,7 +1152,7 @@ td > input {
 
 #titleCover {
     width: 30vw;
-    height: 100vh;
+    height: 100%;
     background-color: #B90606;
     padding: 1em 0 1em 2em;
     box-sizing: border-box;
@@ -1219,32 +1218,6 @@ td > input {
     flex-direction: column;
 }
 
-.packageButtons {
-    display: flex;
-    flex-direction: row;
-}
-
-.editPackage {
-    display: flex;
-    background-color: #945766;
-    color: white;
-    text-align: center;
-    justify-content: center;
-    margin-right: 5px;
-    width: 50px;
-}
-
-.deletePackage {
-    display: flex;
-    background-color: #ce4343;
-    color: white;
-    text-align: center;
-    justify-content: center;
-    margin-right: 5px;
-    width: 50px;
-    align-items: center;
-}
-
 button {
     outline: none;
     border: none;
@@ -1308,34 +1281,88 @@ a:visited {
     border: 2px solid black; 
 }
 
+#packageOptions { 
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1em;
+}
+
+#packageOptions > label {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-right: 10px;
+    color: #797878;
+    font-weight: 600;
+}
+
+#packageOptions > button {
+    margin-left: auto;
+    padding: 2px 8px;
+}
+
 #packageDisplay {
     display: flex;
     flex-direction: column;
+    background-color: #fafafa;
+    border: 1px solid rgb(71, 71, 71);
+    border-radius: 4px;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-#packageDisplay > div {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 20% 80%;
-    grid-template-rows: 50px;
-    justify-items: center;
+#packageDisplayHeader {
+    background-color: #c5abab;
+    padding: 15px 10px;
+    box-sizing: border-box;
 }
 
-#packageDisplay > div > * {
+#packageDisplayHeader > h5 {
     margin: 0;
-    height: 100%;
-    width: 100%;
-    outline: 1px solid black; 
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-size: 1.4em;
 }
 
-#packageDisplay > div > section {
-    justify-content: space-between;
+#packageDisplayBody {
+    padding: 15px 15px 0 15px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    min-height: 200px;
+    max-height: 400px;
+}
+
+.packageCardContainer {
+    position: relative;
+}
+
+.packageCard {
+    border: 1px solid black;
+    display: flex;
+    flex-direction: row;
+    background-color: white;
+    margin-bottom: 15px;
+}
+
+.packageCard > section {
+    display: flex;
+    flex-direction: column;
     padding: 0 15px;
     box-sizing: border-box;
+    padding: 10px 8px;
+    box-sizing: border-box;
+}
+
+.packageCard > section > h5 {
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.projectBuilder {
+    color: #6e6d6d;
+}
+
+.packageCard > section > h6 {
+    margin: 20px 0 0 0;
+    font-size: 0.8em;
+    color: #868686;
 }
 
 #jobDisplay {

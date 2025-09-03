@@ -25,7 +25,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, controlLotList, currentIDX
     const editingPartsOfLot = getLotListValues(`lots.${currentIDX}.editingPartsOfLot`) as boolean
     const hasThroughoutLot = getLotListValues(`lots.${currentIDX}.hasThroughoutLot`) as boolean
     const partsOfLot = getLotListValues(`lots.${currentIDX}.partsOfLot`) as PartOfLot[]
-
+    
     const deleteLotSection = (lotSectionIndex:number) => {
         let updatedTable:LotTableInterface = getLotListValues(`lots.${currentIDX}`) as LotTableInterface
 
@@ -103,7 +103,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, controlLotList, currentIDX
         if(updatedTable.editingPartsOfLot)
             updatedTable = convertToMixedOptions(updatedTable)
 
-        if((key === "lot" || key === "plan") && typeof value === "string") 
+        if((optKey === "lot" || optKey === "plan") && typeof value === "string") 
             setCurrentLotNum(value)
 
         updateLotList(currentIDX, updatedTable)

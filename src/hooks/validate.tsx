@@ -1,6 +1,6 @@
 import { ErrorObject, JobDetails, LotTableInterface, PartOfLot } from "@excelcabinets/excel-types/LotTableInterface";
 
-const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], currentLotNum:string) => {
+const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], currentLotNum:string, isOptionMode: boolean) => {
     const isHandleValid = (handleType:string, key:string, value:string, numOfKnobs:number, numOfPulls:number):boolean => {
         //Lots can have multiple parts of lot, this function determines if any of the parts of lot have an empty hardware section. Pulls, knobs, both.
         let partNum = 0
@@ -46,7 +46,7 @@ const validate = (jobDetails:JobDetails, listOfLots:LotTableInterface[], current
     listOfLots.forEach(lot => lot.hasError = false)
 
     Object.keys(jobDetails).forEach((key) => {
-        if(requiredFieldsJob.includes(key) && !jobDetails[key as keyof JobDetails])
+        if(isOptionMode && requiredFieldsJob.includes(key) && !jobDetails[key as keyof JobDetails])
             newErrors[key] = "Field is required, please fill out"
     })
 

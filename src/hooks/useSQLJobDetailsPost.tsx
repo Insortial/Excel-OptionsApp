@@ -1,9 +1,8 @@
 import { useContext } from "react"
-import { JobDetails, JobDetailsSQL, LotTableInterface, LotTableSQL, PackageDetails, PackageDetailsSQL, PartOfLot, PartOfLotSQL } from "@excelcabinets/excel-types/LotTableInterface"
+import { JobDetails, JobDetailsSQL, LotTableInterface, LotTableSQL, PackageDetailsSQL, PartOfLot, PartOfLotSQL } from "@excelcabinets/excel-types/LotTableInterface"
 import { FormOptionsContext } from "../context/OptionsTemplateContext"
 import { FormOptionsContextType } from "@excelcabinets/excel-types/FormOptions"
 import useFetch from "./useFetch"
-import { JobOptionLoaderResponse } from "../loader/JobOptionLoader"
 import { AuthInfo } from "../context/AuthContext"
 
 const useSQLJobDetailsPost = () => {
@@ -37,7 +36,7 @@ const useSQLJobDetailsPost = () => {
         return partName as string
     }
 
-    const postSQLJobDetails = async (listOfLots:LotTableInterface[], jobDetails:JobDetails, isOptionsMode:boolean, packageProjects:string[], requestedJobDetails:PackageDetails, loaderData:JobOptionLoaderResponse, prodReady: boolean, lotsUpdated: {[key:string]: boolean}) => {
+    const postSQLJobDetails = async (listOfLots:LotTableInterface[], jobDetails:JobDetails, isOptionsMode:boolean, packageProjects:string[], packageName: string, prodReady: boolean, lotsUpdated: {[key:string]: boolean}) => {
         const listOfSQLLots:LotTableSQL[] = []
         
         for(const lotTable of listOfLots) {
@@ -131,7 +130,7 @@ const useSQLJobDetailsPost = () => {
             packageDetailsSQL = {
                 builder: getFormIDs(jobDetails.builder, "builder"),
                 projects: packageProjects.map((project:string) => getFormIDs(project, "project")),
-                packageName: requestedJobDetails?.packageName ?? loaderData?.state.packageDetails.packageName ?? "",
+                packageName: packageName,
                 plans: listOfSQLLots
             }
             finalPackageDetails = JSON.stringify(packageDetailsSQL)

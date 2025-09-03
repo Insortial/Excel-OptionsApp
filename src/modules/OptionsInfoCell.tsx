@@ -37,7 +37,7 @@ const OptionsInfoCell:React.FC<OptionsInfoCell> = ({index, hasThroughoutLot, isO
             }
             <td>
                 {(index === 0 || !hasThroughoutLot && index === 1) &&
-                    <InputSearch inputName={`lots.${currentIDX}.plan`}  onFormChange={onFormChange} isDropDown={false} locked={true} getFormValues={getLotListValues}></InputSearch>
+                    <InputSearch inputName={`lots.${currentIDX}.plan`}  onFormChange={onFormChange} isDropDown={false} locked={isOptionsMode} getFormValues={getLotListValues}></InputSearch>
                 }
                 {!isOptionsMode && <button className="deleteButton" style={{display: index !== 0 ? "block" : "none"}} onClick={() => deleteLotSection(index)}>Delete Row</button>}
             </td>

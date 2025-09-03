@@ -53,7 +53,7 @@ const SavingOptionModal:React.FC<SavingOptionModal> = ({optionsCreatorObject, se
                            </div>
                 })}
                 <button className="addProject" onClick={() => resetPackageProjects({projects: [...getPackageProjects("projects"), ""]})}>Add Project</button>
-                <button className="modalSubmit" onClick={() => saveLotTablesSQL(true, lotsUpdated)}>Submit</button>
+                <button className="modalSubmit" onClick={() => saveLotTablesSQL(false, lotsUpdated)}>Submit</button>
             </div>
         </>
     )

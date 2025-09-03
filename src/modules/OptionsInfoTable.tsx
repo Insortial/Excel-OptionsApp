@@ -20,8 +20,6 @@ type OptionsInfoTable = {
 }
 
 const OptionsInfoTable: React.FC<OptionsInfoTable> = ({onFormChange, onNoneSelect, getLotListValues, deleteLotSection, changeLotEditingMode, setModalType, controlLotList, editingPartsOfLot, currentIDX, hasThroughoutLot, partsOfLot, isOptionsMode}) => {
-    console.log(partsOfLot.slice(hasThroughoutLot ? 0 : 1))
-    
     return (
         <table className='optionsInfo'>
             <tbody>
@@ -41,7 +39,7 @@ const OptionsInfoTable: React.FC<OptionsInfoTable> = ({onFormChange, onNoneSelec
                     <th>Material/Color</th>
                     <th>Option</th>
                 </tr>
-                {partsOfLot.slice(hasThroughoutLot ? 0 : 1).map((lotSection:PartOfLot, index:number) => {
+                {partsOfLot?.slice(hasThroughoutLot ? 0 : 1).map((lotSection:PartOfLot, index:number) => {
                     return <OptionsInfoCell key={index} index={index + (hasThroughoutLot ? 0 : 1)} onFormChange={onFormChange} onNoneSelect={onNoneSelect} getLotListValues={getLotListValues} deleteLotSection={deleteLotSection} changeLotEditingMode={changeLotEditingMode} controlLotList={controlLotList}
                             setModalType={setModalType} editingPartsOfLot={editingPartsOfLot} isOptionsMode={isOptionsMode} currentIDX={currentIDX} hasThroughoutLot={hasThroughoutLot} partsOfLot={partsOfLot} lotSection={lotSection}/>
                 })}
