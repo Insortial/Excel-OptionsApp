@@ -50,10 +50,10 @@ const SavingOptionModal:React.FC<SavingOptionModal> = ({optionsCreatorObject, se
                 {projects.map((_, index:number) => {
                     return <div className="modalInputRow" key={index}>
                                 <InputSearch inputName={`projects.${index}`} getFormValues={getPackageProjects} onFormChange={(key: string, value: string) => onProjectsChange(key as "projects" | `projects.${number}`, value)} isDropDown={true} optionSectionNum={index} filterValue={optionsCreatorObject.jobDetails.builder}></InputSearch>
-                                <button onClick={() => resetPackageProjects({projects: getPackageProjects("projects").filter((_, idx) => idx !== index)})}>Delete</button>
+                                <button onClick={() => resetPackageProjects({projects: projects.filter((_, idx) => idx !== index)})}>Delete</button>
                            </div>
                 })}
-                <button className="addProject" onClick={() => resetPackageProjects({projects: [...getPackageProjects("projects"), ""]})}>Add Project</button>
+                <button className="addProject" onClick={() => resetPackageProjects({projects: [...projects, ""]})}>Add Project</button>
                 <button className="modalSubmit" onClick={() => saveLotTablesSQL(false, lotsUpdated)}>Submit</button>
             </div>
         </>

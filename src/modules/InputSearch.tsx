@@ -96,7 +96,7 @@ const InputSearch = <T extends FieldValues>({isDropDown, onFormChange, inputName
 
         if(suggestion.length === 0)
             updateDropDowns()
-        
+        console.log(getFormValues("projects" as Path<T>))
         if((inputType === "color") && ("partsOfLot" in getFormValues(currentLot))) {
             const materialSelection = getFormValues(`${currentLot}.partsOfLot` as Path<T>)[optionSectionNum ?? 0].material
             const filteredColors = filterColors(materialSelection)
@@ -104,12 +104,14 @@ const InputSearch = <T extends FieldValues>({isDropDown, onFormChange, inputName
             setSuggestion(filteredColors)
         } else if (Array.isArray(getFormValues("projects" as Path<T>)) && typeof filterValue === "string") {
             const filteredProjects = filterProjects(filterValue)
+            console.log(filteredProjects)
             setDropDownOptions(filteredProjects)
             setSuggestion(filteredProjects)
         } else {
             setSuggestion(dropDownOptions.slice(0, 50))
         }
         setInFocus(true)
+        console.log(suggestion)
     }
 
     function handleOptionClick(selectedIndex: number):void {
