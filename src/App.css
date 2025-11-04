@@ -820,6 +820,8 @@ input {
     width: 80vw;
     max-width: 600px;
     min-height: 230px;
+    max-height: 800px;
+    overflow-y: scroll;
     background-color: white;
     display: flex;
     flex-direction: column;
