@@ -53,6 +53,14 @@ const PDEditor = () => {
             return
         }
 
+        return { filterStringArr, pageNum, totalPages, items }
+    }
+
+    const handleDataUpdate = async (selectedPage: number, updatedFilters: boolean, selectedLevel=currentLevel, lotDate=false) => {
+        const result = await retrieveData(selectedPage, updatedFilters, selectedLevel, lotDate)
+        if (!result) return
+
+        const { filterStringArr, pageNum, totalPages, items } = result
         setFilterArray(filterStringArr)
         setCurrentPage(pageNum)
         setNumOfPages(totalPages)
@@ -62,12 +70,12 @@ const PDEditor = () => {
 
     const updateFilters = () => {
       resetFilters(getFilterValues())
-      retrieveData(1, true)
+      handleDataUpdate(1, true)
     }
 
     const changeLevel = (levelType: "job"|"customer"|"project"|"lot") => {
       setCurrentLevel(levelType)
-      retrieveData(1, false, levelType)
+      handleDataUpdate(1, false, levelType)
       setLevelMenu(false)
     }
 
@@ -83,7 +91,7 @@ const PDEditor = () => {
 
     const turnOffModal = () => {
       setModalType("none")
-      retrieveData(currentPage, false)
+      handleDataUpdate(currentPage, false)
     }
 
     const openLocationModal = (index: number) => {
@@ -93,9 +101,54 @@ const PDEditor = () => {
 
     const resetTableFilters = () => {
       resetFilters({customer: "", project: "", job: "", customerID: "", projectID: "", jobID: ""})
-      retrieveData(1, true)
+      handleDataUpdate(1, true)
     }
 
+    const downloadCSV = async () => {
+      // Fetch all data with a high limit
+      const response = await fetchHook(`/excelInfo/${currentLevel}?&page=1&limit=10000${currentLevel === "project" ? '&includeBuilder=true' : ''}&${filterArray.join("&")}`, "GET", undefined, import.meta.env.VITE_EXCELINFO)
+      const responseData = await response.json()
+      
+      if (!response.ok || !responseData.items || responseData.items.length === 0) {
+        console.warn("No data to download")
+        return
+      }
+
+      const data = responseData.items
+
+      // Get headers from first object
+      const headers = Object.keys(data[0])
+      
+      // Create CSV header row
+      const csvHeader = headers.join(",")
+      
+      // Create CSV data rows
+      const csvRows = data.map((item: {[key:string]:string}) =>
+        headers.map(header => {
+          const value = item[header]
+          // Escape quotes and wrap in quotes if contains comma or newline
+          const escaped = String(value).replace(/"/g, '""')
+          return escaped.includes(",") || escaped.includes("\n") ? `"${escaped}"` : escaped
+        }).join(",")
+      )
+      
+      // Combine header and rows
+      const csvContent = [csvHeader, ...csvRows].join("\n")
+      
+      // Create blob and download
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+      const link = document.createElement("a")
+      const url = URL.createObjectURL(blob)
+      const now = new Date()
+      const date = now.toISOString().split('T')[0]
+      const time = now.toTimeString().split(' ')[0].slice(0, 5).replace(':', '')
+      link.setAttribute("href", url)
+      link.setAttribute("download", `${currentLevel}-data-${date}-${time}.csv`)
+      link.style.visibility = "hidden"
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    }
 
     return (
       <>
@@ -164,17 +217,18 @@ const PDEditor = () => {
                       <input inputMode="numeric" {...registerFilters("jobID")}/>
                     </>}
                     <button onClick={() => updateFilters()}>{filterIsDirty ? "Set Filters": "Filters Set"}</button>
+                    <button id="downloadCSV" onClick={() => downloadCSV()}>Download CSV</button>
                   </div>
                 </section>
               </header>
               <div id="pdTable">
                 <section id="pageNavigation">
                   {/* <button onClick={() => switchLotDateMode()}>Date Mode</button> */}
-                  <button className='outerButton' onClick={() => retrieveData(1, false)}>&lt;&lt;</button>
-                  <button className='innerButton' onClick={() => retrieveData(currentPage - 1, false)}>Previous</button>
+                  <button className='outerButton' onClick={() => handleDataUpdate(1, false)}>&lt;&lt;</button>
+                  <button className='innerButton' onClick={() => handleDataUpdate(currentPage - 1, false)}>Previous</button>
                   <h3>Page {currentPage} of {numOfPages}</h3>
-                  <button className='innerButton' onClick={() => retrieveData(currentPage + 1, false)}>Next</button>
-                  <button className='outerButton' onClick={() => retrieveData(numOfPages, false)}>&gt;&gt;</button>
+                  <button className='innerButton' onClick={() => handleDataUpdate(currentPage + 1, false)}>Next</button>
+                  <button className='outerButton' onClick={() => handleDataUpdate(numOfPages, false)}>&gt;&gt;</button>
                 </section>
                 <section className='pdRow'>
                   <div className='pdCellSection'>

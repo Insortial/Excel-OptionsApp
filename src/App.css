@@ -314,6 +314,10 @@ input {
     border-radius: 3px;
 }
 
+#downloadCSV {
+    background-color: #93a08c;
+}
+
 #pdHeader > h1 {
     width: 31%;
     display: inline-block;
