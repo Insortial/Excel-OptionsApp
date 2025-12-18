@@ -125,7 +125,7 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
                 listOfOptions = optionArray as string[] ?? []
             }
         } else if (["kitchen", "master", "bath2", "bath3", "bath4", "powder", "laundry"].includes(propertyName)) {
-            listOfOptions = ['N/A', '5/8" Rough Top', 'Build Up', 'Pedestal']
+            listOfOptions = ['N/A', '5/8" Rough Top', 'Build Up', 'Pedestal', 'Double rough top', '½” build up']
             if(propertyName === "kitchen")
                 listOfOptions.push('1” rough top = 1 – 3/8 plywood & 1 – 5/8 plywood')
         } else if (propertyName === "islands") {
