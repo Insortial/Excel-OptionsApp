@@ -393,13 +393,41 @@ input {
     justify-content: space-between;
 }
 
-.rowButton{
-    width: 4.5%;
+.pdRow.selected {
+    border: 3px solid orange;
+}
+
+.rowButton {
     height: 30px;
+    width: 55px;
     padding: 2px;
     box-sizing: border-box;
     font-weight: bold;
     background-color: #b4d386;
+}
+
+.rowButton.hidden {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.cancel {
+    background-color: #d8ad7d;
+}
+
+.submit {
+    background-color: rgb(149, 185, 152);
+}
+
+.rowButtons {
+    display: flex;
+    gap: 5px;
+    margin-left: 5px;
+}
+
+.location {
+    background-color: #d3c786;
+    width: 70px;
 }
 
 #locationButtons {
@@ -471,7 +499,7 @@ input {
 }
 
 .pdCellSection {
-    width: 95%;
+    width: 90%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Makes columns equal width */
 }

@@ -8,7 +8,7 @@ interface LocationValues {
   Address: string, 
   City: string, 
   zipCode: string,
-  projectID: string,
+  ID: string,
   projectName: string
 }
 
@@ -19,7 +19,7 @@ interface ProjectLocationScreen {
 }
 
 const ProjectLocationScreen:React.FC<ProjectLocationScreen> = ({getTableValues, selectedItem, turnOffModal}) => {
-  const {latitude, longitude, Address, City, zipCode, projectID, projectName} = getTableValues(`${selectedItem}`) as LocationValues
+  const {latitude, longitude, Address, City, zipCode, ID, projectName} = getTableValues(`${selectedItem}`) as LocationValues
   const [locationMode, setLocationMode] = useState<"coords"|"address">("coords")
   const { register: registerCoords, getValues: getCoords, handleSubmit: handleCoordSubmit, setError: setCoordError, reset: resetCoords, formState: {errors: coordErrors} } = useForm({ mode: "onSubmit", shouldUnregister: true, values: {latitude, longitude} })
   const { register: registerAddress, getValues: getAddress, handleSubmit: handleAddressSubmit, reset: resetAddress, formState: {errors: addressErrors} } = useForm({ mode: "onSubmit", shouldUnregister: true, values: {Address, City, zipCode} })
@@ -39,7 +39,7 @@ const ProjectLocationScreen:React.FC<ProjectLocationScreen> = ({getTableValues, 
       longitude: getCoords('longitude') || null
     })
 
-    const response = await fetchHook(`/excelInfo/project/${projectID}/coordinates`, "PATCH", body, import.meta.env.VITE_EXCELINFO)
+    const response = await fetchHook(`/excelInfo/project/${ID}/coordinates`, "PATCH", body, import.meta.env.VITE_EXCELINFO)
   
     if(response.ok) {
       turnOffModal()
@@ -55,7 +55,7 @@ const ProjectLocationScreen:React.FC<ProjectLocationScreen> = ({getTableValues, 
       zipCode: getAddress(`zipCode`) || null,
     })
 
-    const response = await fetchHook(`/excelInfo/project/${projectID}/address`, "PATCH", body, import.meta.env.VITE_EXCELINFO)
+    const response = await fetchHook(`/excelInfo/project/${ID}/address`, "PATCH", body, import.meta.env.VITE_EXCELINFO)
   
     if(response.ok) {
       turnOffModal()
