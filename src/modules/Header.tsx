@@ -65,7 +65,7 @@ const Header:React.FC<HeaderProps> = ({currentPage}) => {
                 <Link to="/creatingJobPackage" className='jobMenuButtons'>Edit/Create Job Package</Link>
             </>}
             {(roles.includes("ADMIN") && ["jobMenu"].includes(currentPage)) && <>
-                <Link to="/pdEditor" className='jobMenuButtons'>P&D Editor</Link>
+                <Link to="/pdEditor/customer?page=1&limit=50&columnPage=1&columnLimit=7" className='jobMenuButtons'>P&D Editor</Link>
                 <Link to="/formOptions" className='jobMenuButtons'>Edit Form Options</Link>
             </>}
             </nav>

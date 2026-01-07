@@ -19,13 +19,14 @@ const PDFilters:React.FC<PDFilters> = ({currentLevel, filterArray, registerFilte
     const selectFields = [
         { label: 'Customer', name: 'customer', levels: ['customer', 'job', 'project', 'lot'], dropdownKey: 'builder' },
         { label: 'Project', name: 'project', levels: ['job', 'project', 'lot'], dropdownKey: 'project' },
-        { label: 'Job', name: 'job', levels: ['job', 'lot'], dropdownKey: 'job' },
+        { label: 'Job', name: 'job', levels: ['job', 'lot'], dropdownKey: 'job' }
     ]
 
     const inputFields = [
         { label: 'Customer ID', name: 'customerID', levels: ['customer', 'job', 'project', 'lot'] },
         { label: 'Project ID', name: 'projectID', levels: ['job', 'project', 'lot'] },
         { label: 'Job ID', name: 'jobID', levels: ['job', 'lot'] },
+        { label: 'Lot ID', name: 'lotID', levels: ['lot'] },
     ]
 
     const downloadCSV = async () => {

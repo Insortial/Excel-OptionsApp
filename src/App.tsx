@@ -16,6 +16,7 @@ import { jobOptionLoader } from './loader/JobOptionLoader.ts';
 import useFetch from './hooks/useFetch.ts';
 import FormOptions from './modules/FormOptions.tsx';
 import PDEditor from './modules/PDEditor.tsx';
+import { pdLoader } from './loader/PDLoader.ts';
 
 const App: React.FC = () => {
   const fetchHook = useFetch()
@@ -32,19 +33,10 @@ const App: React.FC = () => {
       element: <ProtectedRoute allowedRoles={["ADMIN", "MEASURE"]}/>,
       children: [
         {
-          path: "/pdEditor",
+          path: "/pdEditor/:level",
           element: <PDEditor />,
-          loader: async () => {
-            let data = null
-            const response = await fetchHook(`/excelInfo/project?page=1&limit=50`, "GET", undefined, import.meta.env.VITE_EXCELINFO)
-            if (!response.ok) {
-              return null
-            } else {
-              data = await response.json()
-              console.log(data)
-            }
-            
-            return data
+          loader: async ({params, request}) => {
+            return pdLoader(params.level ?? 'project', request, fetchHook)
           }
         }
       ]

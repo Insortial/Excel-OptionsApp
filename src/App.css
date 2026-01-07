@@ -362,6 +362,34 @@ input {
     align-items: center;
 }
 
+#pageNavigation > div {
+    display: flex;
+    flex-direction: row;
+}
+
+#columnNavigation > h5 {
+    margin: 0;
+}
+
+#columnNavigation > button {
+    margin: 0 4px;
+    height: 25px;
+    width: 30px;
+    background-color: #aa596d;
+    color: white;
+    font-weight: normal;
+}
+
+#columnNavigation {
+    margin-right: 30px;
+    align-items: center;
+}
+
+#itemNavigation {
+    justify-content: flex-end;
+    align-items: center;
+}
+
 .innerButton {
     height: 25px;
     width: 80px;
@@ -507,6 +535,7 @@ input {
 .pdCellSection > h4 {
     margin: 20px 0 10px 0;
     font-size: 1.2em;
+    width: 90%;
 }
 
 .pdCellSection > input {
