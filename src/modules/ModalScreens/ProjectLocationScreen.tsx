@@ -34,7 +34,6 @@ const ProjectLocationScreen:React.FC<ProjectLocationScreen> = ({ selectedItem, t
     const itemInfo = (await response.json()).items[0] as LocationValues
     const { latitude, longitude, address, city, zipCode, projectName } = itemInfo
 
-    console.log(projectName)
     resetCoords({ latitude, longitude })
     resetAddress({ address, city, zipCode })
     setProjectName(projectName)

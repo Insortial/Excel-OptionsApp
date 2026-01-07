@@ -48,7 +48,7 @@ const Login = () => {
       const decodedToken:DecodedToken = jwtDecode(data.accessToken)
       const isMeasure = decodedToken !== undefined && decodedToken.roles.find(role => role === "MEASURE")
       updateDropDowns(data.accessToken)
-      navigate(isMeasure ? "/pdEditor" : "/jobMenu", {replace: true})
+      navigate(isMeasure ? "/pdEditor/project?page=1&limit=50&columnPage=1&columnLimit=7&" : "/jobMenu", {replace: true})
     }
 
   }
