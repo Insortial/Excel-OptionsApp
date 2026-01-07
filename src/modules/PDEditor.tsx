@@ -15,10 +15,16 @@ import capitalizeString from '../hooks/capitalizeString'
 import { ColumnDetail } from '@excelcabinets/excel-types/ExcelObjectTypes'
 import PDTableCell from './PDTableCell'
 
+type CellValue = boolean | number | string | null
+
+type ItemRow = {
+  ID: number
+} & Record<string, CellValue>
+
 const PDEditor = () => {
   const fetchHook = useFetch()
   const navigate = useNavigate()
-  const { level, items, pageNum, columnPageNum, totalColumnPages, totalPages, limit, columnLimit, columnDetails } = useLoaderData() as { level: "job"|"customer"|"project"|"lot",items: {[key:string]:string}[], pageNum: number, columnPageNum: number, totalColumnPages: number, totalPages: number, limit: number, columnLimit: number, columnDetails: ColumnDetail[] }
+  const { level, items, pageNum, columnPageNum, totalColumnPages, totalPages, limit, columnLimit, columnDetails } = useLoaderData() as { level: "job"|"customer"|"project"|"lot",items: ItemRow[], pageNum: number, columnPageNum: number, totalColumnPages: number, totalPages: number, limit: number, columnLimit: number, columnDetails: ColumnDetail[] }
   const { retrieveDropDown } = useContext(FormOptionsContext) as FormOptionsContextType
   const { authState } = AuthInfo()
   const { roles } = authState
@@ -85,16 +91,16 @@ const PDEditor = () => {
     setModalType("location")
   }
 
-  const getDirtyRowValues = (itemIndex: number, rowIndex: number) => {
-    const rowValues = getTableValues(`${itemIndex}.${rowIndex}`)
-    const rowDirty = dirtyFields?.[itemIndex]?.[rowIndex] || {}
+  const getDirtyRowValues = (selectedID: number) => {
+    const rowValues = getTableValues(`${selectedID}`)
+    const rowDirty = dirtyFields?.[selectedID] || {}
 
     return Object.fromEntries(
       Object.keys(rowDirty).map(key => [key, rowValues[key]])
     )
   }
 
-  const updateSelectedRow = async (itemIndex: number, rowIndex: number) => {
+  const updateSelectedRow = async (selectedID: number) => {
     console.log(errors)
     if(errors?.length ?? 0 > 0) {
       console.log("there are errors here")
@@ -108,12 +114,11 @@ const PDEditor = () => {
       'lot': 'Lots'
     }
 
-    const selectedRow = getDirtyRowValues(itemIndex, rowIndex)
-    const ID = getTableValues(`${itemIndex}.${rowIndex}.ID`)
+    const selectedRow = getDirtyRowValues(selectedID)
     
     const body = JSON.stringify({data: selectedRow})
 
-    const response = await fetchHook(`/excelInfo/${levelMap[level]}/${ID}`, "PATCH", body, import.meta.env.VITE_EXCELINFO)
+    const response = await fetchHook(`/excelInfo/${levelMap[level]}/${selectedID}`, "PATCH", body, import.meta.env.VITE_EXCELINFO)
     
     if (!response.ok) {
       console.error("Error fetching data")
@@ -124,8 +129,8 @@ const PDEditor = () => {
     setSelectedItem(-1)
   }
 
-  const selectRowEdit = (selectedIndex: number) => {
-    setSelectedItem(selectedIndex)
+  const selectRowEdit = (selectedID: number) => {
+    setSelectedItem(selectedID)
     resetTableValues()
   }
 
@@ -145,7 +150,7 @@ const PDEditor = () => {
         {(() => {
           switch(modalType) {
             case "location":
-              return <ProjectLocationScreen getTableValues={getTableValues} selectedItem={selectedItem} turnOffModal={turnOffModal}/>
+              return <ProjectLocationScreen selectedItem={selectedItem} turnOffModal={turnOffModal}/>
             case "edit":
               return <EditAndCreatePD currentLevel={level} selectedItem={selectedItem} getTableValues={getTableValues}/>
             default:
@@ -195,21 +200,21 @@ const PDEditor = () => {
                 }
                 </div>
               </section>
-              {items.length > 0 && items.map((job, itemIndex) => {
-                  const editingRow = itemIndex === selectedItem
+              {items.length > 0 && items.map((item, itemIndex) => {
+                  const editingRow = item.ID === selectedItem
 
                   return (
                     <div className={`pdRow ${editingRow ? 'selected' : ''}`} key={itemIndex}>
                       <div className='pdCellSection'>
-                        {Object.keys(job).map((key: string, index) => {
-                          return <PDTableCell key={index} errors={errors} jobKey={key} columnTypeMap={columnTypeMap} itemIndex={itemIndex} job={job} editingRow={editingRow} registerTableValues={registerTableValues} index={index}/>
+                        {Object.keys(item).map((key: string, index) => {
+                          return <PDTableCell key={index} errors={errors} jobKey={key} columnTypeMap={columnTypeMap} item={item} editingRow={editingRow} registerTableValues={registerTableValues} index={index}/>
                         })}
                       </div>
                       <div className='rowButtons'>
-                        {level === "project" && <button className='rowButton location' onClick={() => openLocationModal(itemIndex)}>{buttonTitle[level]}</button>}
-                        {!editingRow ? <button className={`rowButton ${editingRow ? 'hidden' : ''}`} onClick={() => selectRowEdit(itemIndex)}>Edit</button>
+                        {level === "project" && <button className='rowButton location' onClick={() => openLocationModal(item.ID)}>{buttonTitle[level]}</button>}
+                        {!editingRow ? <button className={`rowButton ${editingRow ? 'hidden' : ''}`} onClick={() => selectRowEdit(item.ID)}>Edit</button>
                         : <button className={`cancel rowButton ${!editingRow ? 'hidden' : ''}`} onClick={() => cancelEdit()}>Cancel</button>}
-                        <button className={`submit rowButton ${!editingRow ? 'hidden' : ''}`} onClick={() => handleSubmit(() => updateSelectedRow(itemIndex, parseInt(job.ID)))}>Submit</button>
+                        <button className={`submit rowButton ${!editingRow ? 'hidden' : ''}`} onClick={() => handleSubmit(() => updateSelectedRow(item.ID))}>Submit</button>
                       </div>
                     </div>
                   )

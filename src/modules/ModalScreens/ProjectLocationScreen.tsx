@@ -1,29 +1,45 @@
 import React, { useEffect, useState } from 'react'
-import { FieldValues, useForm, UseFormGetValues } from 'react-hook-form'
+import { FieldValues, useForm } from 'react-hook-form'
 import useFetch from '../../hooks/useFetch'
 
 interface LocationValues {
-  longitude: string, 
-  latitude: string, 
-  Address: string, 
-  City: string, 
-  zipCode: string,
+  longitude: number, 
+  latitude: number, 
+  address: string, 
+  city: string, 
+  zipCode: number,
   ID: string,
   projectName: string
 }
 
 interface ProjectLocationScreen {
-  getTableValues: UseFormGetValues<FieldValues>,
   selectedItem: number,
   turnOffModal: () => void
 }
 
-const ProjectLocationScreen:React.FC<ProjectLocationScreen> = ({getTableValues, selectedItem, turnOffModal}) => {
-  const {latitude, longitude, Address, City, zipCode, ID, projectName} = getTableValues(`${selectedItem}`) as LocationValues
+const ProjectLocationScreen:React.FC<ProjectLocationScreen> = ({ selectedItem, turnOffModal}) => {
   const [locationMode, setLocationMode] = useState<"coords"|"address">("coords")
-  const { register: registerCoords, getValues: getCoords, handleSubmit: handleCoordSubmit, setError: setCoordError, reset: resetCoords, formState: {errors: coordErrors} } = useForm({ mode: "onSubmit", shouldUnregister: true, values: {latitude, longitude} })
-  const { register: registerAddress, getValues: getAddress, handleSubmit: handleAddressSubmit, reset: resetAddress, formState: {errors: addressErrors} } = useForm({ mode: "onSubmit", shouldUnregister: true, values: {Address, City, zipCode} })
+  const [projectName, setProjectName] = useState('')
+  const { register: registerCoords, getValues: getCoords, handleSubmit: handleCoordSubmit, setError: setCoordError, reset: resetCoords, formState: {errors: coordErrors} } = useForm({ mode: "onSubmit", shouldUnregister: true, values: {latitude: 0, longitude: 0} })
+  const { register: registerAddress, getValues: getAddress, handleSubmit: handleAddressSubmit, reset: resetAddress, formState: {errors: addressErrors} } = useForm({ mode: "onSubmit", shouldUnregister: true, values: {address: '', city: '', zipCode: 0} })
   const fetchHook = useFetch()
+  
+  const retrieveAddressData = async () => {
+    const response = await fetchHook(`/excelInfo/project/?projectID=${selectedItem}&columnLimit=100`, "GET", undefined, import.meta.env.VITE_EXCELINFO)
+    
+    if(!response.ok) {
+      return
+    }
+
+    const itemInfo = (await response.json()).items[0] as LocationValues
+    const { latitude, longitude, address, city, zipCode, projectName } = itemInfo
+
+    console.log(projectName)
+    resetCoords({ latitude, longitude })
+    resetAddress({ address, city, zipCode })
+    setProjectName(projectName)
+    setLocationMode("coords")
+  }
 
   const locationOptions = {
     latitude: {required: "Latitude is required", pattern: {value: /^-?\d+(\.\d+)?$/, message: "Latitude must be a number"}},
@@ -39,7 +55,7 @@ const ProjectLocationScreen:React.FC<ProjectLocationScreen> = ({getTableValues, 
       longitude: getCoords('longitude') || null
     })
 
-    const response = await fetchHook(`/excelInfo/project/${ID}/coordinates`, "PATCH", body, import.meta.env.VITE_EXCELINFO)
+    const response = await fetchHook(`/excelInfo/project/${selectedItem}/coordinates`, "PATCH", body, import.meta.env.VITE_EXCELINFO)
   
     if(response.ok) {
       turnOffModal()
@@ -50,12 +66,12 @@ const ProjectLocationScreen:React.FC<ProjectLocationScreen> = ({getTableValues, 
 
   const changeAddress = async () => {
     const body = JSON.stringify({
-      address: getAddress(`Address`) || null,
-      city: getAddress(`City`) || null,
+      address: getAddress(`address`) || null,
+      city: getAddress(`city`) || null,
       zipCode: getAddress(`zipCode`) || null,
     })
 
-    const response = await fetchHook(`/excelInfo/project/${ID}/address`, "PATCH", body, import.meta.env.VITE_EXCELINFO)
+    const response = await fetchHook(`/excelInfo/project/${selectedItem}/address`, "PATCH", body, import.meta.env.VITE_EXCELINFO)
   
     if(response.ok) {
       turnOffModal()
@@ -67,9 +83,7 @@ const ProjectLocationScreen:React.FC<ProjectLocationScreen> = ({getTableValues, 
   }
 
   useEffect(() => {
-    resetCoords({ latitude, longitude })
-    resetAddress({ Address, City, zipCode })
-    setLocationMode("coords")
+    retrieveAddressData()
   }, [selectedItem])
 
   return (
@@ -93,11 +107,11 @@ const ProjectLocationScreen:React.FC<ProjectLocationScreen> = ({getTableValues, 
       <form id="locationForm" style={{ display: locationMode === "address" ? "grid" : "none" }} onSubmit={handleAddressSubmit(changeAddress, onError)}>
         <div id="addressDiv">
           <label>Address</label>
-          <input {...registerAddress("Address", locationOptions.address)}></input>
-          <p className='addressError'>{addressErrors.Address?.message}</p>
+          <input {...registerAddress("address", locationOptions.address)}></input>
+          <p className='addressError'>{addressErrors.address?.message}</p>
           <label>City</label>
-          <input {...registerAddress("City", locationOptions.city)}></input>
-          <p className='addressError'>{addressErrors.City?.message}</p>
+          <input {...registerAddress("city", locationOptions.city)}></input>
+          <p className='addressError'>{addressErrors.city?.message}</p>
           <label>Zip Code</label>
           <input {...registerAddress("zipCode", locationOptions.zipCode)}></input>
           <p className='addressError'>{addressErrors.zipCode?.message}</p>

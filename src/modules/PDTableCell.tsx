@@ -3,8 +3,7 @@ import { FieldErrors, FieldValues, UseFormRegister } from 'react-hook-form'
 
 type PDTableCell = {
     jobKey: string,
-    itemIndex: number,
-    job: {[key:string]:string},
+    item: {[key:string]:string|number|boolean|null},
     editingRow: boolean,
     registerTableValues: UseFormRegister<FieldValues>,
     errors: FieldErrors<FieldValues>,
@@ -12,7 +11,7 @@ type PDTableCell = {
     columnTypeMap: {[key: string]: string}
 }
 
-const PDTableCell:React.FC<PDTableCell> = ({ jobKey, itemIndex, job, editingRow, registerTableValues, index, columnTypeMap }) => {
+const PDTableCell:React.FC<PDTableCell> = ({ jobKey, item, editingRow, registerTableValues, index, columnTypeMap }) => {
     const determineInputType = (type: string) => {
         switch(type) {
             case 'nvarchar':
@@ -61,13 +60,13 @@ const PDTableCell:React.FC<PDTableCell> = ({ jobKey, itemIndex, job, editingRow,
                 key={index} 
                 type={inputType} 
                 style={{fontWeight: isIdentity ? 'bold' : 'normal'}} 
-                {...registerTableValues(`${itemIndex}.${job.ID}.${jobKey}`, 
-                    {value: isDate && job[jobKey] ? job[jobKey].split('T')[0] : job[jobKey],
+                {...registerTableValues(`${item.ID}.${jobKey}`, 
+                    {value: isDate && item[jobKey] && typeof item[jobKey] === 'string' ? item[jobKey].split('T')[0] : item[jobKey],
                     validate: (value) => validateValue(value, inputType),
                     ...objTypeMap[inputType]}
                 )}
             /> : 
-            <select disabled={!editingRow} key={index} {...registerTableValues(`${itemIndex}.${job.ID}.${jobKey}`, {value: job[jobKey], ...objTypeMap[inputType]})}>
+            <select disabled={!editingRow} key={index} {...registerTableValues(`${item.ID}.${jobKey}`, {value: item[jobKey], ...objTypeMap[inputType]})}>
                 <option value={'true'}>True</option>
                 <option value={'false'}>False</option>
             </select>
