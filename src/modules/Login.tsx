@@ -50,7 +50,6 @@ const Login = () => {
       updateDropDowns(data.accessToken)
       navigate(isMeasure ? "/pdEditor/project?page=1&limit=50&columnPage=1&columnLimit=7&" : "/jobMenu", {replace: true})
     }
-
   }
 
   const onPasswordResetSubmit:SubmitHandler<LoginForm> = async (body) => {

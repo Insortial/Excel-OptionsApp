@@ -1,5 +1,7 @@
 import React from 'react'
 import { FieldErrors, FieldValues, UseFormRegister } from 'react-hook-form'
+import { determineInputType } from '../hooks/determineInputType'
+import { objTypeMap } from '../constants/objTypeMap'
 
 type PDTableCell = {
     jobKey: string,
@@ -12,29 +14,6 @@ type PDTableCell = {
 }
 
 const PDTableCell:React.FC<PDTableCell> = ({ jobKey, item, editingRow, registerTableValues, index, columnTypeMap }) => {
-    const determineInputType = (type: string) => {
-        switch(type) {
-            case 'nvarchar':
-            case 'varchar':
-                return 'text'
-            case 'int':
-            case 'float':
-                return 'number'
-            case 'bit':
-                return 'select'
-            case 'date':
-                return 'date'
-        }
-        return 'text'
-    }
-
-    const objTypeMap = {
-        'text': {},
-        'select': {setValueAs: (v: string) => v === 'true'},
-        'number': {valueAsNumber: true},
-        'date': {valueAsDate: true}
-    }
-
     const validateValue = (value: string | number | boolean, valueType: string) => {
         console.log(Number.isFinite(Number(value)))
         switch(valueType) {

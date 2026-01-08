@@ -34,6 +34,7 @@ const PDEditor = () => {
   const { register: registerFilters, reset: resetFilters, getValues: getFilterValues, formState: {isDirty: filterIsDirty} } = useForm()
   const { register: registerTableValues, reset: resetTableValues, getValues: getTableValues, handleSubmit, formState: { errors, dirtyFields} } = useForm()
   const buttonTitle = {job: "Edit", project: "Location", customer: "Edit", lot: "Edit"}
+  const levelMap = {'customer': 'Customers', 'project': 'Projects', 'job': 'Jobs', 'lot': 'Lots'}
   const isMeasure = roles.find(role => role === "MEASURE")
 
   const filterStringArr:string[] = []
@@ -107,15 +108,7 @@ const PDEditor = () => {
       return
     }
 
-    const levelMap = {
-      'customer': 'Customers',
-      'project': 'Projects',
-      'job': 'Jobs',
-      'lot': 'Lots'
-    }
-
     const selectedRow = getDirtyRowValues(selectedID)
-    
     const body = JSON.stringify({data: selectedRow})
 
     const response = await fetchHook(`/excelInfo/${levelMap[level]}/${selectedID}`, "PATCH", body, import.meta.env.VITE_EXCELINFO)
@@ -152,7 +145,7 @@ const PDEditor = () => {
             case "location":
               return <ProjectLocationScreen selectedItem={selectedItem} turnOffModal={turnOffModal}/>
             case "edit":
-              return <EditAndCreatePD currentLevel={level} selectedItem={selectedItem} getTableValues={getTableValues}/>
+              return <EditAndCreatePD currentLevel={level} columnDetails={columnDetails} levelMap={levelMap}/>
             default:
               return null
           }
@@ -173,6 +166,7 @@ const PDEditor = () => {
             </header>
             <div id="pdTable">
               <section id="pageNavigation">
+                <button id="createButton" onClick={() => setModalType('edit')}>New {capitalizeString(level)}</button>
                 <div id="columnNavigation">
                   <h5>Column Pages: </h5>
                   {Array.from({ length: totalColumnPages }, (_, i) => ++i).map((colPageNum) => {

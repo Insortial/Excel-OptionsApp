@@ -367,6 +367,16 @@ input {
     flex-direction: row;
 }
 
+#createButton {
+    min-width: 80px;
+    padding: 5px;
+    height: 30px;
+    margin-right: 1em;
+    font-weight: 600;
+    background-color: #a0be84;
+    color: #353434;
+}
+
 #columnNavigation > h5 {
     margin: 0;
 }
@@ -879,7 +889,9 @@ input {
 
 .modal {
     width: 80vw;
-    max-width: 600px;
+    min-width: 500px;
+    max-width: 1500px;
+    width: auto;
     min-height: 230px;
     max-height: 800px;
     overflow-y: scroll;
@@ -912,6 +924,47 @@ input {
     margin: 30px 0 0 0;
     padding: 0 10px;
     text-align: center;
+}
+
+#createForm {
+    width: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+#formSubmit {
+    background-color: rgb(138, 185, 138);
+    width: 150px;
+    height: 35px;
+    font-size: 1em;
+    font-weight: bold;
+    color: white;
+}
+
+#columnGrid {
+    display: grid;
+    grid-auto-flow: column; 
+    grid-auto-columns: 270px; 
+    grid-template-rows: repeat(7, 80px);
+    column-gap: 15px;
+}
+
+#columnGrid > div > h4 {
+    margin: 0 0 5px 0;
+}
+
+#columnGrid > div > input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.formInput > select {
+    width: 100%;
+    height: 35px;
+    border-radius: 2px;
+    border: 1px solid black;
+    padding: 5px;
+    background-color: rgb(240, 239, 239);
 }
 
 #optionsValueCell {
