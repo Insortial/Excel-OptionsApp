@@ -13,11 +13,10 @@ interface EditAndCreatePD {
 }
 
 const EditAndCreatePD:React.FC<EditAndCreatePD> = ({ currentLevel, columnDetails, levelMap }) => {
-    const { register, getValues } = useForm()
+    const { register, getValues, formState: {errors}, handleSubmit } = useForm()
     const fetchHook = useFetch()
     
-    const insertRow = async (e) => {
-        e.preventDefault()
+    const insertRow = async () => {
         console.log(getValues())
         const body = JSON.stringify(getValues())
 
@@ -32,23 +31,25 @@ const EditAndCreatePD:React.FC<EditAndCreatePD> = ({ currentLevel, columnDetails
     return (
         <>
             <h2>Create {capitalizeString(currentLevel)}</h2>
-            <form id="createForm" onSubmit={insertRow}>
+            <form id="createForm" onSubmit={handleSubmit(insertRow)}>
                 <div id="columnGrid">
                     {columnDetails.map((column, index) => {
                         const inputType = determineInputType(column.sqlType)
                         const isIdentity = column.columnName === 'ID'
                         const isDate = inputType === 'date'
                         const isBoolean = inputType === 'select'
+                        const error = errors[column.columnName]
 
                         if(column.IsEditable) {
                             return (
                                 <div key={index} className='formInput'>
                                     <h4 key={index + column.columnName}>{column.columnName}</h4>
-                                    {!isBoolean ? <input key={index + column.columnName + 'input'} type={inputType} {...register(`${column.columnName}`, objTypeMap[inputType])}/> : 
-                                    <select key={index + column.columnName + 'select'} {...register(`${column.columnName}`, objTypeMap[inputType])}>
+                                    {!isBoolean ? <input style={{border: error ? '1px solid red' : '1px solid black'}} key={index + column.columnName + 'input'} type={inputType} {...register(`${column.columnName}`, {required: column.IsRequired ? 'Field is required' : false,...objTypeMap[inputType]})}/> : 
+                                    <select key={index + column.columnName + 'select'} {...register(`${column.columnName}`, {value: false, ...objTypeMap[inputType]})} required={!column.IsNullable}>
                                         <option value={'true'}>True</option>
                                         <option value={'false'}>False</option>
                                     </select>}
+                                    {error?.message && <h6>{String(error.message)}</h6>}
                                 </div>
                             )
                         }

@@ -967,6 +967,11 @@ input {
     background-color: rgb(240, 239, 239);
 }
 
+.formInput > h6 {
+    margin: 0 0 0 0;
+    color: red;
+}
+
 #optionsValueCell {
     display: flex;
     flex-direction: row;
