@@ -13,7 +13,7 @@ import PDFilters from './PDFilters'
 import EditAndCreatePD from './ModalScreens/EditAndCreatePD'
 import capitalizeString from '../hooks/capitalizeString'
 import { ColumnDetail } from '@excelcabinets/excel-types/ExcelObjectTypes'
-import PDTableCell from './PDTableCell'
+import PDTableRow from './PDTableRow'
 
 type CellValue = boolean | number | string | null
 
@@ -32,16 +32,10 @@ const PDEditor = () => {
   const [levelMenu, setLevelMenu] = useState(false)
   const [selectedItem, setSelectedItem] = useState(-1)
   const { register: registerFilters, reset: resetFilters, getValues: getFilterValues, formState: {isDirty: filterIsDirty} } = useForm()
-  const { register: registerTableValues, reset: resetTableValues, getValues: getTableValues, handleSubmit, formState: { errors, dirtyFields} } = useForm()
-  const buttonTitle = {job: "Edit", project: "Location", customer: "Edit", lot: "Edit"}
   const levelMap = {'customer': 'Customers', 'project': 'Projects', 'job': 'Jobs', 'lot': 'Lots'}
   const isMeasure = roles.find(role => role === "MEASURE")
 
   const filterStringArr:string[] = []
-  const columnTypeMap = columnDetails.reduce((map: { [key: string]: string }, col) => {
-    map[col.columnName] = col.sqlType;
-    return map;
-  }, {});
 
   const retrieveData = async (selectedPage: number, selectedColumnPage: number, updatedFilters: boolean, selectedLevel=level, lotDate=false) => {
     if (selectedPage < 1 || (selectedPage > totalPages && totalPages != 0)) 
@@ -59,11 +53,15 @@ const PDEditor = () => {
     navigate(`/pdEditor/${selectedLevel}?page=${selectedPage}&limit=${limit}&columnPage=${selectedColumnPage}&columnLimit=${columnLimit}&${lotDate ? "date=true&" : ""}${filterStringArr.join("&")}`)
   }
 
+  const navigateToInsertedRow = async (id: number) => {
+    resetFilters({[`${level}ID`]: id})
+    handleDataUpdate(1, 1, true)
+  }
+
   const handleDataUpdate = async (selectedPage: number, selectedColumnPage: number, updatedFilters: boolean, selectedLevel=level, lotDate=false) => {
     await retrieveData(selectedPage, selectedColumnPage, updatedFilters, selectedLevel, lotDate)
 
     setSelectedItem(-1)
-    resetTableValues()
   }
 
   const updateFilters = () => {
@@ -87,53 +85,8 @@ const PDEditor = () => {
     handleDataUpdate(pageNum, columnPageNum, false)
   }
 
-  const openLocationModal = (index: number) => {
-    setSelectedItem(index)
-    setModalType("location")
-  }
-
-  const getDirtyRowValues = (selectedID: number) => {
-    const rowValues = getTableValues(`${selectedID}`)
-    const rowDirty = dirtyFields?.[selectedID] || {}
-
-    return Object.fromEntries(
-      Object.keys(rowDirty).map(key => [key, rowValues[key]])
-    )
-  }
-
-  const updateSelectedRow = async (selectedID: number) => {
-    console.log(errors)
-    if(errors?.length ?? 0 > 0) {
-      console.log("there are errors here")
-      return
-    }
-
-    const selectedRow = getDirtyRowValues(selectedID)
-    const body = JSON.stringify({data: selectedRow})
-
-    const response = await fetchHook(`/excelInfo/${levelMap[level]}/${selectedID}`, "PATCH", body, import.meta.env.VITE_EXCELINFO)
-    
-    if (!response.ok) {
-      console.error("Error fetching data")
-      return
-    }
-
-    await retrieveData(pageNum, columnPageNum, false)
-    setSelectedItem(-1)
-  }
-
-  const selectRowEdit = (selectedID: number) => {
-    setSelectedItem(selectedID)
-    resetTableValues()
-  }
-
-  const cancelEdit = () => {
-    setSelectedItem(-1)
-    resetTableValues()
-  }
-
   const resetTableFilters = () => {
-    resetFilters({customer: "", project: "", job: "", customerID: "", projectID: "", jobID: ""})
+    resetFilters({customer: "", project: "", job: "", customerID: "", projectID: "", jobID: "", lotID: ""})
     handleDataUpdate(1, 1, true)
   }
 
@@ -145,12 +98,13 @@ const PDEditor = () => {
             case "location":
               return <ProjectLocationScreen selectedItem={selectedItem} turnOffModal={turnOffModal}/>
             case "edit":
-              return <EditAndCreatePD currentLevel={level} columnDetails={columnDetails} levelMap={levelMap}/>
+              return <EditAndCreatePD currentLevel={level} columnDetails={columnDetails} levelMap={levelMap} navigateToInsertedRow={navigateToInsertedRow} setModalType={setModalType}/>
             default:
               return null
           }
         })()}
       </OptionsCreatorModal>
+      {/* <Notification /> */}
       <div id="jobMenuScreen" style={{backgroundColor: "#f0f0f0"}}>
           <Header currentPage="pdEditor"/>
           <div id="pdBody">
@@ -197,21 +151,9 @@ const PDEditor = () => {
               {items.length > 0 && items.map((item, itemIndex) => {
                   const editingRow = item.ID === selectedItem
 
-                  return (
-                    <div className={`pdRow ${editingRow ? 'selected' : ''}`} key={itemIndex}>
-                      <div className='pdCellSection'>
-                        {Object.keys(item).map((key: string, index) => {
-                          return <PDTableCell key={index} errors={errors} jobKey={key} columnTypeMap={columnTypeMap} item={item} editingRow={editingRow} registerTableValues={registerTableValues} index={index}/>
-                        })}
-                      </div>
-                      <div className='rowButtons'>
-                        {level === "project" && <button className='rowButton location' onClick={() => openLocationModal(item.ID)}>{buttonTitle[level]}</button>}
-                        {!editingRow ? <button className={`rowButton ${editingRow ? 'hidden' : ''}`} onClick={() => selectRowEdit(item.ID)}>Edit</button>
-                        : <button className={`cancel rowButton ${!editingRow ? 'hidden' : ''}`} onClick={() => cancelEdit()}>Cancel</button>}
-                        <button className={`submit rowButton ${!editingRow ? 'hidden' : ''}`} onClick={() => handleSubmit(() => updateSelectedRow(item.ID))}>Submit</button>
-                      </div>
-                    </div>
-                  )
+                  return <PDTableRow key={itemIndex} itemIndex={itemIndex} editingRow={editingRow} item={item} columnDetails={columnDetails}
+                            level={level} levelMap={levelMap} setSelectedItem={setSelectedItem} setModalType={setModalType} retrieveData={retrieveData}
+                            pagination={{pageNum, columnPageNum}}/>
                 })
               }
             </div>
