@@ -1,7 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useContext, useState } from 'react'
 import { useLoaderData, useNavigate } from 'react-router-dom'
-import useFetch from '../hooks/useFetch'
 import { useForm } from 'react-hook-form'
 import OptionsCreatorModal from './OptionsCreatorModal'
 import ProjectLocationScreen from './ModalScreens/ProjectLocationScreen'
@@ -22,7 +21,6 @@ type ItemRow = {
 } & Record<string, CellValue>
 
 const PDEditor = () => {
-  const fetchHook = useFetch()
   const navigate = useNavigate()
   const { level, items, pageNum, columnPageNum, totalColumnPages, totalPages, limit, columnLimit, columnDetails } = useLoaderData() as { level: "job"|"customer"|"project"|"lot",items: ItemRow[], pageNum: number, columnPageNum: number, totalColumnPages: number, totalPages: number, limit: number, columnLimit: number, columnDetails: ColumnDetail[] }
   const { retrieveDropDown } = useContext(FormOptionsContext) as FormOptionsContextType

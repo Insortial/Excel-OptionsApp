@@ -108,29 +108,31 @@ const OptionsCreatorModalScreens:React.FC<OptionsCreatorModalScreens> = ({option
                         return (
                             <>
                                 <h2>Lot Selection</h2>
-                                <div className='modalRow'>
-                                    <h3>Enter Production Date: </h3>
-                                    <input type="date" id="prodDateInput" {...registerJobValues("date")}></input>
-                                </div>
-                                <div id="lotSelectionHeader">
-                                    <h3>Select Lots For This Production Date</h3>
-                                    <button id="selectAllButton" onClick={() => selectAll()}>Select All</button>
-                                </div>
-                                <div id="lotSelection">
-                                    {Object.keys(lotsUpdated).map((lotKey, index) => {
-                                        return <div key={index} className='lotCheckboxDiv'>
-                                            <input type="checkbox" {...register(lotKey)} />
-                                            <label>{lotKey} {lotsUpdated[lotKey] && <span>(E)</span>}</label>
-                                        </div>
-                                    })}
-                                </div>
-                                {availableLots.length > 0 ? <>
-                                    <h4>Lot(s): {availableLots.map(lots => lots.lotNum).join(", ")} remain. Proceed anyway?</h4>
-                                    <div className="modalButtonRow">
-                                        <button onClick={() => submitJob(true)}>YES</button>
-                                        <button onClick={() => turnOffModal()}>NO</button>
+                                <div id="lotSelectionContainer">
+                                    <div className='modalRow'>
+                                        <h3>Enter Production Date: </h3>
+                                        <input type="date" id="prodDateInput" {...registerJobValues("date")}></input>
                                     </div>
-                                </> : <button id="modalSubmit" onClick={() => submitJob(true)} style={{width: '85%', marginTop: '40px'}}>Submit</button>}
+                                    <div id="lotSelectionHeader">
+                                        <h3>Select Lots For This Production Date</h3>
+                                        <button id="selectAllButton" onClick={() => selectAll()}>Select All</button>
+                                    </div>
+                                    <div id="lotSelection">
+                                        {Object.keys(lotsUpdated).map((lotKey, index) => {
+                                            return <div key={index} className='lotCheckboxDiv'>
+                                                <input type="checkbox" {...register(lotKey)} />
+                                                <label>{lotKey} {lotsUpdated[lotKey] && <span>(E)</span>}</label>
+                                            </div>
+                                        })}
+                                    </div>
+                                    {availableLots.length > 0 ? <>
+                                        <h4>Lot(s): {availableLots.map(lots => lots.lotNum).join(", ")} remain. Proceed anyway?</h4>
+                                        <div className="modalButtonRow">
+                                            <button onClick={() => submitJob(true)}>YES</button>
+                                            <button onClick={() => turnOffModal()}>NO</button>
+                                        </div>
+                                    </> : <button id="modalSubmit" onClick={() => submitJob(true)} style={{width: '85%', marginTop: '40px'}}>Submit</button>}
+                                </div>
                             </>
                         )
                     case "document":

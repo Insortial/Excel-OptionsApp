@@ -147,10 +147,12 @@ const FormOptions = () => {
         <>
             <OptionsCreatorModal modalType={modalType} turnOffModal={turnOffModal}>
                 <h2>Are You Sure You Want To Delete Form Option?</h2>
-                <h3>{modalInputValue}</h3>
-                <div className="modalButtonRow">
-                    <button onClick={() => submitDeleteRow()}>YES</button>
-                    <button onClick={() => turnOffModal()}>NO</button>
+                <div id="deleteContainer">
+                    <h3>{modalInputValue}</h3>
+                    <div className="modalButtonRow">
+                        <button onClick={() => submitDeleteRow()}>YES</button>
+                        <button onClick={() => turnOffModal()}>NO</button>
+                    </div>
                 </div>
             </OptionsCreatorModal>
             <div id="jobMenuScreen">

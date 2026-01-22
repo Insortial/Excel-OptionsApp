@@ -18,7 +18,6 @@ type PDTableCell = {
 const PDTableCell:React.FC<PDTableCell> = ({ jobKey, item, editingRow, registerTableValues, index, columnTypeMap, errors, columnDetail }) => {
     const { IsRequired, IsEditable } = columnDetail || {}
     const validateValue = (value: string | number | boolean, valueType: string) => {
-        console.log(Number.isFinite(Number(value)))
         switch(valueType) {
             case 'number':
                 return Number.isFinite(Number(value))
@@ -32,9 +31,9 @@ const PDTableCell:React.FC<PDTableCell> = ({ jobKey, item, editingRow, registerT
 
     const hasError = errors[jobKey]
     const isIdentity = jobKey === 'ID'
-    const isDate = inputType === 'date'
+    //const isDate = inputType === 'date'
     const isBoolean = inputType === 'select'
-    
+
     return (
         !isBoolean ? 
             <input 
@@ -44,7 +43,7 @@ const PDTableCell:React.FC<PDTableCell> = ({ jobKey, item, editingRow, registerT
                 type={inputType} 
                 style={{fontWeight: isIdentity ? 'bold' : 'normal', border: hasError ? '2px solid red' : '1px solid black'}} 
                 {...registerTableValues(`${jobKey}`, 
-                    {value: isDate && item[jobKey] && typeof item[jobKey] === 'string' ? item[jobKey].split('T')[0] : item[jobKey],
+                    {value: item[jobKey],
                     validate: (value) => validateValue(value, inputType),
                     required: IsRequired ? 'Field is required' : false,
                     ...objTypeMap[inputType]}

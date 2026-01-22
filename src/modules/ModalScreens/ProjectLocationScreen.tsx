@@ -88,35 +88,38 @@ const ProjectLocationScreen:React.FC<ProjectLocationScreen> = ({ selectedItem, t
   return (
     <>
       <h2>Update Location: {projectName}</h2>
-      <div id="locationButtons">
-        <button onClick={() => setLocationMode("coords")} className={locationMode === "coords" ? "selectedButton" : ""}>Coordinates</button>
-        <button onClick={() => setLocationMode("address")} className={locationMode !== "coords" ? "selectedButton" : ""}>Address</button>
-      </div>
-      <form id="locationForm" style={{ display: locationMode === "coords" ? "grid" : "none" }} onSubmit={handleCoordSubmit(setCoordinates, onError)}>
-        <div id="coordDiv">
-          <label>Latitude</label>
-          <label>Longitude</label>
-          <input {...registerCoords("latitude", locationOptions.latitude)}></input>
-          <input {...registerCoords("longitude", locationOptions.longitude)}></input>
-          <p>{coordErrors.latitude?.message}</p>
-          <p>{coordErrors.longitude?.message}</p>
-        </div> 
-        <button id="locationSubmit">Submit</button>
-      </form> 
-      <form id="locationForm" style={{ display: locationMode === "address" ? "grid" : "none" }} onSubmit={handleAddressSubmit(changeAddress, onError)}>
-        <div id="addressDiv">
-          <label>Address</label>
-          <input {...registerAddress("address", locationOptions.address)}></input>
-          <p className='addressError'>{addressErrors.address?.message}</p>
-          <label>City</label>
-          <input {...registerAddress("city", locationOptions.city)}></input>
-          <p className='addressError'>{addressErrors.city?.message}</p>
-          <label>Zip Code</label>
-          <input {...registerAddress("zipCode", locationOptions.zipCode)}></input>
-          <p className='addressError'>{addressErrors.zipCode?.message}</p>
+      <div id='locationContainer'>
+        <div id="locationButtons">
+          <button onClick={() => setLocationMode("coords")} className={locationMode === "coords" ? "selectedButton" : ""}>Coordinates</button>
+          <button onClick={() => setLocationMode("address")} className={locationMode !== "coords" ? "selectedButton" : ""}>Address</button>
         </div>
-        <button id="locationSubmit">Submit</button>
-      </form>
+        <form id="locationForm" style={{ display: locationMode === "coords" ? "grid" : "none" }} onSubmit={handleCoordSubmit(setCoordinates, onError)}>
+          <div id="coordDiv">
+            <label>Latitude</label>
+            <label>Longitude</label>
+            <input {...registerCoords("latitude", locationOptions.latitude)}></input>
+            <input {...registerCoords("longitude", locationOptions.longitude)}></input>
+            <p>{coordErrors.latitude?.message}</p>
+            <p>{coordErrors.longitude?.message}</p>
+          </div> 
+          <button id="locationSubmit">Submit</button>
+        </form> 
+        <form id="locationForm" style={{ display: locationMode === "address" ? "grid" : "none" }} onSubmit={handleAddressSubmit(changeAddress, onError)}>
+          <div id="addressDiv">
+            <label>Address</label>
+            <input {...registerAddress("address", locationOptions.address)}></input>
+            <p className='addressError'>{addressErrors.address?.message}</p>
+            <label>City</label>
+            <input {...registerAddress("city", locationOptions.city)}></input>
+            <p className='addressError'>{addressErrors.city?.message}</p>
+            <label>Zip Code</label>
+            <input {...registerAddress("zipCode", locationOptions.zipCode)}></input>
+            <p className='addressError'>{addressErrors.zipCode?.message}</p>
+          </div>
+          <button id="locationSubmit">Submit</button>
+        </form>
+      </div>
+      
     </>
   )
 }

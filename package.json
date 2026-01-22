@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@excelcabinets/excel-types": "^1.6.9",
+    "@excelcabinets/excel-types": "^1.7.2",
     "docx": "^8.5.0",
     "file-saver": "^2.0.5",
     "jwt-decode": "^4.0.0",

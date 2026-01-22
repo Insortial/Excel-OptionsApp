@@ -10,6 +10,7 @@ interface DeleteOptionModal {
 
 const DeleteOptionModal:React.FC<DeleteOptionModal> = ({jobMenuObject, packageObject, turnOffModal}) => {
   const fetchHook = useFetch()
+  
   if(jobMenuObject && jobMenuObject.jobDocument) {
     const {jobDocument: {jobOptionID, customerName, projectName, jobID}, refreshJobMenu, setDeleteMode } = jobMenuObject
   
@@ -30,10 +31,12 @@ const DeleteOptionModal:React.FC<DeleteOptionModal> = ({jobMenuObject, packageOb
 
     return <>
       <h2>Are You Sure You Want To Delete Options?</h2>
-      <h3>{customerName} - {projectName} Job ID: {jobID}</h3>
-      <div className="modalButtonRow">
-          <button onClick={() => deleteJobOption()}>YES</button>
-          <button onClick={() => turnOffModal()}>NO</button>
+      <div id="deleteContainer">
+        <h3>{customerName} - {projectName} Job ID: {jobID}</h3>
+        <div className="modalButtonRow">
+            <button onClick={() => deleteJobOption()}>YES</button>
+            <button onClick={() => turnOffModal()}>NO</button>
+        </div>
       </div>
     </>
 
