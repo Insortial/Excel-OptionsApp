@@ -260,7 +260,7 @@ function OptionsCreator() {
         setIsCheckingError(lotsHaveError)
     }
 
-      useEffect(() => {
+    useEffect(() => {
         const beforeUnloadListener = (event: BeforeUnloadEvent) => {
             const hasUnsavedChanges = Object.values(lotsUpdated).some(v => v);
 
