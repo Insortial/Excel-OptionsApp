@@ -17,6 +17,7 @@ interface EditAndCreatePD {
 
 const EditAndCreatePD:React.FC<EditAndCreatePD> = ({ currentLevel, columnDetails, levelMap, navigateToInsertedRow, setModalType }) => {
     const { register, getValues, setValue, formState: {errors}, handleSubmit } = useForm()
+    const { register: registerSearch, watch: watchSearch } = useForm({defaultValues: {customerSearch: ''}})
     const [PDLevels, setPDLevels] = useState<null|CustomerLevel[]>(null)
     const [createError, setCreateError] = useState(false)
     const [IDFKSearch, setIDFKSearch] = useState(false)
@@ -94,6 +95,13 @@ const EditAndCreatePD:React.FC<EditAndCreatePD> = ({ currentLevel, columnDetails
         setPDLevels(levels)
     }
 
+    const filterCustomers = (customers: CustomerLevel[]) => {
+        const searchValue = watchSearch('customerSearch').toLowerCase()
+        return customers.filter((customer) => {
+            return customer.customerName.toLowerCase().includes(searchValue) || customer.customerID.toString().includes(searchValue)
+        })
+    }
+
     useEffect(() => {
         updatePDLevels()
     }, [])
@@ -151,31 +159,37 @@ const EditAndCreatePD:React.FC<EditAndCreatePD> = ({ currentLevel, columnDetails
                     {createError && <h4 className='error'>Unable to insert row</h4>}
                 </form> 
                 {(PDLevels && currentLevel !== 'customer' && IDFKSearch) &&
-                    <div id="pdLevelsWrapper">
-                        <div id='pdLevels'>
-                            <h2>Select {foreignKeyMap[currentLevel]}</h2>
-                            <div className='levelContainer'>
-                                {PDLevels.map((customerLevel) => {
-                                    const { customerID, customerName } = customerLevel
-                                    return <>
-                                        <LevelRow levelType='customer' id={customerID} name={customerName} selectIDFK={selectIDFK}>
-                                            {['job', 'lot'].includes(currentLevel) && customerLevel.projects.map((projectLevel) => {
-                                                const { projectID, projectName } = projectLevel
-                                                return <>
-                                                    <LevelRow levelType='project' id={projectID} name={projectName} selectIDFK={selectIDFK}>
-                                                        {['lot'].includes(currentLevel) && projectLevel.jobs.map((jobLevel) => {
-                                                            const { jobID, jobName } = jobLevel
-                                                            return <LevelRow key={jobID} levelType='job' id={jobID} name={jobName} selectIDFK={selectIDFK}/>
-                                                        })}
-                                                    </LevelRow>
-                                                </>
-                                            })}
-                                        </LevelRow>
-                                    </>
-                                })}
+                    <section id="pdLevelsSection">
+                        <div id='customerSearch'>
+                            <h3>Search: </h3>
+                            <input placeholder='Enter Customer Name or ID' {...registerSearch('customerSearch')}></input>
+                        </div>
+                        <div id="pdLevelsWrapper">
+                            <div id='pdLevels'>
+                                <h2>Select {foreignKeyMap[currentLevel]}</h2>
+                                <div className='levelContainer'>
+                                    {filterCustomers(PDLevels).map((customerLevel) => {
+                                        const { customerID, customerName } = customerLevel
+                                        return <>
+                                            <LevelRow levelType='customer' id={customerID} name={customerName} selectIDFK={selectIDFK}>
+                                                {['job', 'lot'].includes(currentLevel) && customerLevel.projects.map((projectLevel) => {
+                                                    const { projectID, projectName } = projectLevel
+                                                    return <>
+                                                        <LevelRow levelType='project' id={projectID} name={projectName} selectIDFK={selectIDFK}>
+                                                            {['lot'].includes(currentLevel) && projectLevel.jobs.map((jobLevel) => {
+                                                                const { jobID, jobName } = jobLevel
+                                                                return <LevelRow key={jobID} levelType='job' id={jobID} name={jobName} selectIDFK={selectIDFK}/>
+                                                            })}
+                                                        </LevelRow>
+                                                    </>
+                                                })}
+                                            </LevelRow>
+                                        </>
+                                    })}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
                 }
             </section>
         </>

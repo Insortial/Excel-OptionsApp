@@ -956,6 +956,31 @@ input {
 
 #pdLevels > h2 {
     margin: 0 0 10px 0;
+    font-weight: 600;
+}
+
+#customerSearch {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    height: 30px;
+    margin-bottom: 10px;
+}
+
+#customerSearch > h3 {
+    margin: 0 5px 0 0;
+    color: #3f3e3e;
+    font-weight: bold;
+}
+
+#customerSearch > input {
+    width: 80%;
+}
+
+#customerSearch > input::placeholder {
+    font-weight: normal;
+    color: #666565;
+    opacity: 0.8;
 }
 
 .levelContainer.child {
@@ -976,7 +1001,7 @@ input {
 .levelContainer > h3 {
     font-size: 1em;
     width: 350px;
-    margin: 10px 0;
+    margin: 0;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
