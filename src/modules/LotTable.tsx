@@ -40,10 +40,12 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, controlLotList, currentIDX
         updateLotList(currentIDX, updatedTable)
     }
 
+
+    //TODO: REFACTOR WHERE FINGERPULL IS MAPPED DIRECTLY TO DOOR STYLE
     function findFingerpull(doorID:string):string {
-        if(["1", "2", "6"].includes(doorID.charAt(4)) && doorID !== "ECI-605") {
+        if(["1", "2", "6"].includes(doorID.charAt(4)) && !["ECI-605", "ECI-280", "ECI-260"].includes(doorID)) {
             return "CF-14"
-        } else if(doorID.charAt(4) === "3") {
+        } else if(doorID.charAt(4) === "3" || ["ECI-280", "ECI-260"].includes(doorID)) {
             return "OD-6"
         } else if (doorID.charAt(4) === "4") {
             return doorID.charAt(5) === "0" ? "OD-1" : "OD-2" 
