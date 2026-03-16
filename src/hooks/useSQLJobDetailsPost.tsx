@@ -59,7 +59,7 @@ const useSQLJobDetailsPost = () => {
                         color: getFormIDs(lotSection.color, "color"), 
                         doors: lotSection.doors == "" ? "N/A" : lotSection.doors,
                         fingerpull: lotSection.fingerpull,
-                        drawerFronts: getFormIDs(throughOutLot.drawerFronts, "drawerFronts"), 
+                        drawerFronts: decipherMixedOptions(lotTable.editingPartsOfLot, throughOutLot, lotSection, "drawerFronts"),
                         knobs: handlePullsAndKnobs("knobs", lotSection, throughOutLot), 
                         drawerBoxes: decipherMixedOptions(lotTable.editingPartsOfLot, throughOutLot, lotSection, "drawerBoxes"), 
                         drawerGuides: decipherMixedOptions(lotTable.editingPartsOfLot, throughOutLot, lotSection, "drawerGuides"), 
