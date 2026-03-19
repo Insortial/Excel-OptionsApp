@@ -87,7 +87,7 @@ const InputSearch = <T extends FieldValues>({isDropDown, onFormChange, inputName
         }
     
         setFocusedIndex(nextIndexCount);
-      };
+    };
 
     function handleOnFocus():void {
         const currentLot = `lots.${keyParts[1] ?? 0}` as Path<T>
@@ -96,7 +96,7 @@ const InputSearch = <T extends FieldValues>({isDropDown, onFormChange, inputName
 
         if(suggestion.length === 0)
             updateDropDowns()
-        console.log(getFormValues("projects" as Path<T>))
+
         if((inputType === "color") && ("partsOfLot" in getFormValues(currentLot))) {
             const materialSelection = getFormValues(`${currentLot}.partsOfLot` as Path<T>)[optionSectionNum ?? 0].material
             const filteredColors = filterColors(materialSelection)
@@ -107,11 +107,15 @@ const InputSearch = <T extends FieldValues>({isDropDown, onFormChange, inputName
             console.log(filteredProjects)
             setDropDownOptions(filteredProjects)
             setSuggestion(filteredProjects)
+        } else if (inputType === "fingerpull") {
+            const doorSelection = getFormValues(`${currentLot}.partsOfLot` as Path<T>)[optionSectionNum ?? 0].doors
+            const options = doorSelection === "ECI-420" ? ["OD-2", "OD-6"] : []
+            setDropDownOptions(options)
+            setSuggestion(options)
         } else {
             setSuggestion(dropDownOptions.slice(0, 50))
         }
         setInFocus(true)
-        console.log(suggestion)
     }
 
     function handleOptionClick(selectedIndex: number):void {

@@ -116,7 +116,7 @@ const OptionsInfoCell:React.FC<OptionsInfoCell> = ({index, hasThroughoutLot, isO
                     </div>
                     <div className={"fingerPullList"}>
                         <label htmlFor={`fingerpull${idNumber}`}>Fingerpull:</label>
-                        <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.fingerpull`} optionSectionNum={index} onFormChange={onFormChange} isDropDown={true} locked={true} getFormValues={getLotListValues}></InputSearch>
+                        <InputSearch inputName={`lots.${currentIDX}.partsOfLot.${index}.fingerpull`} optionSectionNum={index} onFormChange={onFormChange} isDropDown={true} locked={false} getFormValues={getLotListValues}></InputSearch>
                     </div>
                     {Array.from({length: lotSection.numOfPulls}, (_, i) => i + 1).map((i) => {
                         return <div key={i} className={"pullList"} style={{display: ["both", "pulls"].includes(lotSection.handleType ?? "") && lotSection.handleType !== "none" ? "block" : "none"}}>
