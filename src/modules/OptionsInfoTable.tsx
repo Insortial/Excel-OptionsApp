@@ -28,7 +28,7 @@ const OptionsInfoTable: React.FC<OptionsInfoTable> = ({onFormChange, onNoneSelec
                     <td colSpan={3}>
                         <section id="optionsValueCell">
                             <span className="valueDiv">$</span>
-                            <InputSearch inputName={`lots.${currentIDX}.lotOptionsValue`}  onFormChange={onFormChange} isDropDown={false} getFormValues={getLotListValues}></InputSearch>
+                            <InputSearch inputName={`lots.${currentIDX}.lotOptionsValue`} onFormChange={onFormChange} isDropDown={false} getFormValues={getLotListValues}></InputSearch>
                             <span id="centsDiv" className="valueDiv">.00</span>
                         </section>
                     </td>

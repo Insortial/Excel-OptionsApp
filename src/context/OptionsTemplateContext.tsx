@@ -86,6 +86,9 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
                 break;
             case "White Oak Rift":
                 return ["Unfinished", "Clear", "Alto", "True Maple"]
+            case "Soft Maple/MDF":
+                filterWords = ["Painted Finish"]
+                break;
             case "MDF":
                 filterWords = ["Painted Finish"]
                 break;
