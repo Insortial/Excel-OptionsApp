@@ -99,6 +99,9 @@ const FormOptionsProvider: React.FC<{children: React.ReactNode}> = ({ children }
             case "Acrylic":
                 filterWords = ["Acrylic"]
                 break;
+            case "Plywood":
+                filterWords = ["Plywood"]
+                break;
             case "Melamine":
                 filterWords = ["Melamine"]
                 break

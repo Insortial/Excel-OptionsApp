@@ -594,6 +594,10 @@ input {
     flex-direction: column;
     justify-content: center;
     font-weight: bold;
+    background-color: rgb(230, 230, 230);
+    border-right: 10px solid #b4536b;
+    border-radius: 4px;
+    transition: .2s;
 }
 
 #formOptions {
@@ -704,13 +708,6 @@ input {
     column-gap: 20px;
     row-gap: 15px;
     padding: 10px;
-}
-
-.choiceButton {
-    background-color: rgb(230, 230, 230);
-    border-right: 10px solid #b4536b;
-    border-radius: 4px;
-    transition: .2s;
 }
 
 #addButton {
