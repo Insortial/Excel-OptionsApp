@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { OptionsCreatorObject } from '../../types/ModalTypes'
-import InputSearch from '../InputSearch'
+import InputSearch from '../components/InputSearch'
 import { LotInfo } from '@excelcabinets/excel-types/LotTableInterface'
 
 interface SavingOptionModal {

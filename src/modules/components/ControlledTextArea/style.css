@@ -1,0 +1,90 @@
+#logoSection {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 10px;
+}
+
+#appHeader {
+  width: 100%;
+  position: relative;
+  background-color: #C14D4D;
+  height: 70px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+#logoSection > h2 {
+    display: none;
+    color: black;
+}
+
+#excelLogo {
+  height: 30px;
+}
+
+#headerButtonSection {
+  padding-right: 10px;
+}
+
+.headerButtons {
+  padding: 7px;
+  background-color: #F06363;
+  font-weight: bold;
+  text-decoration: none;
+  color: #2d2d2d;
+  margin-left: 15px;
+  border-radius: 4px;
+}
+
+#logOutButtonHeader {
+  margin: 0;
+  color: white;
+  font-size: 1.2em;
+  padding: 10px;
+  margin-right: auto;
+}
+
+#logOutButtonHeader:hover {
+  cursor: pointer;
+} 
+
+#logOutButton {
+  position: absolute;
+  top: 100%;
+  left: 10px;
+  margin: 0;
+  background-color: #B90606;
+  color: white;
+  border-radius: 0 0px 5px 5px;
+  padding: 10px;
+}
+
+#logOutButton:hover {
+  cursor: pointer;
+}
+
+#appHeader > h4 {
+  position: absolute;
+  top: 100%;
+  left: 10px;
+  margin: 0;
+  background-color: #B90606;
+  color: white;
+  border-radius: 0 0px 5px 5px;
+  padding: 10px;
+  z-index: 30;
+}
+  
+#appHeader > h4:hover {
+  cursor: pointer;
+}
+
+@media only screen and (min-width: 900px) {
+    #appHeader {
+        justify-content: space-between;
+    }
+}
+

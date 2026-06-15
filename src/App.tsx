@@ -5,17 +5,17 @@ import {
   RouterProvider
 } from "react-router-dom";
 import './index.css'
-import './Auth.css'
-import OptionsCreator from './modules/OptionsCreator.tsx';
-import JobCreator from './modules/JobCreator.tsx';
-import JobMenu from './modules/JobMenu.tsx';
-import Login from './modules/Login.tsx';
-import ProtectedRoute from './modules/ProtectedRoute.tsx';
-import JobPackageCreator from './modules/JobPackageCreator.tsx';
+import './App.css'
+import OptionsCreator from './modules/features/OptionsCreator/OptionsCreator.tsx';
+import JobCreator from './modules/features/JobAndPackageCreator/JobCreator';
+import JobMenu from './modules/features/JobMenu/component.tsx';
+import Login from './modules/features/Login';
+import ProtectedRoute from './modules/components/ProtectedRoute';
+import JobPackageCreator from './modules/features/JobAndPackageCreator/JobPackageCreator/component.tsx';
 import { jobOptionLoader } from './loader/JobOptionLoader.ts';
 import useFetch from './hooks/useFetch.ts';
-import FormOptions from './modules/FormOptions.tsx';
-import PDEditor from './modules/PDEditor.tsx';
+import FormOptions from './modules/features/FormOptions';
+import PDEditor from './modules/features/PDEditor';
 import { pdLoader } from './loader/PDLoader.ts';
 
 const App: React.FC = () => {

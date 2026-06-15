@@ -1,7 +1,6 @@
 import React, {} from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
-import './Auth.css'
 import AuthProvider from './context/AuthContext.tsx';
 import FormOptionsProvider from './context/OptionsTemplateContext.tsx';
 import App from './App.tsx';
