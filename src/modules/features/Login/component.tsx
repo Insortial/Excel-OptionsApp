@@ -8,6 +8,7 @@ import { DecodedToken } from '@excelcabinets/excel-types/AuthContextTypes';
 import { jwtDecode } from 'jwt-decode';
 import { FormOptionsContext } from '../../../context/OptionsTemplateContext';
 import { FormOptionsContextType } from '@excelcabinets/excel-types/FormOptions';
+import './style.css'
 
 type LoginForm = {
   email: string;

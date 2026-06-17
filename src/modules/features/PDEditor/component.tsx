@@ -13,6 +13,7 @@ import EditAndCreatePD from '../../ModalScreens/EditAndCreatePD'
 import capitalizeString from '../../../hooks/capitalizeString'
 import { ColumnDetail } from '@excelcabinets/excel-types/ExcelObjectTypes'
 import PDTableRow from './PDTableRow'
+import Notification from '../../components/Notification'
 
 type CellValue = boolean | number | string | null
 
@@ -102,7 +103,7 @@ const PDEditor = () => {
           }
         })()}
       </Modal>
-      {/* <Notification /> */}
+      <Notification />
       <div id="jobMenuScreen" style={{backgroundColor: "#f0f0f0"}}>
           <Header currentPage="pdEditor"/>
           <div id="pdBody">

@@ -15,10 +15,12 @@ import Notification from "../../components/Notification/component.tsx";
 import OptionsCreatorModalScreens from "../../ModalScreens/OptionsCreatorModalScreens.tsx";
 import { useFieldArray, useForm } from "react-hook-form";
 import { initialJobDetails, initialLotDetails, initialPackageDetails, throughoutLot } from "../../../templates/initialValues.ts";
+import { NotificationInterface } from "../../../context/NotificationContext.tsx";
   
 function OptionsCreator() {
     const revalidator = useRevalidator()
     const { setErrors, setIsCheckingError, isCheckingError } = useContext(FormOptionsContext) as FormOptionsContextType
+    const { showNotification } = NotificationInterface()
     //Option States
     const { getValues: getLotListValues, control: controlLotList, reset: resetLotList, setValue: setLotListValue } = useForm<{lots: LotTableInterface[]}>({defaultValues: {lots: []}})
     const { fields: listOfLots, remove: removeLotList, update: updateLotList, insert: insertLot, update: updateLot } = useFieldArray({control: controlLotList, name: "lots"})
@@ -30,7 +32,6 @@ function OptionsCreator() {
     const [modalType, setModalType] = useState<string>("none")
     const [isLotCopy, setIsLotCopy] = useState<boolean>(false)
     const [modalInputValue, setModalInputValue] = useState<string>("")
-    const [submissionValid, setSubmissionValid] = useState<boolean|null>(null)
 
     //Package States
     const { getValues: getPackageProjects, setValue: setPackageProjects, reset: resetPackageProjects } = useForm<{projects: string[]}>({defaultValues: {projects: [""]}})
@@ -168,14 +169,6 @@ function OptionsCreator() {
         }
     }
 
-    const setNotification = (submissionState:boolean) => {
-        setSubmissionValid(submissionState)
-
-        setTimeout(() => {
-            setSubmissionValid(null)
-        }, 3000)
-    }
-
     const saveLotTablesSQL = async (prodReady:boolean, updatedLots: {[key:string]: boolean}) => {
         let hasError = false
 
@@ -195,7 +188,7 @@ function OptionsCreator() {
             if(validJob.ok && location.pathname === '/optionCreator/')
                 navigate(isOptionsMode ? `/optionCreator/jobOption/${responseBody.jobDocumentID}` : `/optionCreator/package/${responseBody.packageID}`)
             
-            setNotification(validJob.ok)
+            showNotification(validJob.ok ? "Job was submitted successfully" : "Job was not submitted", validJob.ok)
 
             if(validJob.ok) {
                 setJobValue("prodReady", prodReady)
@@ -402,7 +395,7 @@ function OptionsCreator() {
                 {currentLotNum === "" ? (<div style={{height: "100vh"}}></div>): (<LotTable onFormJobChange={onFormJobChange} setModalType={setModalType} convertToMixedOptions={convertToMixedOptions} setLotListValue={setLotListValue} setLotsUpdated={setLotsUpdated}
                                                                                 getLotListValues={getLotListValues} setCurrentLotNum={setCurrentLotNum} isOptionsMode={isOptionsMode} getJobValues={getJobValues} updateLotList={updateLotList} controlLotList={controlLotList} currentIDX={currentIDX}/>)}
             </div>
-            <Notification submissionValid={submissionValid}/>
+            <Notification />
         </>
     )
 }

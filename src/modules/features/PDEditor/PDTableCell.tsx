@@ -16,7 +16,7 @@ type PDTableCell = {
 }
 
 const PDTableCell:React.FC<PDTableCell> = ({ jobKey, item, editingRow, registerTableValues, index, columnTypeMap, errors, columnDetail }) => {
-    const { IsRequired, IsEditable } = columnDetail || {}
+    const { IsRequired, IsEditable, dropdownValues } = columnDetail || {}
     const validateValue = (value: string | number | boolean, valueType: string) => {
         switch(valueType) {
             case 'number':
@@ -26,33 +26,50 @@ const PDTableCell:React.FC<PDTableCell> = ({ jobKey, item, editingRow, registerT
         }
     }
 
+    if(jobKey === 'areaForeman')
+        console.log(item[jobKey])
+
     const sqlType = columnTypeMap[jobKey] || 'nvarchar'
     const inputType = determineInputType(sqlType)
 
     const hasError = errors[jobKey]
     const isIdentity = jobKey === 'ID'
+    const cellType = inputType === 'select' ? 'boolean' : dropdownValues ? 'dropdown' : 'text'
     //const isDate = inputType === 'date'
-    const isBoolean = inputType === 'select'
 
     return (
-        !isBoolean ? 
-            <input 
-                readOnly={isIdentity} 
-                disabled={!editingRow || !IsEditable} 
-                key={index} 
-                type={inputType} 
-                style={{fontWeight: isIdentity ? 'bold' : 'normal', border: hasError ? '2px solid red' : '1px solid black'}} 
-                {...registerTableValues(`${jobKey}`, 
-                    {value: item[jobKey],
-                    validate: (value) => validateValue(value, inputType),
-                    required: IsRequired ? 'Field is required' : false,
-                    ...objTypeMap[inputType]}
-                )}
-            /> : 
-            <select disabled={!editingRow} key={index} {...registerTableValues(`${jobKey}`, {value: item[jobKey], ...objTypeMap[inputType]})}>
-                <option value={'true'}>True</option>
-                <option value={'false'}>False</option>
-            </select>
+        <>
+            {(() => {
+                switch(cellType) {
+                    case 'boolean':
+                        return <select disabled={!editingRow} key={index} {...registerTableValues(`${jobKey}`, {value: item[jobKey], ...objTypeMap[inputType]})}>
+                                    <option value={'true'}>True</option>
+                                    <option value={'false'}>False</option>
+                                </select>
+                    case 'dropdown':
+                        return <select disabled={!editingRow} key={index} {...registerTableValues(`${jobKey}`, {value: item[jobKey], ...objTypeMap[inputType]})}>
+                                    {dropdownValues?.map((value) => {
+                                        return <option key={`${jobKey}${value.ID}`} value={value.ID}>{value.name}</option>
+                                    })}
+                                </select>
+                    case 'text':
+                    default:
+                        return <input 
+                                    readOnly={isIdentity} 
+                                    disabled={!editingRow || !IsEditable} 
+                                    key={index} 
+                                    type={inputType} 
+                                    style={{fontWeight: isIdentity ? 'bold' : 'normal', border: hasError ? '2px solid red' : '1px solid black'}} 
+                                    {...registerTableValues(`${jobKey}`, 
+                                        {value: item[jobKey],
+                                        validate: (value) => validateValue(value, inputType),
+                                        required: IsRequired ? 'Field is required' : false,
+                                        ...objTypeMap[inputType]}
+                                    )}
+                                />
+                }
+            })()}
+        </>
     )
 }
 

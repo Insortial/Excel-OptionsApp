@@ -3,6 +3,7 @@ import PDTableCell from './PDTableCell'
 import { ColumnDetail } from '@excelcabinets/excel-types/ExcelObjectTypes'
 import { useForm } from 'react-hook-form'
 import useFetch from '../../../hooks/useFetch'
+import { NotificationInterface } from '../../../context/NotificationContext'
 
 type CellValue = boolean | number | string | null
 
@@ -25,6 +26,7 @@ type PDTableRow = {
 
 const PDTableRow:React.FC<PDTableRow> = ({columnDetails, editingRow, item, level, itemIndex, levelMap, pagination, setSelectedItem, setModalType, retrieveData}) => {
     const fetchHook = useFetch()
+    const { showNotification } = NotificationInterface()
     const { getValues, reset, register, handleSubmit, formState: {errors, dirtyFields} } = useForm()
 
     const buttonTitle = {job: "Edit", project: "Location", customer: "Edit", lot: "Edit"}
@@ -70,6 +72,7 @@ const PDTableRow:React.FC<PDTableRow> = ({columnDetails, editingRow, item, level
         const response = await fetchHook(`/excelInfo/${levelMap[level]}/${getValues("ID")}`, "PATCH", body, import.meta.env.VITE_EXCELINFO)
         
         if (!response.ok) {
+            showNotification('Update Failed', false)
             console.error("Error fetching data")
             return
         }

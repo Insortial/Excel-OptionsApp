@@ -1,12 +1,11 @@
-import React from 'react'
+import React, { NotificationInterface } from '../../../context/NotificationContext'
 
-type Notification = {
-    submissionValid: boolean|null
-}
+const Notification = () => {
+    const { notificationState } = NotificationInterface()
+    const { message, show, success } = notificationState
 
-const Notification: React.FC<Notification> = ({submissionValid}) => {
     return (
-        <div className={`notification ${submissionValid ? "valid" : "invalid"}`} style={{display: submissionValid !== null ? "flex" : "none"}}>{submissionValid ? "Job was submitted successfully" : "Job was not submitted"}</div>
+        <div className={`notification ${success ? "valid" : "invalid"}`} style={{display: show ? "flex" : "none"}}>{message}</div>
     )
 }
 

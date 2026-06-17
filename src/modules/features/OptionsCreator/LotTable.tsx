@@ -135,7 +135,7 @@ const LotTable: React.FC<LotTable> = ({isOptionsMode, controlLotList, currentIDX
                         <td><InputSearch inputName={"phase"} onFormChange={onFormJobChange} isDropDown={false} getFormValues={getJobValues}></InputSearch></td>
                         <td><InputSearch inputName={"superintendent"} onFormChange={onFormJobChange} isDropDown={false} getFormValues={getJobValues}></InputSearch></td>
                         <td><InputSearch inputName={"phone"} onFormChange={onFormJobChange} isDropDown={false} getFormValues={getJobValues}></InputSearch></td>
-                        <td><InputSearch inputName={"foreman"} onFormChange={onFormJobChange} isDropDown={true} getFormValues={getJobValues}></InputSearch></td>
+                        <td><InputSearch inputName={"foreman"} onFormChange={onFormJobChange} isDropDown={true} getFormValues={getJobValues} locked={true}></InputSearch></td>
                     </tr>
                 </tbody>
             </table>) : <></>}

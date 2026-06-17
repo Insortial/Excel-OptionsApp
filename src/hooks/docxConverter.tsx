@@ -651,7 +651,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
         children: [
         new TextRun({
             text: "",
-            break: 2
+            break: 0
         })],
     })
 
@@ -696,10 +696,7 @@ export default function docxConverter(jobDetails:JobDetails, lotCollection: LotT
                     default: new Footer({
                         children: [new Paragraph({
                             children : [new TextRun({text: jobDetails.optionCoordinator, break: 1}), 
-                                        new TextRun({text: '\nOptions Coordinator', break: 1}), 
-                                        new TextRun({text: '\n225 Jason Court, Corona CA 92879', break: 1}),
-                                        new TextRun({text: '\nOffice (951) 279-4545', break: 1}), 
-                                        new TextRun({text: '\nFax (951) 279-4544', break: 1})],
+                                        new TextRun({text: '\nOptions Coordinator', break: 1})],
                             alignment: AlignmentType.CENTER
                         })]
                     }) 
