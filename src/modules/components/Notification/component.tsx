@@ -1,4 +1,5 @@
-import React, { NotificationInterface } from '../../../context/NotificationContext'
+/* eslint-disable react/react-in-jsx-scope */
+import { NotificationInterface } from '../../../context/NotificationContext'
 
 const Notification = () => {
     const { notificationState } = NotificationInterface()

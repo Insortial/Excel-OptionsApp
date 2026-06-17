@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import './index.css'
 import './App.css'
-import OptionsCreator from './modules/features/OptionsCreator/OptionsCreator.tsx';
+import OptionsCreator from './modules/features/OptionsCreator';
 import JobCreator from './modules/features/JobAndPackageCreator/JobCreator';
 import JobMenu from './modules/features/JobMenu/component.tsx';
 import Login from './modules/features/Login';
