@@ -15,7 +15,7 @@ type PDTableCell = {
     columnTypeMap: {[key: string]: string}
 }
 
-const PDTableCell:React.FC<PDTableCell> = ({ jobKey, item, editingRow, registerTableValues, index, columnTypeMap, errors, columnDetail }) => {
+const PDTableCell:React.FC<PDTableCell> = ({ jobKey, editingRow, registerTableValues, index, columnTypeMap, errors, columnDetail }) => {
     const { IsRequired, IsEditable, dropdownValues } = columnDetail || {}
     const validateValue = (value: string | number | boolean, valueType: string) => {
         switch(valueType) {
@@ -25,9 +25,6 @@ const PDTableCell:React.FC<PDTableCell> = ({ jobKey, item, editingRow, registerT
                 return true
         }
     }
-
-    if(jobKey === 'areaForeman')
-        console.log(item[jobKey])
 
     const sqlType = columnTypeMap[jobKey] || 'nvarchar'
     const inputType = determineInputType(sqlType)
@@ -42,12 +39,13 @@ const PDTableCell:React.FC<PDTableCell> = ({ jobKey, item, editingRow, registerT
             {(() => {
                 switch(cellType) {
                     case 'boolean':
-                        return <select disabled={!editingRow} key={index} {...registerTableValues(`${jobKey}`, {value: item[jobKey], ...objTypeMap[inputType]})}>
+                        return <select disabled={!editingRow} key={index} {...registerTableValues(`${jobKey}`, {...objTypeMap[inputType]})}>
                                     <option value={'true'}>True</option>
                                     <option value={'false'}>False</option>
                                 </select>
                     case 'dropdown':
-                        return <select disabled={!editingRow} key={index} {...registerTableValues(`${jobKey}`, {value: item[jobKey], ...objTypeMap[inputType]})}>
+                        return <select disabled={!editingRow} key={index} {...registerTableValues(`${jobKey}`, {...objTypeMap[inputType]})}>
+                                    {columnDetail?.IsNullable && <option value='none'>None</option>}
                                     {dropdownValues?.map((value) => {
                                         return <option key={`${jobKey}${value.ID}`} value={value.ID}>{value.name}</option>
                                     })}
@@ -61,8 +59,7 @@ const PDTableCell:React.FC<PDTableCell> = ({ jobKey, item, editingRow, registerT
                                     type={inputType} 
                                     style={{fontWeight: isIdentity ? 'bold' : 'normal', border: hasError ? '2px solid red' : '1px solid black'}} 
                                     {...registerTableValues(`${jobKey}`, 
-                                        {value: item[jobKey],
-                                        validate: (value) => validateValue(value, inputType),
+                                        {validate: (value) => validateValue(value, inputType),
                                         required: IsRequired ? 'Field is required' : false,
                                         ...objTypeMap[inputType]}
                                     )}
